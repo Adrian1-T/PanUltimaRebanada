@@ -1159,30 +1159,19 @@ function drawFog() {
   const screenX = me.x - G.camera.x;
   const screenY = me.y - G.camera.y;
 
-  // Oscurecer todo
+  // Crear un gradiente radial centrado en el jugador
+  const grad = ctx.createRadialGradient(
+    screenX, screenY, vision * 0.5,   // inicio del gradiente (zona clara)
+    screenX, screenY, vision           // fin (zona oscura)
+  );
+  grad.addColorStop(0, 'rgba(10, 8, 5, 0)');      // transparente en el centro
+  grad.addColorStop(0.6, 'rgba(10, 8, 5, 0.35)'); // penumbra
+  grad.addColorStop(1, 'rgba(10, 8, 5, 0.8)');    // oscuro afuera
+
+  // Rellenar TODA la pantalla con el gradiente
   ctx.save();
-  ctx.fillStyle = 'rgba(10, 8, 5, 0.75)';
-
-  // Usar gradiente radial para "cortar" la zona visible
-  const grad = ctx.createRadialGradient(screenX, screenY, vision * 0.4, screenX, screenY, vision);
-  grad.addColorStop(0, 'rgba(10, 8, 5, 0)');
-  grad.addColorStop(0.7, 'rgba(10, 8, 5, 0.4)');
-  grad.addColorStop(1, 'rgba(10, 8, 5, 0.85)');
-
-  // Rellenar todo menos un círculo: usamos evenodd
-  ctx.beginPath();
-  ctx.rect(0, 0, W, H);
-  ctx.arc(screenX, screenY, vision, 0, Math.PI * 2, true);
-  ctx.fillStyle = 'rgba(10, 8, 5, 0.8)';
-  ctx.fill('evenodd');
-
-  // Gradiente suave encima
-  ctx.globalCompositeOperation = 'source-over';
   ctx.fillStyle = grad;
-  ctx.beginPath();
-  ctx.rect(0, 0, W, H);
-  ctx.arc(screenX, screenY, vision, 0, Math.PI * 2, true);
-  ctx.fill('evenodd');
+  ctx.fillRect(0, 0, W, H);
   ctx.restore();
 }
 
