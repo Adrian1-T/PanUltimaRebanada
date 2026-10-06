@@ -230,9 +230,8 @@ io.on('connection', (socket) => {
     if (!room || room.state !== 'playing') return;
     const p = room.players.get(socket.id);
     if (!p || !p.alive) return;
-    // Validación básica anti-cheat
     if (typeof data.x !== 'number' || typeof data.y !== 'number') return;
-    const maxDist = 60; // por tick
+    const maxDist = 60;
     const dx = data.x - p.x;
     const dy = data.y - p.y;
     if (Math.hypot(dx, dy) > maxDist) return;
@@ -241,6 +240,16 @@ io.on('connection', (socket) => {
     p.dir = data.dir || p.dir;
     p.moving = data.moving !== false;
     p.animTime = (p.animTime || 0) + 1;
+
+    // 🔥 ESTA LÍNEA FALTABA: avisar a todos los demás jugadores
+    socket.to(code).emit('player_moved', {
+      id: socket.id,
+      x: p.x,
+      y: p.y,
+      dir: p.dir,
+      moving: p.moving,
+      animTime: p.animTime
+    });
   });
 
   // -------- MATAR (IMPOSTOR) --------
