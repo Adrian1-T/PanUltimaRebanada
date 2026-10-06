@@ -1494,20 +1494,22 @@ function updateLocalPlayer() {
     if (Math.abs(dx) > 0.1) me.dir = dx > 0 ? 1 : -1;
     me.animTime = (me.animTime || 0) + 1;
 
-    // Limitar al mapa
     if (G.map) {
       me.x = Math.max(20, Math.min(G.map.width - 20, me.x));
       me.y = Math.max(20, Math.min(G.map.height - 20, me.y));
     }
-
-    // Enviar al servidor (throttle 30fps)
-    const now = Date.now();
-    if (now - G.lastMoveSent > 33) {
-      G.lastMoveSent = now;
-      G.socket.emit('move', { x: me.x, y: me.y, dir: me.dir, moving: true });
-    }
   } else {
     me.moving = false;
+  }
+
+  // 🔥 Enviar SIEMPRE, aunque no se mueva (throttle 30fps)
+  const now = Date.now();
+  if (now - G.lastMoveSent > 33) {
+    G.lastMoveSent = now;
+    G.socket.emit('move', {
+      x: me.x, y: me.y,
+      dir: me.dir, moving: me.moving
+    });
   }
 }
 
