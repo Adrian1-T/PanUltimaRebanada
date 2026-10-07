@@ -131,7 +131,7 @@ io.on('connection', (socket) => {
         hostId: socket.id,
         state: 'lobby', // lobby | playing | voting | ended
         config: {
-          maxPlayers: Math.min(15, Math.max(4, config.maxPlayers || 8)),
+          maxPlayers: Math.min(15, Math.max(2, config.maxPlayers || 8)),
           speed: Math.min(3, Math.max(0.5, config.speed || 1.5)),
           vision: Math.min(600, Math.max(120, config.vision || 280)),
           taskCount: Math.min(15, Math.max(5, config.taskCount || 10)),
@@ -154,7 +154,31 @@ io.on('connection', (socket) => {
       const player = createPlayer(socket.id, config.profile, room);
       room.players.set(socket.id, player);
 
-      cb({ ok: true, code, player: sanitizePlayer(player), config: room.config });
+      const mapPayload = {
+        width: room.map.width,
+        height: room.map.height,
+        tasks: room.map.tasks.slice(0, room.config.taskCount),
+        emergency: room.map.emergency
+      };
+
+      const playersList = Array.from(room.players.values()).map(sanitizePlayer);
+
+      cb({
+        ok: true,
+        code,
+        player: sanitizePlayer(player),
+        config: room.config,
+        map: mapPayload,
+        players: playersList
+      });
+
+      io.to(code).emit('lobby_update', {
+        players: playersList,
+        hostId: room.hostId,
+        config: room.config,
+        map: mapPayload
+      });
+
       console.log(`🏠 Sala creada: ${code}`);
     } catch (e) {
       console.error(e);
@@ -178,14 +202,32 @@ io.on('connection', (socket) => {
       const player = createPlayer(socket.id, profile, room);
       room.players.set(socket.id, player);
 
-      // Notificar a todos
+      const mapPayload = {
+        width: room.map.width,
+        height: room.map.height,
+        tasks: room.map.tasks.slice(0, room.config.taskCount),
+        emergency: room.map.emergency
+      };
+
+      const playersList = Array.from(room.players.values()).map(sanitizePlayer);
+
+      // Notificar a todos en la sala
       io.to(code).emit('lobby_update', {
-        players: Array.from(room.players.values()).map(sanitizePlayer),
+        players: playersList,
         hostId: room.hostId,
-        config: room.config
+        config: room.config,
+        map: mapPayload
       });
 
-      cb({ ok: true, code, player: sanitizePlayer(player), config: room.config });
+      cb({
+        ok: true,
+        code,
+        player: sanitizePlayer(player),
+        config: room.config,
+        map: mapPayload,
+        players: playersList
+      });
+
       console.log(`👤 ${player.name} se unió a ${code}`);
     } catch (e) {
       console.error(e);
@@ -204,10 +246,19 @@ io.on('connection', (socket) => {
     if (profile.skin && BREAD_SKINS.includes(profile.skin)) player.skin = profile.skin;
     if (profile.hat && HATS.includes(profile.hat)) player.hat = profile.hat;
     if (profile.face && FACES.includes(profile.face)) player.face = profile.face;
+
+    const mapPayload = {
+      width: room.map.width,
+      height: room.map.height,
+      tasks: room.map.tasks.slice(0, room.config.taskCount),
+      emergency: room.map.emergency
+    };
+
     io.to(code).emit('lobby_update', {
       players: Array.from(room.players.values()).map(sanitizePlayer),
       hostId: room.hostId,
-      config: room.config
+      config: room.config,
+      map: mapPayload
     });
   });
 
@@ -216,22 +267,24 @@ io.on('connection', (socket) => {
     const code = socketToRoom.get(socket.id);
     const room = rooms.get(code);
     if (!room || room.hostId !== socket.id || room.state !== 'lobby') return;
-    if (room.players.size < 4) {
-      socket.emit('error_msg', 'Se necesitan al menos 4 jugadores');
+    if (room.players.size < 1) {
+      socket.emit('error_msg', 'No hay jugadores en la sala');
       return;
     }
     startGame(room);
   });
 
-  // -------- MOVIMIENTO --------
+  // -------- MOVIMIENTO (LOBBY Y JUEGO) --------
   socket.on('move', (data) => {
     const code = socketToRoom.get(socket.id);
     const room = rooms.get(code);
-    if (!room || room.state !== 'playing') return;
+    if (!room || (room.state !== 'playing' && room.state !== 'lobby')) return;
     const p = room.players.get(socket.id);
-    if (!p || !p.alive) return;
+    if (!p) return;
+    if (!p.alive && room.state === 'playing' && !p.isGhost) return;
+    // Validación básica
     if (typeof data.x !== 'number' || typeof data.y !== 'number') return;
-    const maxDist = 60;
+    const maxDist = 80; // por tick
     const dx = data.x - p.x;
     const dy = data.y - p.y;
     if (Math.hypot(dx, dy) > maxDist) return;
@@ -241,7 +294,7 @@ io.on('connection', (socket) => {
     p.moving = data.moving !== false;
     p.animTime = (p.animTime || 0) + 1;
 
-    // 🔥 ESTA LÍNEA FALTABA: avisar a todos los demás jugadores
+    // Retransmitir movimiento en tiempo real a los demás jugadores de la sala
     socket.to(code).emit('player_moved', {
       id: socket.id,
       x: p.x,
@@ -413,7 +466,13 @@ io.on('connection', (socket) => {
     io.to(code).emit('lobby_update', {
       players: Array.from(room.players.values()).map(sanitizePlayer),
       hostId: room.hostId,
-      config: room.config
+      config: room.config,
+      map: {
+        width: room.map.width,
+        height: room.map.height,
+        tasks: room.map.tasks.slice(0, room.config.taskCount),
+        emergency: room.map.emergency
+      }
     });
     checkWinCondition(room);
   });
@@ -473,7 +532,9 @@ function startGame(room) {
 
   const playerIds = Array.from(room.players.keys());
   const shuffled = shuffle(playerIds);
-  const impostorCount = Math.min(room.config.impostors, Math.floor(playerIds.length / 3) || 1);
+  const impostorCount = playerIds.length >= 2
+    ? Math.min(room.config.impostors, Math.max(1, Math.floor(playerIds.length / 3)))
+    : 0;
   const impostorIds = shuffled.slice(0, impostorCount);
 
   // Asignar posiciones iniciales y resetear
@@ -594,24 +655,39 @@ function checkWinCondition(room) {
   const aliveImpostors = alive.filter(p => p.isImpostor);
   const aliveCrew = alive.filter(p => !p.isImpostor);
 
-  // Victoria impostores
-  if (aliveImpostors.length > 0 && aliveImpostors.length >= aliveCrew.length) {
-    endGame(room, 'impostors');
-    return;
-  }
-  // Victoria tripulantes
-  if (aliveImpostors.length === 0) {
-    endGame(room, 'crewmates');
-    return;
-  }
-  // Victoria por misiones
+  // Misiones
   const totalTasks = Array.from(room.players.values())
     .filter(p => !p.isImpostor)
     .reduce((sum) => sum + room.config.taskCount, 0);
   const completedTasks = Array.from(room.players.values())
     .filter(p => !p.isImpostor)
     .reduce((sum, p) => sum + p.completedTasks.length, 0);
-  if (completedTasks >= totalTasks) {
+
+  // Modo solo / práctica
+  if (room.players.size === 1) {
+    if (totalTasks > 0 && completedTasks >= totalTasks) {
+      endGame(room, 'crewmates');
+    }
+    return;
+  }
+
+  // Victoria impostores
+  if (aliveImpostors.length > 0) {
+    if (aliveCrew.length === 0 || (alive.length > 2 && aliveImpostors.length >= aliveCrew.length)) {
+      endGame(room, 'impostors');
+      return;
+    }
+  }
+
+  // Victoria tripulantes si no quedan impostores
+  const startedWithImpostors = Array.from(room.players.values()).some(p => p.isImpostor);
+  if (startedWithImpostors && aliveImpostors.length === 0) {
+    endGame(room, 'crewmates');
+    return;
+  }
+
+  // Victoria por misiones
+  if (totalTasks > 0 && completedTasks >= totalTasks) {
     endGame(room, 'crewmates');
   }
 }
@@ -643,7 +719,13 @@ function endGame(room, winner) {
     io.to(room.code).emit('back_to_lobby', {
       players: Array.from(room.players.values()).map(sanitizePlayer),
       hostId: room.hostId,
-      config: room.config
+      config: room.config,
+      map: {
+        width: room.map.width,
+        height: room.map.height,
+        tasks: room.map.tasks.slice(0, room.config.taskCount),
+        emergency: room.map.emergency
+      }
     });
   }, 8000);
 }

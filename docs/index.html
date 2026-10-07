@@ -199,6 +199,27 @@ html, body {
   margin-top: 2px; font-weight: 700;
 }
 
+/* LOBBY JUGABLE FLOTANTE */
+#screenLobby {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  pointer-events: none !important;
+  align-items: flex-start !important;
+  justify-content: center !important;
+  padding: 10px !important;
+}
+#screenLobby .panel {
+  pointer-events: auto !important;
+  max-width: 460px !important;
+  background: rgba(245, 230, 211, 0.94) !important;
+  backdrop-filter: blur(14px) !important;
+  border: 2px solid rgba(139, 90, 43, 0.5) !important;
+  box-shadow: 0 12px 36px rgba(42, 30, 20, 0.55), inset 0 1px 0 rgba(255,255,255,0.8) !important;
+  border-radius: 20px !important;
+  padding: 16px 20px !important;
+  margin-top: 6px !important;
+}
+
 /* ============================================
    HUD EN JUEGO
    ============================================ */
@@ -511,16 +532,34 @@ html, body {
 
 <!-- ============ PANTALLA: LOBBY ============ -->
 <div class="screen" id="screenLobby">
-  <div class="panel neu">
-    <h2 style="text-align:center;">🏠 Sala de Espera</h2>
-    <div class="room-code" id="lobbyCode">----</div>
-    <div class="lobby-players" id="lobbyPlayers"></div>
-    <div style="text-align:center;font-size:12px;color:#8b5a2b;margin-bottom:12px;" id="lobbyInfo">
-      Esperando jugadores...
+  <div class="panel neu" id="lobbyPanel">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+      <h2 style="margin:0;font-size:18px;color:#5a3a1a;">🏠 Sala de Espera</h2>
+      <button class="neu-btn" id="btnToggleLobbyPanel" style="padding:4px 10px;font-size:11px;">➖ Ocultar Menú</button>
     </div>
-    <div class="btn-row">
-      <button class="neu-btn" id="btnLobbyLeave">← Salir</button>
-      <button class="neu-btn primary" id="btnStartGame" disabled>▶ Iniciar Partida</button>
+
+    <div id="lobbyPanelBody">
+      <div style="display:flex;gap:8px;align-items:center;justify-content:center;margin:8px 0 10px;">
+        <div class="room-code" id="lobbyCode" style="margin:0;flex:1;font-size:28px;padding:8px;letter-spacing:5px;">----</div>
+        <button class="neu-btn" id="btnCopyCode" title="Copiar código" style="padding:10px 14px;font-size:13px;white-space:nowrap;">📋 Copiar</button>
+      </div>
+
+      <div style="text-align:center;margin-bottom:8px;">
+        <button class="neu-btn" id="btnLobbyCustomize" style="padding:8px 16px;font-size:13px;width:100%;font-weight:700;">🎨 Modificar mi Pan (Skins & Gorros)</button>
+      </div>
+
+      <div class="lobby-players" id="lobbyPlayers"></div>
+      
+      <div style="text-align:center;font-size:12px;color:#8b5a2b;margin-bottom:6px;font-weight:700;" id="lobbyInfo">
+        Esperando jugadores...
+      </div>
+      <div style="text-align:center;font-size:11px;color:#7a5228;background:rgba(255,255,255,0.45);padding:6px 10px;border-radius:10px;margin-bottom:12px;">
+        🥖 ¡Puedes caminar libremente por la panadería con <b>WASD / Flechas / Joystick</b> mientras esperas!
+      </div>
+      <div class="btn-row">
+        <button class="neu-btn" id="btnLobbyLeave">← Salir</button>
+        <button class="neu-btn primary" id="btnStartGame" disabled>▶ Iniciar Partida</button>
+      </div>
     </div>
   </div>
 </div>
@@ -573,7 +612,7 @@ html, body {
 
 <div id="toast"></div>
 
-<script src="https://amongbreads.onrender.com/socket.io/socket.io.js"></script>
+<script src="/socket.io/socket.io.js"></script>
 <script>
 /* ============================================================
    AMONG BREADS - Cliente
@@ -677,7 +716,7 @@ function drawBread(c, opts) {
 
   // Cuerpo según skin
   const bodyColor = isGhost ? '#f5e6d3' : (isDead ? '#8a8a8a' : color);
-  drawBreadBody(c, skin, bodyColor, isGhost);
+  drawBreadBody(c, skin, bodyColor, isGhost, animTime);
 
   // Ojos
   if (!isDead && !isGhost) {
@@ -704,7 +743,7 @@ function drawBread(c, opts) {
   c.restore();
 }
 
-function drawBreadBody(c, skin, color, isGhost) {
+function drawBreadBody(c, skin, color, isGhost, animTime = 0) {
   const fill = isGhost ? 'rgba(245, 230, 211, 0.5)' : color;
   c.fillStyle = fill;
   c.strokeStyle = isGhost ? 'rgba(245,230,211,0.8)' : darken(color, 30);
@@ -728,30 +767,87 @@ function drawBreadBody(c, skin, color, isGhost) {
       c.stroke();
     }
   } else if (skin === 'donut') {
-    // Donut con hueco
+    // === DONA BONITA, REDONDA Y ADORABLE ===
+    // 1. Masa suave dorada / color base
     c.beginPath();
-    c.arc(0, 0, 28, 0, Math.PI * 2);
+    c.arc(0, -2, 28, 0, Math.PI * 2);
     c.fill();
     c.stroke();
-    // Glaseado
-    c.fillStyle = isGhost ? 'rgba(245,230,211,0.4)' : '#f4a4b8';
+
+    // 2. Glaseado ondulado completo y brillante
+    c.save();
+    c.fillStyle = isGhost ? 'rgba(245,230,211,0.45)' : '#ff85a1';
+    c.strokeStyle = isGhost ? 'rgba(245,230,211,0.7)' : '#e05777';
+    c.lineWidth = 1.5;
     c.beginPath();
-    c.arc(0, -2, 24, Math.PI, 0);
+    const frostSteps = 24;
+    for (let i = 0; i <= frostSteps; i++) {
+      const a = (i / frostSteps) * Math.PI * 2;
+      // Ondulación cremosa orgánica
+      const wave = Math.sin(a * 5) * 2.5 + Math.cos(a * 3) * 1.5;
+      const r = 24.5 + wave;
+      const px = Math.cos(a) * r;
+      const py = -2 + Math.sin(a) * (r * 0.95);
+      if (i === 0) c.moveTo(px, py);
+      else c.lineTo(px, py);
+    }
+    c.closePath();
     c.fill();
-    // Hueco
-    c.fillStyle = isGhost ? 'rgba(42,30,20,0.3)' : '#3a2a1a';
-    c.beginPath();
-    c.arc(0, 0, 8, 0, Math.PI * 2);
-    c.fill();
-    // Chispas
-    const sparkColors = ['#fff', '#f4c542', '#7ac74f', '#e07a5f'];
-    for (let i = 0; i < 8; i++) {
-      const a = (i / 8) * Math.PI * 2 + animTime * 0.02;
-      const r = 16 + Math.sin(i * 2) * 3;
-      c.fillStyle = sparkColors[i % 4];
+    c.stroke();
+
+    // 3. Brillo en el glaseado
+    if (!isGhost) {
+      c.fillStyle = 'rgba(255, 255, 255, 0.45)';
       c.beginPath();
-      c.arc(Math.cos(a) * r, -2 + Math.sin(a) * r * 0.7, 2, 0, Math.PI * 2);
+      c.ellipse(-10, -14, 9, 3.5, -0.4, 0, Math.PI * 2);
       c.fill();
+    }
+    c.restore();
+
+    // 4. Hueco del centro del donut (con relieve y profundidad)
+    c.save();
+    c.fillStyle = isGhost ? 'rgba(42,30,20,0.3)' : darken(color, 45);
+    c.beginPath();
+    c.ellipse(0, 4, 8.5, 7.5, 0, 0, Math.PI * 2);
+    c.fill();
+    c.fillStyle = isGhost ? 'rgba(30,20,15,0.4)' : '#2a1d12';
+    c.beginPath();
+    c.ellipse(0, 3, 6.5, 5.5, 0, 0, Math.PI * 2);
+    c.fill();
+    c.strokeStyle = darken(color, 25);
+    c.lineWidth = 1.5;
+    c.stroke();
+    c.restore();
+
+    // 5. Chispas de colores (sprinkles)
+    const t = animTime || 0;
+    const sprinkles = [
+      { x: -14, y: -16, angle: 0.3, color: '#ffffff' },
+      { x: -5,  y: -21, angle: -0.5, color: '#ffd166' },
+      { x: 8,   y: -19, angle: 0.8, color: '#06d6a0' },
+      { x: 17,  y: -13, angle: -0.3, color: '#ffffff' },
+      { x: -18, y: -7,  angle: 0.6, color: '#ff4d6d' },
+      { x: 18,  y: -5,  angle: -0.7, color: '#ffd166' },
+      { x: -15, y: 7,   angle: -0.2, color: '#06d6a0' },
+      { x: 15,  y: 7,   angle: 0.4, color: '#118ab2' },
+      { x: 0,   y: 15,  angle: 0.1, color: '#ff4d6d' },
+      { x: -7,  y: -11, angle: 0.9, color: '#ffffff' },
+      { x: 8,   y: -10, angle: -0.8, color: '#ffd166' }
+    ];
+    for (let i = 0; i < sprinkles.length; i++) {
+      const sp = sprinkles[i];
+      c.save();
+      c.translate(sp.x, sp.y);
+      c.rotate(sp.angle + Math.sin(t * 0.03 + i) * 0.05);
+      c.fillStyle = isGhost ? 'rgba(255,255,255,0.5)' : sp.color;
+      c.beginPath();
+      if (c.roundRect) {
+        c.roundRect(-2.8, -1.2, 5.6, 2.4, 1.2);
+      } else {
+        c.rect(-2.8, -1.2, 5.6, 2.4);
+      }
+      c.fill();
+      c.restore();
     }
   } else if (skin === 'concha') {
     // Cuerpo redondo
@@ -785,17 +881,18 @@ function drawBreadBody(c, skin, color, isGhost) {
     c.arc(0, 0, 26, 0, Math.PI * 2);
     c.fill(); c.stroke();
     // Manchas verdes
+    const tTime = animTime || 0;
     c.fillStyle = isGhost ? 'rgba(122,199,79,0.4)' : '#7ac74f';
     for (let i = 0; i < 6; i++) {
-      const a = (i / 6) * Math.PI * 2 + animTime * 0.01;
+      const a = (i / 6) * Math.PI * 2 + tTime * 0.01;
       c.beginPath();
-      c.arc(Math.cos(a) * 14, Math.sin(a) * 14, 5 + Math.sin(animTime * 0.1 + i) * 2, 0, Math.PI * 2);
+      c.arc(Math.cos(a) * 14, Math.sin(a) * 14, 5 + Math.sin(tTime * 0.1 + i) * 2, 0, Math.PI * 2);
       c.fill();
     }
     // Esporas flotantes
     c.fillStyle = 'rgba(122,199,79,0.6)';
     for (let i = 0; i < 4; i++) {
-      const t = animTime * 0.05 + i;
+      const t = tTime * 0.05 + i;
       c.beginPath();
       c.arc(Math.sin(t) * 20, -30 - (t % 20), 2, 0, Math.PI * 2);
       c.fill();
@@ -813,7 +910,8 @@ function drawBreadBody(c, skin, color, isGhost) {
     c.moveTo(10, -15); c.lineTo(5, -5); c.lineTo(15, 5);
     c.stroke();
     // Chispas
-    c.fillStyle = `rgba(255, 150, 50, ${0.5 + Math.sin(animTime * 0.3) * 0.3})`;
+    const tTime = animTime || 0;
+    c.fillStyle = `rgba(255, 150, 50, ${0.5 + Math.sin(tTime * 0.3) * 0.3})`;
     for (let i = 0; i < 3; i++) {
       c.beginPath();
       c.arc(-10 + i * 10, -32, 2, 0, Math.PI * 2);
@@ -1093,54 +1191,62 @@ function render(dt) {
   animTick++;
   ctx.clearRect(0, 0, W, H);
 
-  if (G.gameState === 'playing' || G.gameState === 'voting' || G.gameState === 'ended') {
-    const me = G.players.get(G.myId);
-    if (me) {
-      // Cámara sigue al jugador
-      G.camera.x = me.x - W / 2;
-      G.camera.y = me.y - H / 2;
-    }
+  try {
+    if (G.gameState === 'playing' || G.gameState === 'voting' || G.gameState === 'ended' || G.gameState === 'lobby') {
+      const me = G.players.get(G.myId);
+      if (me) {
+        // Cámara sigue al jugador
+        G.camera.x = me.x - W / 2;
+        G.camera.y = me.y - H / 2;
+      }
 
-    ctx.save();
-    ctx.translate(-G.camera.x, -G.camera.y);
+      ctx.save();
+      ctx.translate(-G.camera.x, -G.camera.y);
 
-    drawMap(ctx);
-    drawTasks(ctx);
-    drawBodies(ctx);
+      drawMap(ctx);
+      if (G.gameState !== 'lobby') {
+        drawTasks(ctx);
+        drawBodies(ctx);
+      }
 
-    // Jugadores
-    const now = Date.now();
-    for (const p of G.players.values()) {
-      // Ocultar si es invisible y no soy yo/impostor
-      if (p.invisible && p.id !== G.myId && !G.isImpostor) continue;
+      // Jugadores
+      for (const p of G.players.values()) {
+        // Ocultar si es invisible y no soy yo/impostor
+        if (p.invisible && p.id !== G.myId && !G.isImpostor) continue;
 
-      // Interpolación simple de animTime
-      const anim = animTick + (p.animOffset || 0);
-      drawBread(ctx, {
-        x: p.x, y: p.y, skin: p.skin, hat: p.hat, face: p.face,
-        dir: p.dir, moving: p.moving, animTime: anim,
-        scale: 1, color: p.color,
-        alpha: p.alive ? (p.invisible ? 0.15 : 1) : 0.4,
-        isGhost: !p.alive,
-        isDead: !p.alive
-      });
+        try {
+          const anim = animTick + (p.animOffset || 0);
+          drawBread(ctx, {
+            x: p.x, y: p.y, skin: p.skin, hat: p.hat, face: p.face,
+            dir: p.dir, moving: p.moving, animTime: anim,
+            scale: 1, color: p.color,
+            alpha: p.alive ? (p.invisible ? 0.15 : 1) : 0.4,
+            isGhost: !p.alive,
+            isDead: !p.alive && G.gameState !== 'lobby'
+          });
 
-      // Nombre
-      if (p.id !== G.myId) {
-        ctx.fillStyle = '#f5e6d3';
-        ctx.font = 'bold 12px sans-serif';
-        ctx.textAlign = 'center';
-        ctx.strokeStyle = 'rgba(0,0,0,0.6)';
-        ctx.lineWidth = 3;
-        ctx.strokeText(p.name, p.x, p.y - 42);
-        ctx.fillText(p.name, p.x, p.y - 42);
+          // Nombre encima del personaje
+          ctx.fillStyle = '#f5e6d3';
+          ctx.font = 'bold 12px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.strokeStyle = 'rgba(0,0,0,0.6)';
+          ctx.lineWidth = 3;
+          ctx.strokeText(p.name || 'Pan', p.x, p.y - 42);
+          ctx.fillText(p.name || 'Pan', p.x, p.y - 42);
+        } catch (perr) {
+          console.warn('Error dibujando jugador:', perr);
+        }
+      }
+
+      ctx.restore();
+
+      // Fog of war solo durante la partida normal
+      if (G.gameState === 'playing') {
+        drawFog();
       }
     }
-
-    ctx.restore();
-
-    // Fog of war radial
-    drawFog();
+  } catch (err) {
+    console.error('Error en loop de render:', err);
   }
 
   requestAnimationFrame((t) => {
@@ -1155,9 +1261,10 @@ function drawFog() {
   const me = G.players.get(G.myId);
   if (!me) return;
 
-  const vision = G.config ? G.config.vision : 280;
+  const vision = G.config && G.config.vision ? G.config.vision : 280;
   const screenX = me.x - G.camera.x;
   const screenY = me.y - G.camera.y;
+  if (isNaN(screenX) || isNaN(screenY) || vision <= 0) return;
 
   // Oscurecer todo
   ctx.save();
@@ -1192,7 +1299,7 @@ function drawFog() {
 function getServerUrl() {
   const input = document.getElementById('serverUrl').value.trim();
   if (input) return input.replace(/\/$/, '');
-  return 'https://amongbreads.onrender.com'; // ← tu URL de Render
+  return window.location.origin;
 }
 
 function connectToServer() {
@@ -1236,12 +1343,47 @@ function connectToServer() {
 
   // ---- LOBBY ----
   G.socket.on('lobby_update', (data) => {
+    G.myId = G.socket.id;
     G.isHost = data.hostId === G.myId;
     G.config = data.config;
+    if (data.map) G.map = data.map;
+    if (G.gameState !== 'playing' && G.gameState !== 'voting' && G.gameState !== 'ended') {
+      G.gameState = 'lobby';
+      document.getElementById('joystickZone').style.display = 'block';
+      document.getElementById('chatBox').classList.add('active');
+    }
+
+    // Sincronizar jugadores en G.players
+    const currentIds = new Set();
+    for (const p of data.players) {
+      currentIds.add(p.id);
+      const existing = G.players.get(p.id);
+      if (!existing) {
+        G.players.set(p.id, { ...p, animOffset: Math.random() * 100 });
+      } else {
+        existing.name = p.name;
+        existing.skin = p.skin;
+        existing.hat = p.hat;
+        existing.face = p.face;
+        existing.color = p.color;
+        existing.alive = p.alive;
+        if (p.id !== G.myId) {
+          existing.x = p.x;
+          existing.y = p.y;
+          existing.dir = p.dir;
+          existing.moving = p.moving;
+        }
+      }
+    }
+    // Remover desconectados
+    for (const id of G.players.keys()) {
+      if (!currentIds.has(id)) G.players.delete(id);
+    }
+
     renderLobby(data.players, data.hostId);
     document.getElementById('btnStartGame').disabled = !G.isHost;
     document.getElementById('lobbyInfo').textContent =
-      `${data.players.length} / ${data.config.maxPlayers} jugadores`;
+      `${data.players.length} / ${data.config.maxPlayers} jugadores` + (G.isHost ? ' • ¡Eres el anfitrión!' : ' • Esperando al anfitrión...');
   });
 
   // ---- INICIO DE PARTIDA ----
@@ -1296,10 +1438,16 @@ function connectToServer() {
 
   // ---- MOVIMIENTO ----
   G.socket.on('player_moved', (data) => {
-    const p = G.players.get(data.id);
-    if (p) {
-      p.x = data.x; p.y = data.y; p.dir = data.dir;
-      p.moving = data.moving; p.animTime = data.animTime;
+    let p = G.players.get(data.id);
+    if (!p) {
+      p = { id: data.id, x: data.x, y: data.y, dir: data.dir || 1, moving: !!data.moving, animTime: data.animTime || 0, alive: true, skin: 'bolillo', hat: 'none', face: 'none', color: '#d4a373' };
+      G.players.set(data.id, p);
+    } else {
+      p.x = data.x;
+      p.y = data.y;
+      p.dir = data.dir || p.dir;
+      p.moving = !!data.moving;
+      p.animTime = data.animTime;
     }
   });
 
@@ -1381,10 +1529,16 @@ function connectToServer() {
     G.completedTasks = [];
     G.isImpostor = false;
     G.myRole = 'Panadero';
+    if (data.map) G.map = data.map;
+    if (data.players) {
+      for (const p of data.players) {
+        G.players.set(p.id, { ...p, animOffset: Math.random() * 100 });
+      }
+    }
     document.getElementById('hud').classList.remove('active');
-    document.getElementById('joystickZone').style.display = 'none';
+    document.getElementById('joystickZone').style.display = 'block';
     document.getElementById('actionButtons').style.display = 'none';
-    document.getElementById('chatBox').classList.remove('active');
+    document.getElementById('chatBox').classList.add('active');
     document.getElementById('screenEnd').classList.remove('active');
     document.getElementById('screenVoting').classList.remove('active');
     document.getElementById('screenLobby').classList.add('active');
@@ -1480,9 +1634,9 @@ document.getElementById('btnInvis').addEventListener('click', tryInvisibility);
 // LÓGICA DE MOVIMIENTO LOCAL
 // ============================================
 function updateLocalPlayer() {
-  if (G.gameState !== 'playing') return;
+  if (G.gameState !== 'playing' && G.gameState !== 'lobby') return;
   const me = G.players.get(G.myId);
-  if (!me || !me.alive) return;
+  if (!me || (!me.alive && G.gameState !== 'lobby')) return;
 
   let dx = 0, dy = 0;
   if (G.input.up) dy -= 1;
@@ -1498,7 +1652,7 @@ function updateLocalPlayer() {
   const mag = Math.hypot(dx, dy);
   if (mag > 0.1) {
     dx /= mag; dy /= mag;
-    const speed = G.config.speed * 2.5;
+    const speed = ((G.config && G.config.speed) || 1.5) * 2.5;
     me.x += dx * speed;
     me.y += dy * speed;
     me.moving = true;
@@ -1507,18 +1661,25 @@ function updateLocalPlayer() {
 
     // Limitar al mapa
     if (G.map) {
-      me.x = Math.max(20, Math.min(G.map.width - 20, me.x));
-      me.y = Math.max(20, Math.min(G.map.height - 20, me.y));
+      me.x = Math.max(30, Math.min(G.map.width - 30, me.x));
+      me.y = Math.max(30, Math.min(G.map.height - 30, me.y));
     }
 
     // Enviar al servidor (throttle 30fps)
     const now = Date.now();
     if (now - G.lastMoveSent > 33) {
       G.lastMoveSent = now;
-      G.socket.emit('move', { x: me.x, y: me.y, dir: me.dir, moving: true });
+      if (G.socket && G.socket.connected) {
+        G.socket.emit('move', { x: me.x, y: me.y, dir: me.dir, moving: true });
+      }
     }
   } else {
-    me.moving = false;
+    if (me.moving) {
+      me.moving = false;
+      if (G.socket && G.socket.connected) {
+        G.socket.emit('move', { x: me.x, y: me.y, dir: me.dir, moving: false });
+      }
+    }
   }
 }
 
@@ -1694,9 +1855,18 @@ document.getElementById('btnCreateConfirm').addEventListener('click', () => {
     if (!res.ok) { toast(res.error); return; }
     G.roomCode = res.code;
     G.isHost = true;
+    G.myId = G.socket.id;
+    G.gameState = 'lobby';
+    if (res.config) G.config = res.config;
+    if (res.map) G.map = res.map;
+    if (res.player) {
+      G.players.set(res.player.id, { ...res.player, animOffset: Math.random() * 100 });
+    }
     document.getElementById('lobbyCode').textContent = res.code;
     showScreen('screenLobby');
     document.getElementById('btnStartGame').disabled = false;
+    document.getElementById('joystickZone').style.display = 'block';
+    document.getElementById('chatBox').classList.add('active');
   });
 });
 
@@ -1709,8 +1879,21 @@ document.getElementById('btnJoinConfirm').addEventListener('click', () => {
     if (!res.ok) { toast(res.error); return; }
     G.roomCode = res.code;
     G.isHost = false;
+    G.myId = G.socket.id;
+    G.gameState = 'lobby';
+    if (res.config) G.config = res.config;
+    if (res.map) G.map = res.map;
+    if (res.players) {
+      for (const p of res.players) {
+        G.players.set(p.id, { ...p, animOffset: Math.random() * 100 });
+      }
+    } else if (res.player) {
+      G.players.set(res.player.id, { ...res.player, animOffset: Math.random() * 100 });
+    }
     document.getElementById('lobbyCode').textContent = res.code;
     showScreen('screenLobby');
+    document.getElementById('joystickZone').style.display = 'block';
+    document.getElementById('chatBox').classList.add('active');
   });
 });
 
@@ -1764,7 +1947,13 @@ function buildOptionGrid(containerId, options, selected, onClick) {
 
 const previewCanvas = document.getElementById('previewCanvas');
 const previewCtx = previewCanvas.getContext('2d');
+let previewRaf = null;
+
 function drawPreview() {
+  if (previewRaf) {
+    cancelAnimationFrame(previewRaf);
+    previewRaf = null;
+  }
   previewCtx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
   previewCtx.save();
   previewCtx.translate(previewCanvas.width / 2, previewCanvas.height / 2 + 10);
@@ -1775,9 +1964,8 @@ function drawPreview() {
     scale: 1.6, color: '#d4a373'
   });
   previewCtx.restore();
-  // Animar preview
   if (document.getElementById('screenCustomize').classList.contains('active')) {
-    requestAnimationFrame(drawPreview);
+    previewRaf = requestAnimationFrame(drawPreview);
   }
 }
 
@@ -1785,6 +1973,13 @@ document.getElementById('btnCustomizeDone').addEventListener('click', () => {
   G.profile.name = document.getElementById('pName').value.trim().slice(0, 12) || 'Panadero';
   if (G.socket && G.connected) {
     G.socket.emit('update_profile', G.profile);
+    const me = G.players.get(G.myId);
+    if (me) {
+      me.name = G.profile.name;
+      me.skin = G.profile.skin;
+      me.hat = G.profile.hat;
+      me.face = G.profile.face;
+    }
   }
   showScreen(G.roomCode ? 'screenLobby' : 'screenMain');
 });
@@ -1792,19 +1987,20 @@ document.getElementById('btnCustomizeDone').addEventListener('click', () => {
 // ---- LOBBY ----
 function renderLobby(players, hostId) {
   const container = document.getElementById('lobbyPlayers');
+  if (!container) return;
   container.innerHTML = '';
   for (const p of players) {
     const div = document.createElement('div');
     div.className = 'lobby-player';
     const cv = document.createElement('canvas');
-    cv.width = 88; cv.height = 88;
+    cv.width = 64; cv.height = 64;
     const cx = cv.getContext('2d');
     cx.save();
-    cx.translate(44, 48);
+    cx.translate(32, 34);
     drawBread(cx, {
       x: 0, y: 0, skin: p.skin, hat: p.hat, face: p.face,
-      dir: 1, moving: false, animTime: Date.now() * 0.05 + Math.random() * 100,
-      scale: 0.9, color: p.color
+      dir: 1, moving: false, animTime: 0,
+      scale: 0.75, color: p.color
     });
     cx.restore();
     div.appendChild(cv);
@@ -1820,16 +2016,54 @@ function renderLobby(players, hostId) {
     }
     container.appendChild(div);
   }
-  // Animar
-  if (document.getElementById('screenLobby').classList.contains('active')) {
-    setTimeout(() => renderLobby(players, hostId), 100);
-  }
+}
+
+// Botón copiar código
+const btnCopy = document.getElementById('btnCopyCode');
+if (btnCopy) {
+  btnCopy.addEventListener('click', () => {
+    const code = document.getElementById('lobbyCode').textContent.trim();
+    if (code && code !== '----') {
+      navigator.clipboard.writeText(code).then(() => {
+        toast('📋 ¡Código ' + code + ' copiado!');
+      }).catch(() => {
+        toast('Código: ' + code);
+      });
+    }
+  });
+}
+
+// Botón personalizar desde lobby
+const btnLobbyCust = document.getElementById('btnLobbyCustomize');
+if (btnLobbyCust) {
+  btnLobbyCust.addEventListener('click', () => {
+    showScreen('screenCustomize');
+  });
+}
+
+// Botón minimizar/mostrar menú de lobby
+const btnToggleLobby = document.getElementById('btnToggleLobbyPanel');
+if (btnToggleLobby) {
+  btnToggleLobby.addEventListener('click', () => {
+    const body = document.getElementById('lobbyPanelBody');
+    if (body.style.display === 'none') {
+      body.style.display = 'block';
+      btnToggleLobby.textContent = '➖ Ocultar Menú';
+    } else {
+      body.style.display = 'none';
+      btnToggleLobby.textContent = '➕ Mostrar Menú';
+    }
+  });
 }
 
 document.getElementById('btnLobbyLeave').addEventListener('click', () => {
   if (G.socket) G.socket.disconnect();
   G.roomCode = null;
   G.isHost = false;
+  G.gameState = 'menu';
+  G.players.clear();
+  document.getElementById('joystickZone').style.display = 'none';
+  document.getElementById('chatBox').classList.remove('active');
   showScreen('screenMain');
   connectToServer();
 });

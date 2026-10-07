@@ -1,0 +1,7 @@
+node_modules/
+*.exe
+*.docx
+*.zip
+*.rar
+.DS_Store
+Thumbs.db
