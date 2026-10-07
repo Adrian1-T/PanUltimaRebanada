@@ -412,12 +412,12 @@ html, body {
       <div class="joystick-knob" id="joystickKnob"></div>
     </div>
   </div>
-  <div class="action-buttons" id="actionButtons">
-    <div class="action-btn kill" id="btnKill">🔪<br>MATAR</div>
-    <div class="action-btn" id="btnUse">✋<br>USAR</div>
-    <div class="action-btn" id="btnInvis">👻<br>INVIS</div>
+  <div class="action-buttons" id="actionButtons" style="display:none;">
+    <div class="action-btn kill" id="btnKill" style="display:none;">&#128298;<br>MATAR</div>
+    <div class="action-btn" id="btnUse" style="display:flex;">&#128295;<br>USAR</div>
+    <div class="action-btn" id="btnInvis" style="display:none;">&#128123;<br>INVIS</div>
   </div>
-  <div class="chat-box" id="chatBox"></div>
+    <div class="chat-box" id="chatBox"></div>
 </div>
 
 <!-- ============ PANTALLA: MENÚ PRINCIPAL ============ -->
@@ -639,7 +639,12 @@ const G = {
   },
   gameState: 'menu', // menu | lobby | playing | voting | ended
   players: new Map(), // id -> player state
-  map: null,
+  map: {
+    width: 2000,
+    height: 1500,
+    tasks: [],
+    emergency: { x: 1000, y: 750 }
+  },
   isImpostor: false,
   myRole: 'Panadero',
   myTasks: [],
@@ -1249,47 +1254,38 @@ function render(dt) {
     console.error('Error en loop de render:', err);
   }
 
-  requestAnimationFrame((t) => {
-    const dt2 = lastFrame ? t - lastFrame : 16;
-    lastFrame = t;
-    render(Math.min(dt2, 50));
-  });
 }
 
 function drawFog() {
   if (!G.map || G.gameState !== 'playing') return;
   const me = G.players.get(G.myId);
-  if (!me) return;
+  if (!me || !me.alive) return; // Fantasmas ven todo sin niebla
 
-  const vision = G.config && G.config.vision ? G.config.vision : 280;
+  const vision = (G.config && G.config.vision) ? G.config.vision : 280;
   const screenX = me.x - G.camera.x;
   const screenY = me.y - G.camera.y;
   if (isNaN(screenX) || isNaN(screenY) || vision <= 0) return;
 
-  // Oscurecer todo
   ctx.save();
-  ctx.fillStyle = 'rgba(10, 8, 5, 0.75)';
-
-  // Usar gradiente radial para "cortar" la zona visible
-  const grad = ctx.createRadialGradient(screenX, screenY, vision * 0.4, screenX, screenY, vision);
+  // Gradiente suave de visión desde el jugador
+  const grad = ctx.createRadialGradient(screenX, screenY, vision * 0.45, screenX, screenY, vision);
   grad.addColorStop(0, 'rgba(10, 8, 5, 0)');
-  grad.addColorStop(0.7, 'rgba(10, 8, 5, 0.4)');
-  grad.addColorStop(1, 'rgba(10, 8, 5, 0.85)');
+  grad.addColorStop(0.7, 'rgba(10, 8, 5, 0.45)');
+  grad.addColorStop(1, 'rgba(10, 8, 5, 0.92)');
 
-  // Rellenar todo menos un círculo: usamos evenodd
-  ctx.beginPath();
-  ctx.rect(0, 0, W, H);
-  ctx.arc(screenX, screenY, vision, 0, Math.PI * 2, true);
-  ctx.fillStyle = 'rgba(10, 8, 5, 0.8)';
-  ctx.fill('evenodd');
-
-  // Gradiente suave encima
-  ctx.globalCompositeOperation = 'source-over';
+  // 1. Difuminado en los bordes del círculo de visión
   ctx.fillStyle = grad;
   ctx.beginPath();
+  ctx.arc(screenX, screenY, vision, 0, Math.PI * 2);
+  ctx.fill();
+
+  // 2. Oscuridad total fuera del radio de visión
+  ctx.fillStyle = 'rgba(10, 8, 5, 0.92)';
+  ctx.beginPath();
   ctx.rect(0, 0, W, H);
   ctx.arc(screenX, screenY, vision, 0, Math.PI * 2, true);
   ctx.fill('evenodd');
+
   ctx.restore();
 }
 
@@ -1387,9 +1383,36 @@ function connectToServer() {
   });
 
   // ---- INICIO DE PARTIDA ----
+  
+// Control de visibilidad de botones del HUD según rol y estado
+function updateActionButtonsVisibility() {
+  const container = document.getElementById('actionButtons');
+  const btnKill = document.getElementById('btnKill');
+  const btnInvis = document.getElementById('btnInvis');
+  const btnUse = document.getElementById('btnUse');
+  
+  if (G.gameState !== 'playing') {
+    if (container) container.style.display = 'none';
+    return;
+  }
+  
+  if (container) container.style.display = 'flex';
+  if (btnUse) btnUse.style.display = 'flex';
+  
+  const me = G.players.get(G.myId);
+  if (G.isImpostor && me && me.alive) {
+    if (btnKill) btnKill.style.display = 'flex';
+    if (btnInvis) btnInvis.style.display = (me.skin === 'mohoso') ? 'flex' : 'none';
+  } else {
+    if (btnKill) btnKill.style.display = 'none';
+    if (btnInvis) btnInvis.style.display = 'none';
+  }
+}
+
   G.socket.on('role_assigned', (data) => {
     G.isImpostor = data.isImpostor;
     G.myRole = data.role;
+    updateActionButtonsVisibility();
     G.myTasks = data.tasks || [];
     G.completedTasks = [];
 
@@ -1427,10 +1450,11 @@ function connectToServer() {
     }
     G.myId = G.socket.id;
 
+    showScreen(null);
     document.getElementById('screenLobby').classList.remove('active');
     document.getElementById('hud').classList.add('active');
     document.getElementById('joystickZone').style.display = 'block';
-    document.getElementById('actionButtons').style.display = 'flex';
+    updateActionButtonsVisibility();
     document.getElementById('chatBox').classList.add('active');
 
     updateTaskProgress();
@@ -1459,7 +1483,7 @@ function connectToServer() {
     }
     if (data.targetId === G.myId) {
       toast('💀 Has sido eliminado. Ahora eres un fantasma.');
-      document.getElementById('btnKill').style.display = 'none';
+      updateActionButtonsVisibility();
     } else if (data.killerId === G.myId) {
       toast('🔪 ¡Eliminaste a ' + (target ? target.name : '?') + '!');
       G.killCooldown = 25000;
@@ -1537,7 +1561,7 @@ function connectToServer() {
     }
     document.getElementById('hud').classList.remove('active');
     document.getElementById('joystickZone').style.display = 'block';
-    document.getElementById('actionButtons').style.display = 'none';
+    updateActionButtonsVisibility();
     document.getElementById('chatBox').classList.add('active');
     document.getElementById('screenEnd').classList.remove('active');
     document.getElementById('screenVoting').classList.remove('active');
@@ -1556,16 +1580,17 @@ function setConnStatus(msg) {
 // INPUT (TECLADO + JOYSTICK TÁCTIL)
 // ============================================
 window.addEventListener('keydown', (e) => {
-  if (G.gameState !== 'playing') return;
+  if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
+  if (G.gameState !== 'playing' && G.gameState !== 'lobby') return;
   switch (e.key.toLowerCase()) {
     case 'w': case 'arrowup': G.input.up = true; break;
     case 's': case 'arrowdown': G.input.down = true; break;
     case 'a': case 'arrowleft': G.input.left = true; break;
     case 'd': case 'arrowright': G.input.right = true; break;
-    case 'e': case ' ': tryInteract(); break;
-    case 'k': tryKill(); break;
-    case 'i': tryInvisibility(); break;
-    case 'r': tryReport(); break;
+    case 'e': case ' ': if (G.gameState === 'playing') tryInteract(); break;
+    case 'k': case 'q': if (G.gameState === 'playing') tryKill(); break;
+    case 'i': if (G.gameState === 'playing') tryInvisibility(); break;
+    case 'r': if (G.gameState === 'playing') tryReport(); break;
   }
 });
 window.addEventListener('keyup', (e) => {
@@ -2754,38 +2779,54 @@ function initMermelada(m) {
 }
 
 // ============================================
-// GAME LOOP PRINCIPAL
+// GAME LOOP PRINCIPAL (LÓGICA + RENDER UNIFICADO)
 // ============================================
-let lastMoveTick = 0;
-function gameLoop() {
+let lastLoopTime = 0;
+function gameLoop(timestamp) {
+  const ts = typeof timestamp === 'number' ? timestamp : performance.now();
+  const dt = lastLoopTime ? Math.min(ts - lastLoopTime, 50) : 16;
+  lastLoopTime = ts;
+
+  // 1. Actualizar movimiento local
   updateLocalPlayer();
-  // Cooldowns
+
+  // 2. Cooldowns
   if (G.killCooldown > 0) {
-    G.killCooldown -= 16;
+    G.killCooldown = Math.max(0, G.killCooldown - dt);
     const btn = document.getElementById('btnKill');
-    if (G.killCooldown <= 0) {
-      G.killCooldown = 0;
-      btn.classList.remove('disabled');
-    } else {
-      btn.classList.add('disabled');
-      btn.textContent = '🔪\n' + Math.ceil(G.killCooldown/1000);
+    if (btn) {
+      if (G.killCooldown <= 0) {
+        btn.classList.remove('disabled');
+        btn.innerHTML = '&#128298;<br>MATAR';
+      } else {
+        btn.classList.add('disabled');
+        btn.innerHTML = '&#128298;<br>' + Math.ceil(G.killCooldown / 1000);
+      }
     }
   }
   if (G.invisCooldown > 0) {
-    G.invisCooldown -= 16;
+    G.invisCooldown = Math.max(0, G.invisCooldown - dt);
     const btn = document.getElementById('btnInvis');
-    if (G.invisCooldown <= 0) {
-      G.invisCooldown = 0;
-      btn.classList.remove('disabled');
-      btn.textContent = '👻\nINVIS';
-    } else {
-      btn.classList.add('disabled');
-      btn.textContent = '👻\n' + Math.ceil(G.invisCooldown/1000);
+    if (btn) {
+      if (G.invisCooldown <= 0) {
+        btn.classList.remove('disabled');
+        btn.innerHTML = '&#128123;<br>INVIS';
+      } else {
+        btn.classList.add('disabled');
+        btn.innerHTML = '&#128123;<br>' + Math.ceil(G.invisCooldown / 1000);
+      }
     }
   }
+
+  // 3. Renderizar cuadro en canvas (¡SE DIBUJA CADA FRAME!)
+  render(dt);
+
+  // Solicitar siguiente frame
   requestAnimationFrame(gameLoop);
 }
-gameLoop();
+
+// Iniciar bucle principal de juego y renderizado
+requestAnimationFrame(gameLoop);
 
 // ============================================
 // INICIO
