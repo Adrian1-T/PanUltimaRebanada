@@ -377,6 +377,20 @@ html, body {
   background: linear-gradient(145deg, #7ac74f, #4caf50);
   color: #fff; border-color: #a3e67e;
 }
+.action-btn.use.emergency-ready {
+  background: linear-gradient(145deg, #f39c12, #d35400) !important;
+  border-color: #ffeaa7 !important;
+  color: #fff !important;
+  animation: pulseEmergency 0.7s infinite alternate ease-in-out;
+  box-shadow: 0 0 24px rgba(243, 156, 18, 0.95) !important;
+  opacity: 1 !important;
+  filter: none !important;
+  pointer-events: auto !important;
+}
+@keyframes pulseEmergency {
+  from { transform: scale(1); filter: brightness(1); }
+  to { transform: scale(1.12); filter: brightness(1.3); }
+}
 .action-btn.report {
   background: linear-gradient(145deg, #e07a5f, #c0392b);
   color: #fff; border-color: #ff9d87;
@@ -1632,6 +1646,7 @@ const DEFAULT_MAPS = {
 };
 
 G.map = DEFAULT_MAPS['El Horno Central'];
+G.emergency = (G.map && G.map.emergency) ? G.map.emergency : { x: 1000, y: 760 };
 
 // ============================================
 // RENDERIZADO DEL MAPA
@@ -1773,21 +1788,71 @@ function drawMap(c) {
   // 5. Mesa Central y Campana de Emergencia
   if (m.emergency) {
     const e = m.emergency;
-    c.fillStyle = '#5c3a21';
-    c.beginPath(); c.arc(e.x, e.y, 65, 0, Math.PI * 2); c.fill();
-    c.strokeStyle = '#382212'; c.lineWidth = 6; c.stroke();
+    c.save();
+    // Sombra de la gran mesa de reunión
+    c.fillStyle = 'rgba(0,0,0,0.32)';
+    c.beginPath(); c.arc(e.x + 5, e.y + 6, 70, 0, Math.PI * 2); c.fill();
 
-    c.fillStyle = '#e8d4b8';
-    c.beginPath(); c.arc(e.x, e.y, 45, 0, Math.PI * 2); c.fill();
+    // Base de madera tallada de la mesa
+    c.fillStyle = '#4a2e1b';
+    c.beginPath(); c.arc(e.x, e.y, 68, 0, Math.PI * 2); c.fill();
+    c.strokeStyle = '#2b180d'; c.lineWidth = 6; c.stroke();
 
-    c.fillStyle = '#d4a017';
-    c.beginPath(); c.arc(e.x, e.y, 22, 0, Math.PI * 2); c.fill();
-    c.strokeStyle = '#8b5a2b'; c.lineWidth = 4; c.stroke();
+    // Mantel blanco / mantelito harinero
+    c.fillStyle = '#f5ebd9';
+    c.beginPath(); c.arc(e.x, e.y, 50, 0, Math.PI * 2); c.fill();
+    c.strokeStyle = '#c4b59d'; c.lineWidth = 2.5; c.stroke();
 
+    // Botón / Campana dorada central
     const pulse = 0.5 + Math.sin(Date.now() * 0.005) * 0.5;
-    c.strokeStyle = `rgba(244, 197, 66, ${pulse})`;
-    c.lineWidth = 3;
-    c.beginPath(); c.arc(e.x, e.y, 30 + pulse * 6, 0, Math.PI * 2); c.stroke();
+    c.fillStyle = '#f39c12';
+    c.beginPath(); c.arc(e.x, e.y, 25, 0, Math.PI * 2); c.fill();
+    c.fillStyle = '#f1c40f';
+    c.beginPath(); c.arc(e.x, e.y, 20, 0, Math.PI * 2); c.fill();
+    c.strokeStyle = '#b7791f'; c.lineWidth = 3; c.stroke();
+
+    // Icono de campana
+    c.fillStyle = '#78350f';
+    c.font = '22px sans-serif';
+    c.textAlign = 'center';
+    c.textBaseline = 'middle';
+    c.fillText('🔔', e.x, e.y + 1);
+
+    // Ondas expansivas doradas pulsantes
+    c.strokeStyle = `rgba(243, 156, 18, ${0.4 + pulse * 0.5})`;
+    c.lineWidth = 3 + pulse * 2;
+    c.beginPath(); c.arc(e.x, e.y, 32 + pulse * 14, 0, Math.PI * 2); c.stroke();
+
+    // Indicador flotante si el jugador vivo está cerca de la mesa
+    const localMe = G.players.get(G.myId);
+    if (localMe && localMe.alive && !localMe.isGhost && G.gameState === 'playing') {
+      const dist = Math.hypot(localMe.x - e.x, localMe.y - e.y);
+      if (dist < 150) {
+        c.save();
+        const tagY = e.y - 82;
+        const text = '🔔 [TOCAR CAMPANA] REUNIÓN';
+        c.font = 'bold 15px "Segoe UI", sans-serif';
+        const tw = c.measureText(text).width;
+        c.fillStyle = 'rgba(20, 15, 10, 0.9)';
+        c.strokeStyle = '#ffd166';
+        c.lineWidth = 2;
+        c.beginPath();
+        if (c.roundRect) {
+          c.roundRect(e.x - tw / 2 - 12, tagY - 14, tw + 24, 28, 8);
+        } else {
+          c.rect(e.x - tw / 2 - 12, tagY - 14, tw + 24, 28);
+        }
+        c.fill();
+        c.stroke();
+
+        c.fillStyle = '#fffae8';
+        c.textAlign = 'center';
+        c.textBaseline = 'middle';
+        c.fillText(text, e.x, tagY);
+        c.restore();
+      }
+    }
+    c.restore();
   }
 }
 
@@ -1940,7 +2005,9 @@ function drawFog() {
   grad.addColorStop(1, 'rgba(12, 8, 5, 0.94)');
 
   ctx.fillStyle = grad;
-  ctx.beginPath(); c.arc(screenX, screenY, vision, 0, Math.PI * 2); c.fill();
+  ctx.beginPath();
+  ctx.arc(screenX, screenY, vision, 0, Math.PI * 2);
+  ctx.fill();
 
   ctx.fillStyle = 'rgba(12, 8, 5, 0.94)';
   ctx.beginPath();
@@ -2020,7 +2087,10 @@ function connectToServer() {
     G.myId = G.socket.id;
     G.isHost = data.hostId === G.myId;
     G.config = data.config;
-    if (data.map) G.map = data.map;
+    if (data.map) {
+      G.map = data.map;
+      if (data.map.emergency) G.emergency = data.map.emergency;
+    }
 
     if (G.gameState !== 'playing' && G.gameState !== 'voting' && G.gameState !== 'ended') {
       G.gameState = 'lobby';
@@ -2081,7 +2151,10 @@ function connectToServer() {
   G.socket.on('game_started', (data) => {
     G.gameState = 'playing';
     G.config = data.config;
-    if (data.map) G.map = data.map;
+    if (data.map) {
+      G.map = data.map;
+      if (data.map.emergency) G.emergency = data.map.emergency;
+    }
     G.bodyParts.clear();
     showScreen(null);
 
@@ -2189,6 +2262,10 @@ function connectToServer() {
   G.socket.on('player_invisible', (data) => {
     const p = G.players.get(data.playerId);
     if (p) p.invisible = true;
+  });
+
+  G.socket.on('toast', (data) => {
+    if (data && data.msg) toast(data.msg);
   });
 
   G.socket.on('player_visible', (data) => {
@@ -2408,6 +2485,43 @@ bindTouchButton('btnUse', tryInteract);
 bindTouchButton('btnReport', tryReport);
 bindTouchButton('btnInvis', tryInvisibility);
 
+// Clic o toque directo en el canvas (mesa de emergencia o tareas)
+canvas.addEventListener('pointerdown', (e) => {
+  if (G.gameState !== 'playing') return;
+  const me = G.players.get(G.myId);
+  if (!me || !me.alive || me.isGhost) return;
+
+  const rect = canvas.getBoundingClientRect();
+  const screenX = e.clientX - rect.left;
+  const screenY = e.clientY - rect.top;
+  const worldX = screenX + G.camera.x;
+  const worldY = screenY + G.camera.y;
+
+  // Clic en la mesa de emergencia
+  const emerPos = G.emergency || (G.map && G.map.emergency);
+  if (emerPos) {
+    const distTable = Math.hypot(worldX - emerPos.x, worldY - emerPos.y);
+    const distMe = Math.hypot(me.x - emerPos.x, me.y - emerPos.y);
+    if (distTable < 85 && distMe < 150) {
+      tryInteract();
+      return;
+    }
+  }
+
+  // Clic en tarea
+  if (!G.isImpostor && G.visibleTasks) {
+    for (const t of G.visibleTasks) {
+      if (G.completedTasks.includes(t.id)) continue;
+      const distTask = Math.hypot(worldX - t.x, worldY - t.y);
+      const distMe = Math.hypot(me.x - t.x, me.y - t.y);
+      if (distTask < 50 && distMe < 95) {
+        openMission(t);
+        return;
+      }
+    }
+  }
+});
+
 // ============================================
 // MOVIMIENTO LOCAL CON COLISIONES
 // ============================================
@@ -2509,10 +2623,11 @@ function tryInteract() {
   const me = G.players.get(G.myId);
   if (!me) return;
 
-  // Botón de emergencia
-  if (G.emergency && me.alive && !me.isGhost) {
-    const d = Math.hypot(G.emergency.x - me.x, G.emergency.y - me.y);
-    if (d < 95) {
+  // Botón / Campana de reunión de emergencia en el centro
+  const emerPos = G.emergency || (G.map && G.map.emergency);
+  if (emerPos && me.alive && !me.isGhost) {
+    const d = Math.hypot(emerPos.x - me.x, emerPos.y - me.y);
+    if (d < 140) {
       G.socket.emit('emergency');
       return;
     }
@@ -2523,7 +2638,7 @@ function tryInteract() {
     for (const t of G.visibleTasks) {
       if (G.completedTasks.includes(t.id)) continue;
       const d = Math.hypot(t.x - me.x, t.y - me.y);
-      if (d < 75) {
+      if (d < 80) {
         openMission(t);
         return;
       }
@@ -2568,24 +2683,34 @@ function updateProximityButtons() {
     }
   }
 
+  const emerPos = G.emergency || (G.map && G.map.emergency);
+  const emergencyNearby = Boolean(emerPos && me.alive && !me.isGhost && (Math.hypot(emerPos.x - me.x, emerPos.y - me.y) < 140));
+
   let taskNearby = false;
-  if (G.emergency && me.alive && !me.isGhost && Math.hypot(G.emergency.x - me.x, G.emergency.y - me.y) < 95) {
-    taskNearby = true;
-  }
-  if (!taskNearby && !G.isImpostor && G.visibleTasks) {
+  if (!G.isImpostor && G.visibleTasks) {
     for (const t of G.visibleTasks) {
-      if (!G.completedTasks.includes(t.id) && Math.hypot(t.x - me.x, t.y - me.y) < 75) {
+      if (!G.completedTasks.includes(t.id) && Math.hypot(t.x - me.x, t.y - me.y) < 80) {
         taskNearby = true;
         break;
       }
     }
   }
+
   if (btnUse) {
-    if (taskNearby) {
+    if (emergencyNearby) {
       btnUse.classList.remove('disabled');
+      btnUse.classList.add('emergency-ready');
+      btnUse.innerHTML = '<span class="btn-icon">🔔</span>REUNIÓN';
+    } else if (taskNearby) {
+      btnUse.classList.remove('disabled');
+      btnUse.classList.remove('emergency-ready');
+      btnUse.innerHTML = '<span class="btn-icon">⚙️</span>USAR';
       btnUse.style.filter = 'brightness(1.15)';
     } else {
+      btnUse.classList.remove('emergency-ready');
+      btnUse.innerHTML = '<span class="btn-icon">⚙️</span>USAR';
       btnUse.style.filter = 'brightness(1)';
+      btnUse.classList.add('disabled');
     }
   }
 }
@@ -3599,7 +3724,11 @@ function gameLoop(now) {
   const dt = now - lastLoopTime;
   lastLoopTime = now;
 
-  updateLocalPlayer();
+  try {
+    updateLocalPlayer();
+  } catch (err) {
+    console.error('Movement update error:', err);
+  }
 
   if (G.killCooldown > 0) {
     G.killCooldown = Math.max(0, G.killCooldown - dt);
@@ -3629,8 +3758,12 @@ function gameLoop(now) {
     }
   }
 
-  updateProximityButtons();
-  render();
+  try {
+    updateProximityButtons();
+    render();
+  } catch (err) {
+    console.error('Render error:', err);
+  }
 
   requestAnimationFrame(gameLoop);
 }

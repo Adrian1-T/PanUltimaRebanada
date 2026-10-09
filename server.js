@@ -508,16 +508,32 @@ io.on('connection', (socket) => {
     startVoting(room, socket.id, target.name);
   });
 
-  // -------- EMERGENCIA --------
+  // -------- EMERGENCIA (REUNIÓN CENTRAL) --------
   socket.on('emergency', () => {
     const code = socketToRoom.get(socket.id);
     const room = rooms.get(code);
     if (!room || room.state !== 'playing') return;
     const p = room.players.get(socket.id);
-    if (!p || !p.alive) return;
-    const e = room.map.emergency;
+    if (!p || !p.alive || p.isGhost) return;
+    const e = (room.map && room.map.emergency) || { x: 1000, y: 760 };
     const dist = Math.hypot(p.x - e.x, p.y - e.y);
-    if (dist > 150) return;
+    if (dist > 180) return;
+
+    // Enfriamiento inicial al comenzar la partida (8 segundos)
+    const timeSinceStart = Date.now() - (room.startTime || 0);
+    if (timeSinceStart < 8000) {
+      const waitSec = Math.ceil((8000 - timeSinceStart) / 1000);
+      socket.emit('toast', { msg: `⏳ Espera ${waitSec}s para convocar una reunión` });
+      return;
+    }
+
+    if (p.emergencyCount !== undefined && p.emergencyCount <= 0) {
+      socket.emit('toast', { msg: '❌ Ya utilizaste tu reunión de emergencia en esta partida' });
+      return;
+    }
+
+    p.emergencyCount = (p.emergencyCount !== undefined ? p.emergencyCount : 1) - 1;
+    console.log(`🔔 ${p.name} convocó una reunión de emergencia en sala ${room.code}`);
     startVoting(room, socket.id, 'EMERGENCIA');
   });
 
@@ -731,6 +747,7 @@ function sanitizePlayer(p) {
 
 function startGame(room) {
   room.state = 'playing';
+  room.startTime = Date.now();
   room.votes = {};
   room.chat = [];
   if (room.votingTimer) {
@@ -756,6 +773,7 @@ function startGame(room) {
     p.lastKill = 0;
     p.deathX = null;
     p.deathY = null;
+    p.emergencyCount = 1;
     p.x = spawns[spawnIdx % spawns.length].x;
     p.y = spawns[spawnIdx % spawns.length].y;
     spawnIdx++;
