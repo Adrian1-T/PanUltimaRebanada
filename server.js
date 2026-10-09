@@ -11,7 +11,7 @@ const path = require('path');
 const app = express();
 const server = http.createServer(app);
 
-// CORS totalmente abierto para permitir conexiones desde cualquier dominio
+// CORS totalmente abierto para permitir conexiones desde cualquier origen / celular
 app.use(cors({ origin: '*' }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
@@ -33,61 +33,216 @@ const BREAD_SKINS = ['baguette', 'bolillo', 'donut', 'concha', 'mohoso', 'quemad
 const HATS = ['none', 'chef', 'butter', 'candle'];
 const FACES = ['none', 'sunglasses', 'mustache', 'monocle'];
 
-// Mapa de posiciones iniciales por mapa
+// ============================================
+// MAPAS ARQUITECTÓNICOS DIVERSOS (HABITACIONES, PASILLOS Y PAREDES)
+// ============================================
 const MAPS = {
   'El Horno Central': {
     width: 2000,
     height: 1500,
+    emergency: { x: 1000, y: 760 },
     spawns: [
-      { x: 400, y: 400 }, { x: 1600, y: 400 },
-      { x: 400, y: 1100 }, { x: 1600, y: 1100 },
-      { x: 1000, y: 750 }, { x: 700, y: 750 },
-      { x: 1300, y: 750 }, { x: 1000, y: 400 },
-      { x: 1000, y: 1100 }, { x: 300, y: 750 },
-      { x: 1700, y: 750 }, { x: 700, y: 200 },
-      { x: 1300, y: 200 }, { x: 700, y: 1300 },
-      { x: 1300, y: 1300 }
+      { x: 1000, y: 670 }, { x: 1080, y: 710 }, { x: 1090, y: 790 },
+      { x: 1000, y: 850 }, { x: 910, y: 790 }, { x: 920, y: 710 },
+      { x: 960, y: 680 }, { x: 1040, y: 680 }, { x: 960, y: 840 },
+      { x: 1040, y: 840 }, { x: 880, y: 760 }, { x: 1120, y: 760 },
+      { x: 860, y: 700 }, { x: 1140, y: 700 }, { x: 1000, y: 760 }
+    ],
+    rooms: [
+      { id: 'cafeteria', name: 'Cafetería & Salón Principal', x: 670, y: 550, w: 660, h: 420, floor: 'wood', label: 'CAFETERÍA' },
+      { id: 'horno', name: 'Gran Salón de Hornos', x: 670, y: 30, w: 660, h: 440, floor: 'stone', label: 'EL GRAN HORNO' },
+      { id: 'cocina', name: 'Cocina & Amasadero', x: 30, y: 30, w: 540, h: 580, floor: 'tile', label: 'COCINA & AMASADO' },
+      { id: 'despensa', name: 'Almacén de Harina & Silos', x: 30, y: 780, w: 540, h: 690, floor: 'rustic', label: 'DESPENSA' },
+      { id: 'reposteria', name: 'Repostería & Glaseados', x: 1430, y: 30, w: 540, h: 580, floor: 'tile_pink', label: 'REPOSTERÍA' },
+      { id: 'ventas', name: 'Mostrador & Vitrinas de Venta', x: 1430, y: 780, w: 540, h: 690, floor: 'wood_dark', label: 'RECEPCIÓN & VENTAS' },
+      { id: 'enfriamiento', name: 'Cuarto de Enfriamiento & Limpieza', x: 670, y: 1050, w: 660, h: 420, floor: 'metal', label: 'ENFRIAMIENTO' }
+    ],
+    walls: [
+      // Perímetro exterior
+      { x: 0, y: 0, w: 2000, h: 30 },
+      { x: 0, y: 1470, w: 2000, h: 30 },
+      { x: 0, y: 0, w: 30, h: 1500 },
+      { x: 1970, y: 0, w: 30, h: 1500 },
+
+      // Cocina (NW)
+      { x: 30, y: 610, w: 540, h: 25 },
+      { x: 570, y: 30, w: 25, h: 250 },
+      { x: 570, y: 400, w: 25, h: 235 }, // puerta y: 280-400
+
+      // Despensa (SW)
+      { x: 30, y: 780, w: 540, h: 25 },
+      { x: 570, y: 780, w: 25, h: 140 },
+      { x: 570, y: 1040, w: 25, h: 430 }, // puerta y: 920-1040
+
+      // Repostería (NE)
+      { x: 1430, y: 610, w: 540, h: 25 },
+      { x: 1430, y: 30, w: 25, h: 250 },
+      { x: 1430, y: 400, w: 25, h: 235 }, // puerta y: 280-400
+
+      // Recepción (SE)
+      { x: 1430, y: 780, w: 540, h: 25 },
+      { x: 1430, y: 780, w: 25, h: 140 },
+      { x: 1430, y: 1040, w: 25, h: 430 }, // puerta y: 920-1040
+
+      // Cafetería Central
+      { x: 670, y: 550, w: 25, h: 150 },
+      { x: 670, y: 820, w: 25, h: 150 }, // puerta Oeste y: 700-820
+      { x: 1330, y: 550, w: 25, h: 150 },
+      { x: 1330, y: 820, w: 25, h: 150 }, // puerta Este y: 700-820
+      { x: 670, y: 550, w: 270, h: 25 },
+      { x: 1060, y: 550, w: 295, h: 25 }, // puerta Norte x: 940-1060
+      { x: 670, y: 970, w: 270, h: 25 },
+      { x: 1060, y: 970, w: 295, h: 25 }, // puerta Sur x: 940-1060
+
+      // Gran Horno (Norte)
+      { x: 670, y: 30, w: 25, h: 440 },
+      { x: 1330, y: 30, w: 25, h: 440 },
+      { x: 670, y: 470, w: 270, h: 25 },
+      { x: 1060, y: 470, w: 295, h: 25 }, // puerta a pasillo
+
+      // Enfriamiento (Sur)
+      { x: 670, y: 1050, w: 25, h: 420 },
+      { x: 1330, y: 1050, w: 25, h: 420 },
+      { x: 670, y: 1050, w: 270, h: 25 },
+      { x: 1060, y: 1050, w: 295, h: 25 }
+    ],
+    decorations: [
+      // Hornos
+      { type: 'oven_block', x: 800, y: 80, w: 400, h: 90, label: 'HORNO INDUSTRIAL' },
+      { type: 'fire_logs', x: 720, y: 220, count: 5 },
+      { type: 'fire_logs', x: 1240, y: 220, count: 5 },
+      // Cocina
+      { type: 'table_prep', x: 180, y: 180, w: 160, h: 90 },
+      { type: 'flour_sacks', x: 80, y: 90, count: 6 },
+      { type: 'table_prep', x: 180, y: 380, w: 160, h: 80 },
+      // Despensa
+      { type: 'shelves', x: 80, y: 830, w: 200, h: 50 },
+      { type: 'flour_sacks', x: 100, y: 1100, count: 8 },
+      { type: 'wooden_crates', x: 380, y: 1150, count: 4 },
+      // Repostería
+      { type: 'glass_showcase', x: 1540, y: 120, w: 260, h: 70 },
+      { type: 'donut_stand', x: 1820, y: 340 },
+      // Recepción
+      { type: 'checkout_counter', x: 1540, y: 840, w: 260, h: 60 },
+      { type: 'bread_rack', x: 1820, y: 1100, w: 60, h: 160 },
+      // Cafetería
+      { type: 'cafe_table', x: 820, y: 640 },
+      { type: 'cafe_table', x: 1180, y: 640 },
+      { type: 'cafe_table', x: 820, y: 880 },
+      { type: 'cafe_table', x: 1180, y: 880 },
+      // Enfriamiento
+      { type: 'cooling_racks', x: 800, y: 1200, w: 140, h: 70 },
+      { type: 'fan_vent', x: 1180, y: 1200 }
     ],
     tasks: [
-      { id: 1, name: 'Amasar la Masa', x: 300, y: 300, type: 'amasar' },
-      { id: 2, name: 'Acomodar Panes', x: 1700, y: 300, type: 'acomodar' },
-      { id: 3, name: 'Limpiar Migajas', x: 300, y: 1200, type: 'limpiar' },
-      { id: 4, name: 'Meter Panes al Horno', x: 1700, y: 1200, type: 'horno' },
-      { id: 5, name: 'Decorar Donas', x: 1000, y: 200, type: 'donas' },
-      { id: 6, name: 'Ajustar Temperatura', x: 1000, y: 1300, type: 'temperatura' },
-      { id: 7, name: 'Moler Trigo', x: 200, y: 750, type: 'moler' },
-      { id: 8, name: 'Ordenar Sacos', x: 1800, y: 750, type: 'sacos' },
-      { id: 9, name: 'Enfriar Baguettes', x: 1000, y: 750, type: 'abanicar' },
-      { id: 10, name: 'Vaciar Mermelada', x: 500, y: 1000, type: 'mermelada' }
-    ],
-    emergency: { x: 1000, y: 750 }
+      { id: 1, name: 'Amasar la Masa', room: 'Cocina', x: 260, y: 230, type: 'amasar' },
+      { id: 2, name: 'Moler Trigo', room: 'Cocina', x: 180, y: 440, type: 'moler' },
+      { id: 3, name: 'Meter Panes al Horno', room: 'Hornos', x: 1000, y: 190, type: 'horno' },
+      { id: 4, name: 'Ajustar Temperatura', room: 'Hornos', x: 1220, y: 270, type: 'temperatura' },
+      { id: 5, name: 'Decorar Donas', room: 'Repostería', x: 1720, y: 220, type: 'donas' },
+      { id: 6, name: 'Acomodar Panes', room: 'Repostería', x: 1680, y: 460, type: 'acomodar' },
+      { id: 7, name: 'Ordenar Sacos', room: 'Despensa', x: 220, y: 980, type: 'sacos' },
+      { id: 8, name: 'Vaciar Mermelada', room: 'Despensa', x: 450, y: 1280, type: 'mermelada' },
+      { id: 9, name: 'Limpiar Migajas', room: 'Recepción', x: 1620, y: 980, type: 'limpiar' },
+      { id: 10, name: 'Enfriar Baguettes', room: 'Enfriamiento', x: 1000, y: 1280, type: 'abanicar' }
+    ]
   },
+
   'La Masadería': {
     width: 2200,
     height: 1600,
+    emergency: { x: 1100, y: 800 },
     spawns: [
-      { x: 300, y: 300 }, { x: 1900, y: 300 },
-      { x: 300, y: 1300 }, { x: 1900, y: 1300 },
-      { x: 1100, y: 800 }, { x: 800, y: 800 },
-      { x: 1400, y: 800 }, { x: 1100, y: 400 },
-      { x: 1100, y: 1200 }, { x: 400, y: 800 },
-      { x: 1800, y: 800 }, { x: 800, y: 200 },
-      { x: 1400, y: 200 }, { x: 800, y: 1400 },
-      { x: 1400, y: 1400 }
+      { x: 1100, y: 700 }, { x: 1180, y: 750 }, { x: 1190, y: 830 },
+      { x: 1100, y: 890 }, { x: 1010, y: 830 }, { x: 1020, y: 750 },
+      { x: 1060, y: 710 }, { x: 1140, y: 710 }, { x: 1060, y: 880 },
+      { x: 1140, y: 880 }, { x: 970, y: 800 }, { x: 1230, y: 800 },
+      { x: 950, y: 740 }, { x: 1250, y: 740 }, { x: 1100, y: 800 }
+    ],
+    rooms: [
+      { id: 'salon', name: 'Salón Rústico de Catas', x: 770, y: 580, w: 660, h: 440, floor: 'rustic', label: 'LA GRAN MESA' },
+      { id: 'horno_artesanal', name: 'Horno de Piedra Tradicional', x: 770, y: 30, w: 660, h: 450, floor: 'stone', label: 'HORNO DE PIEDRA' },
+      { id: 'fermentacion', name: 'Cámara de Fermentación', x: 30, y: 30, w: 600, h: 620, floor: 'tile_dark', label: 'FERMENTACIÓN' },
+      { id: 'bodega', name: 'Bodega de Semillas y Levadura', x: 30, y: 820, w: 600, h: 750, floor: 'rustic', label: 'BODEGA DE LEVADURA' },
+      { id: 'pasteleria', name: 'Taller de Confitería', x: 1570, y: 30, w: 600, h: 620, floor: 'tile_pink', label: 'CONFITERÍA' },
+      { id: 'envasado', name: 'Despacho & Envasado de Pan', x: 1570, y: 820, w: 600, h: 750, floor: 'wood', label: 'DESPACHO' },
+      { id: 'lavanderia', name: 'Taller de Limpieza & Utensilios', x: 770, y: 1120, w: 660, h: 450, floor: 'metal', label: 'LIMPIEZA' }
+    ],
+    walls: [
+      // Perímetro exterior
+      { x: 0, y: 0, w: 2200, h: 30 },
+      { x: 0, y: 1570, w: 2200, h: 30 },
+      { x: 0, y: 0, w: 30, h: 1600 },
+      { x: 2170, y: 0, w: 30, h: 1600 },
+
+      // Fermentación (NW)
+      { x: 30, y: 650, w: 600, h: 25 },
+      { x: 630, y: 30, w: 25, h: 280 },
+      { x: 630, y: 430, w: 25, h: 245 },
+
+      // Bodega (SW)
+      { x: 30, y: 820, w: 600, h: 25 },
+      { x: 630, y: 820, w: 25, h: 160 },
+      { x: 630, y: 1100, w: 25, h: 470 },
+
+      // Confitería (NE)
+      { x: 1570, y: 650, w: 600, h: 25 },
+      { x: 1570, y: 30, w: 25, h: 280 },
+      { x: 1570, y: 430, w: 25, h: 245 },
+
+      // Envasado (SE)
+      { x: 1570, y: 820, w: 600, h: 25 },
+      { x: 1570, y: 820, w: 25, h: 160 },
+      { x: 1570, y: 1100, w: 25, h: 470 },
+
+      // Salón Central
+      { x: 770, y: 580, w: 25, h: 160 },
+      { x: 770, y: 860, w: 25, h: 160 },
+      { x: 1430, y: 580, w: 25, h: 160 },
+      { x: 1430, y: 860, w: 25, h: 160 },
+      { x: 770, y: 580, w: 270, h: 25 },
+      { x: 1160, y: 580, w: 295, h: 25 },
+      { x: 770, y: 1020, w: 270, h: 25 },
+      { x: 1160, y: 1020, w: 295, h: 25 },
+
+      // Horno Artesanal (N)
+      { x: 770, y: 30, w: 25, h: 450 },
+      { x: 1430, y: 30, w: 25, h: 450 },
+      { x: 770, y: 480, w: 270, h: 25 },
+      { x: 1160, y: 480, w: 295, h: 25 },
+
+      // Limpieza (S)
+      { x: 770, y: 1120, w: 25, h: 450 },
+      { x: 1430, y: 1120, w: 25, h: 450 },
+      { x: 770, y: 1120, w: 270, h: 25 },
+      { x: 1160, y: 1120, w: 295, h: 25 }
+    ],
+    decorations: [
+      { type: 'stone_oven', x: 920, y: 80, w: 360, h: 110 },
+      { type: 'flour_sacks', x: 120, y: 120, count: 8 },
+      { type: 'table_prep', x: 260, y: 260, w: 180, h: 90 },
+      { type: 'wooden_crates', x: 120, y: 920, count: 6 },
+      { type: 'shelves', x: 380, y: 860, w: 200, h: 50 },
+      { type: 'glass_showcase', x: 1680, y: 140, w: 260, h: 80 },
+      { type: 'checkout_counter', x: 1680, y: 900, w: 260, h: 70 },
+      { type: 'bread_rack', x: 1980, y: 1150, w: 70, h: 180 },
+      { type: 'cafe_table', x: 920, y: 680 },
+      { type: 'cafe_table', x: 1280, y: 680 },
+      { type: 'cafe_table', x: 920, y: 920 },
+      { type: 'cafe_table', x: 1280, y: 920 }
     ],
     tasks: [
-      { id: 1, name: 'Amasar la Masa', x: 250, y: 250, type: 'amasar' },
-      { id: 2, name: 'Acomodar Panes', x: 1950, y: 250, type: 'acomodar' },
-      { id: 3, name: 'Limpiar Migajas', x: 250, y: 1350, type: 'limpiar' },
-      { id: 4, name: 'Meter Panes al Horno', x: 1950, y: 1350, type: 'horno' },
-      { id: 5, name: 'Decorar Donas', x: 1100, y: 150, type: 'donas' },
-      { id: 6, name: 'Ajustar Temperatura', x: 1100, y: 1450, type: 'temperatura' },
-      { id: 7, name: 'Moler Trigo', x: 150, y: 800, type: 'moler' },
-      { id: 8, name: 'Ordenar Sacos', x: 2050, y: 800, type: 'sacos' },
-      { id: 9, name: 'Enfriar Baguettes', x: 1100, y: 800, type: 'abanicar' },
-      { id: 10, name: 'Vaciar Mermelada', x: 600, y: 1100, type: 'mermelada' }
-    ],
-    emergency: { x: 1100, y: 800 }
+      { id: 1, name: 'Amasar la Masa', room: 'Fermentación', x: 300, y: 260, type: 'amasar' },
+      { id: 2, name: 'Moler Trigo', room: 'Fermentación', x: 200, y: 480, type: 'moler' },
+      { id: 3, name: 'Meter Panes al Horno', room: 'Horno de Piedra', x: 1100, y: 200, type: 'horno' },
+      { id: 4, name: 'Ajustar Temperatura', room: 'Horno de Piedra', x: 1320, y: 300, type: 'temperatura' },
+      { id: 5, name: 'Decorar Donas', room: 'Confitería', x: 1860, y: 240, type: 'donas' },
+      { id: 6, name: 'Acomodar Panes', room: 'Confitería', x: 1820, y: 500, type: 'acomodar' },
+      { id: 7, name: 'Ordenar Sacos', room: 'Bodega', x: 240, y: 1040, type: 'sacos' },
+      { id: 8, name: 'Vaciar Mermelada', room: 'Bodega', x: 500, y: 1360, type: 'mermelada' },
+      { id: 9, name: 'Limpiar Migajas', room: 'Limpieza', x: 920, y: 1340, type: 'limpiar' },
+      { id: 10, name: 'Enfriar Baguettes', room: 'Despacho', x: 1860, y: 1060, type: 'abanicar' }
+    ]
   }
 };
 
@@ -111,6 +266,19 @@ function shuffle(arr) {
     [a[i], a[j]] = [a[j], a[i]];
   }
   return a;
+}
+
+function getMapPayload(room) {
+  return {
+    width: room.map.width,
+    height: room.map.height,
+    emergency: room.map.emergency,
+    spawns: room.map.spawns,
+    rooms: room.map.rooms || [],
+    walls: room.map.walls || [],
+    decorations: room.map.decorations || [],
+    tasks: room.map.tasks.slice(0, room.config.taskCount)
+  };
 }
 
 // ============================================
@@ -154,13 +322,7 @@ io.on('connection', (socket) => {
       const player = createPlayer(socket.id, config.profile, room);
       room.players.set(socket.id, player);
 
-      const mapPayload = {
-        width: room.map.width,
-        height: room.map.height,
-        tasks: room.map.tasks.slice(0, room.config.taskCount),
-        emergency: room.map.emergency
-      };
-
+      const mapPayload = getMapPayload(room);
       const playersList = Array.from(room.players.values()).map(sanitizePlayer);
 
       cb({
@@ -202,16 +364,9 @@ io.on('connection', (socket) => {
       const player = createPlayer(socket.id, profile, room);
       room.players.set(socket.id, player);
 
-      const mapPayload = {
-        width: room.map.width,
-        height: room.map.height,
-        tasks: room.map.tasks.slice(0, room.config.taskCount),
-        emergency: room.map.emergency
-      };
-
+      const mapPayload = getMapPayload(room);
       const playersList = Array.from(room.players.values()).map(sanitizePlayer);
 
-      // Notificar a todos en la sala
       io.to(code).emit('lobby_update', {
         players: playersList,
         hostId: room.hostId,
@@ -247,12 +402,7 @@ io.on('connection', (socket) => {
     if (profile.hat && HATS.includes(profile.hat)) player.hat = profile.hat;
     if (profile.face && FACES.includes(profile.face)) player.face = profile.face;
 
-    const mapPayload = {
-      width: room.map.width,
-      height: room.map.height,
-      tasks: room.map.tasks.slice(0, room.config.taskCount),
-      emergency: room.map.emergency
-    };
+    const mapPayload = getMapPayload(room);
 
     io.to(code).emit('lobby_update', {
       players: Array.from(room.players.values()).map(sanitizePlayer),
@@ -274,7 +424,7 @@ io.on('connection', (socket) => {
     startGame(room);
   });
 
-  // -------- MOVIMIENTO (LOBBY Y JUEGO) --------
+  // -------- MOVIMIENTO --------
   socket.on('move', (data) => {
     const code = socketToRoom.get(socket.id);
     const room = rooms.get(code);
@@ -282,19 +432,19 @@ io.on('connection', (socket) => {
     const p = room.players.get(socket.id);
     if (!p) return;
     if (!p.alive && room.state === 'playing' && !p.isGhost) return;
-    // Validación básica
     if (typeof data.x !== 'number' || typeof data.y !== 'number') return;
-    const maxDist = 80; // por tick
+
+    const maxDist = 90; // margen seguro por tick
     const dx = data.x - p.x;
     const dy = data.y - p.y;
     if (Math.hypot(dx, dy) > maxDist) return;
+
     p.x = data.x;
     p.y = data.y;
     p.dir = data.dir || p.dir;
     p.moving = data.moving !== false;
     p.animTime = (p.animTime || 0) + 1;
 
-    // Retransmitir movimiento en tiempo real a los demás jugadores de la sala
     socket.to(code).emit('player_moved', {
       id: socket.id,
       x: p.x,
@@ -317,9 +467,10 @@ io.on('connection', (socket) => {
     if (Date.now() - (killer.lastKill || 0) < 25000) return;
 
     const dist = Math.hypot(killer.x - target.x, killer.y - target.y);
-    if (dist > 80) return;
+    if (dist > 90) return;
 
     target.alive = false;
+    target.isGhost = true;
     target.deathX = target.x;
     target.deathY = target.y;
     target.deathTime = Date.now();
@@ -342,8 +493,10 @@ io.on('connection', (socket) => {
     const reporter = room.players.get(socket.id);
     const target = room.players.get(targetId);
     if (!reporter || !reporter.alive || !target || target.alive) return;
+    if (typeof target.deathX !== 'number' || typeof target.deathY !== 'number') return;
+
     const dist = Math.hypot(reporter.x - target.deathX, reporter.y - target.deathY);
-    if (dist > 120) return;
+    if (dist > 140) return;
 
     startVoting(room, socket.id, target.name);
   });
@@ -367,8 +520,14 @@ io.on('connection', (socket) => {
     const room = rooms.get(code);
     if (!room || room.state !== 'voting') return;
     const voter = room.players.get(socket.id);
-    if (!voter || !voter.alive) return;
-    if (room.votes[socket.id]) return;
+    if (!voter || !voter.alive) return; // Muertos no votan
+    if (room.votes[socket.id]) return; // Ya emitió su voto
+
+    if (targetId !== 'skip') {
+      const target = room.players.get(targetId);
+      if (!target || !target.alive) return; // No se vota por muertos
+    }
+
     room.votes[socket.id] = targetId;
 
     io.to(code).emit('vote_update', {
@@ -376,7 +535,6 @@ io.on('connection', (socket) => {
       voters: Object.keys(room.votes)
     });
 
-    // Si todos votaron, terminar
     const aliveVoters = Array.from(room.players.values()).filter(p => p.alive);
     if (Object.keys(room.votes).length >= aliveVoters.length) {
       finishVoting(room);
@@ -390,11 +548,18 @@ io.on('connection', (socket) => {
     if (!room) return;
     const p = room.players.get(socket.id);
     if (!p) return;
+    const cleanMsg = String(msg || '').trim().slice(0, 200);
+    if (!cleanMsg) return;
+
     const message = {
+      senderId: socket.id,
       name: p.name,
-      msg: String(msg).slice(0, 200),
+      msg: cleanMsg,
       ts: Date.now(),
-      color: p.color
+      color: p.color,
+      skin: p.skin,
+      alive: p.alive,
+      isGhost: p.isGhost
     };
     room.chat.push(message);
     if (room.chat.length > 100) room.chat.shift();
@@ -431,7 +596,7 @@ io.on('connection', (socket) => {
     if (!room || room.state !== 'playing') return;
     const p = room.players.get(socket.id);
     if (!p || !p.isImpostor || !p.alive) return;
-    if (p.skin !== 'mohoso') return; // solo Pan Infeccioso
+    if (p.skin !== 'mohoso') return;
     if (Date.now() - (p.lastInvis || 0) < 25000) return;
     p.lastInvis = Date.now();
     p.invisible = true;
@@ -449,10 +614,12 @@ io.on('connection', (socket) => {
     if (!code) return;
     const room = rooms.get(code);
     if (!room) return;
+
     room.players.delete(socket.id);
     delete room.votes[socket.id];
 
     if (room.players.size === 0) {
+      if (room.votingTimer) clearTimeout(room.votingTimer);
       rooms.delete(code);
       console.log(`🗑️ Sala eliminada: ${code}`);
       return;
@@ -463,16 +630,26 @@ io.on('connection', (socket) => {
     }
 
     io.to(code).emit('player_left', { playerId: socket.id });
+
+    // Si estábamos en votación, verificar si ya votaron todos los que quedan vivos
+    if (room.state === 'voting') {
+      const aliveVoters = Array.from(room.players.values()).filter(p => p.alive);
+      if (aliveVoters.length === 0 || Object.keys(room.votes).length >= aliveVoters.length) {
+        finishVoting(room);
+      } else {
+        io.to(code).emit('vote_update', {
+          votes: room.votes,
+          voters: Object.keys(room.votes)
+        });
+      }
+    }
+
+    const mapPayload = getMapPayload(room);
     io.to(code).emit('lobby_update', {
       players: Array.from(room.players.values()).map(sanitizePlayer),
       hostId: room.hostId,
       config: room.config,
-      map: {
-        width: room.map.width,
-        height: room.map.height,
-        tasks: room.map.tasks.slice(0, room.config.taskCount),
-        emergency: room.map.emergency
-      }
+      map: mapPayload
     });
     checkWinCondition(room);
   });
@@ -485,6 +662,8 @@ function createPlayer(id, profile = {}, room) {
   const idx = room.players.size;
   const colors = ['#f4c542', '#e8a87c', '#d4a373', '#c98b5e', '#e6b980',
                   '#f0d78c', '#d9a066', '#bf8040', '#a67c52', '#8b5a2b'];
+  const spawnPos = room.map.spawns[idx % room.map.spawns.length] || { x: 1000, y: 760 };
+
   return {
     id,
     name: (profile.name || `Pan${idx + 1}`).slice(0, 12),
@@ -492,8 +671,8 @@ function createPlayer(id, profile = {}, room) {
     hat: HATS.includes(profile.hat) ? profile.hat : 'none',
     face: FACES.includes(profile.face) ? profile.face : 'none',
     color: colors[idx % colors.length],
-    x: room.map.spawns[idx % room.map.spawns.length].x,
-    y: room.map.spawns[idx % room.map.spawns.length].y,
+    x: spawnPos.x,
+    y: spawnPos.y,
     dir: 1,
     moving: false,
     animTime: 0,
@@ -504,6 +683,8 @@ function createPlayer(id, profile = {}, room) {
     completedTasks: [],
     lastKill: 0,
     lastInvis: 0,
+    deathX: null,
+    deathY: null,
     role: 'panadero'
   };
 }
@@ -520,6 +701,8 @@ function sanitizePlayer(p) {
     y: p.y,
     dir: p.dir,
     alive: p.alive,
+    isGhost: p.isGhost,
+    role: p.role,
     moving: p.moving,
     animTime: p.animTime
   };
@@ -529,6 +712,10 @@ function startGame(room) {
   room.state = 'playing';
   room.votes = {};
   room.chat = [];
+  if (room.votingTimer) {
+    clearTimeout(room.votingTimer);
+    room.votingTimer = null;
+  }
 
   const playerIds = Array.from(room.players.keys());
   const shuffled = shuffle(playerIds);
@@ -537,7 +724,6 @@ function startGame(room) {
     : 0;
   const impostorIds = shuffled.slice(0, impostorCount);
 
-  // Asignar posiciones iniciales y resetear
   let spawnIdx = 0;
   const spawns = shuffle(room.map.spawns);
   for (const [id, p] of room.players) {
@@ -547,18 +733,18 @@ function startGame(room) {
     p.completedTasks = [];
     p.invisible = false;
     p.lastKill = 0;
+    p.deathX = null;
+    p.deathY = null;
     p.x = spawns[spawnIdx % spawns.length].x;
     p.y = spawns[spawnIdx % spawns.length].y;
     spawnIdx++;
 
-    // Rol específico
     if (p.isImpostor) {
       p.role = p.skin === 'mohoso' ? 'Pan Infeccioso' : 'Impostor Básico';
     } else {
       p.role = Math.random() < 0.3 ? 'Maestro Harinero' : 'Panadero Estándar';
     }
 
-    // Enviar rol privado
     io.to(id).emit('role_assigned', {
       role: p.role,
       isImpostor: p.isImpostor,
@@ -567,14 +753,11 @@ function startGame(room) {
     });
   }
 
+  const mapPayload = getMapPayload(room);
+
   io.to(room.code).emit('game_started', {
     config: room.config,
-    map: {
-      width: room.map.width,
-      height: room.map.height,
-      tasks: room.map.tasks.slice(0, room.config.taskCount),
-      emergency: room.map.emergency
-    },
+    map: mapPayload,
     players: Array.from(room.players.values()).map(sanitizePlayer)
   });
 
@@ -586,6 +769,11 @@ function startVoting(room, reporterId, reportedName) {
   room.state = 'voting';
   room.votes = {};
 
+  if (room.votingTimer) {
+    clearTimeout(room.votingTimer);
+    room.votingTimer = null;
+  }
+
   io.to(room.code).emit('voting_started', {
     reporterId,
     reportedName,
@@ -594,6 +782,7 @@ function startVoting(room, reporterId, reportedName) {
       name: p.name,
       skin: p.skin,
       alive: p.alive,
+      isGhost: p.isGhost,
       color: p.color
     }))
   });
@@ -606,7 +795,10 @@ function startVoting(room, reporterId, reportedName) {
 
 function finishVoting(room) {
   if (room.state !== 'voting') return;
-  clearTimeout(room.votingTimer);
+  if (room.votingTimer) {
+    clearTimeout(room.votingTimer);
+    room.votingTimer = null;
+  }
 
   // Contar votos
   const counts = {};
@@ -618,34 +810,65 @@ function finishVoting(room) {
   let ejected = null;
   let tie = false;
   for (const [id, c] of Object.entries(counts)) {
-    if (c > maxVotes) { maxVotes = c; ejected = id; tie = false; }
-    else if (c === maxVotes) { tie = true; }
+    if (c > maxVotes) {
+      maxVotes = c;
+      ejected = id;
+      tie = false;
+    } else if (c === maxVotes) {
+      tie = true;
+    }
   }
-  if (tie || maxVotes === 0) ejected = null;
+  if (tie || maxVotes === 0 || ejected === 'skip') {
+    ejected = null;
+  }
 
-  if (ejected && ejected !== 'skip') {
+  let ejectedPlayer = null;
+  if (ejected) {
     const p = room.players.get(ejected);
     if (p) {
       p.alive = false;
       p.isGhost = true;
+      ejectedPlayer = p;
+    }
+  }
+
+  // Limpiar todos los cadáveres tras la reunión
+  for (const p of room.players.values()) {
+    p.deathX = null;
+    p.deathY = null;
+  }
+
+  // Teletransportar a jugadores vivos alrededor de la mesa de emergencia
+  let sIdx = 0;
+  const spawns = room.map.spawns;
+  for (const p of room.players.values()) {
+    if (p.alive) {
+      p.x = spawns[sIdx % spawns.length].x;
+      p.y = spawns[sIdx % spawns.length].y;
+      p.moving = false;
+      sIdx++;
     }
   }
 
   io.to(room.code).emit('voting_result', {
     ejectedId: ejected,
-    ejectedName: ejected && room.players.get(ejected) ? room.players.get(ejected).name : null,
-    wasImpostor: ejected && room.players.get(ejected) ? room.players.get(ejected).isImpostor : false,
-    votes: room.votes
+    ejectedName: ejectedPlayer ? ejectedPlayer.name : null,
+    wasImpostor: ejectedPlayer ? ejectedPlayer.isImpostor : false,
+    votes: room.votes,
+    tie: tie && maxVotes > 0
   });
 
-  // Reset
-  room.votes = {};
+  // Reanudar tras 3.5 segundos sincronizados con el cliente
   setTimeout(() => {
     if (rooms.has(room.code) && room.state === 'voting') {
       room.state = 'playing';
+      room.votes = {};
+      io.to(room.code).emit('round_resumed', {
+        players: Array.from(room.players.values()).map(sanitizePlayer)
+      });
       checkWinCondition(room);
     }
-  }, 5000);
+  }, 3500);
 }
 
 function checkWinCondition(room) {
@@ -714,18 +937,16 @@ function endGame(room, winner) {
       p.isGhost = false;
       p.isImpostor = false;
       p.completedTasks = [];
+      p.deathX = null;
+      p.deathY = null;
       p.role = 'panadero';
     }
+    const mapPayload = getMapPayload(room);
     io.to(room.code).emit('back_to_lobby', {
       players: Array.from(room.players.values()).map(sanitizePlayer),
       hostId: room.hostId,
       config: room.config,
-      map: {
-        width: room.map.width,
-        height: room.map.height,
-        tasks: room.map.tasks.slice(0, room.config.taskCount),
-        emergency: room.map.emergency
-      }
+      map: mapPayload
     });
   }, 8000);
 }
