@@ -695,6 +695,7 @@ html, body {
 
   <div class="hud-top">
     <div class="hud-badge" id="roleBadge">🍞 Panadero</div>
+    <button class="hud-chat-btn" id="btnMinimap">🗺️ Mapa</button>
     <button class="hud-chat-btn" id="btnToggleChat">
       💬 Chat <span class="chat-unread-badge" id="chatUnread" style="display:none;">0</span>
     </button>
@@ -825,8 +826,10 @@ html, body {
     <div class="field">
       <label>🗺️ Mapa Temático</label>
       <select class="neu-input" id="cfgMap">
-        <option value="El Horno Central">El Horno Central (Gran Panadería)</option>
-        <option value="La Masadería">La Masadería (Molino & Bodega Rústica)</option>
+        <option value="El Horno Central">🍞 El Horno Central (Mega Panadería - 3200x2400)</option>
+        <option value="La Masadería">🌾 La Masadería (Molino & Cava Rústica - 3300x2500)</option>
+        <option value="Pastelería Francesa">🥐 La Gran Pastelería Francesa (Palacio Dulce - 3400x2500)</option>
+        <option value="Fábrica Industrial">🏭 Planta Industrial Bim-Pan (Mega Fábrica - 3500x2600)</option>
       </select>
     </div>
     <div class="btn-row">
@@ -911,6 +914,20 @@ html, body {
         <button class="neu-btn danger" id="btnLobbyLeave">Salir</button>
         <button class="neu-btn primary" id="btnLobbyStart" style="display:none;">Iniciar Partida 🚀</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PANTALLA: MINIMAPA ============ -->
+<div class="screen" id="screenMinimap" style="background:rgba(8,6,4,0.85);backdrop-filter:blur(6px);z-index:180;">
+  <div style="position:relative;background:#1e150f;border:3px solid #d4a017;border-radius:20px;padding:16px;max-width:92vw;max-height:92vh;display:flex;flex-direction:column;align-items:center;box-shadow:0 12px 35px rgba(0,0,0,0.85);">
+    <div style="display:flex;justify-content:space-between;width:100%;align-items:center;margin-bottom:8px;">
+      <h3 id="minimapTitle" style="color:#f4c542;margin:0;font-size:17px;font-weight:800;">🗺️ Plano Arquitectónico del Mapa</h3>
+      <button class="neu-btn" id="btnCloseMinimap" style="padding:4px 14px;font-size:13px;">✕ Cerrar</button>
+    </div>
+    <canvas id="minimapCanvas" width="680" height="480" style="background:#131b24;border:2px solid #5a3e22;border-radius:12px;max-width:86vw;max-height:68vh;object-fit:contain;"></canvas>
+    <div style="color:#d5c5b2;font-size:12px;margin-top:8px;text-align:center;">
+      🟡 Misión activa &nbsp;|&nbsp; 🔔 Campana central de reunión &nbsp;|&nbsp; 🥖 Tu ubicación
     </div>
   </div>
 </div>
@@ -1607,46 +1624,183 @@ function darken(hex, amount) {
 // ============================================
 const DEFAULT_MAPS = {
   'El Horno Central': {
-    width: 2000, height: 1500, emergency: { x: 1000, y: 760 },
+    width: 3200, height: 2400, emergency: { x: 1600, y: 1200 },
     rooms: [
-      { id: 'cafeteria', name: 'Cafetería Central', x: 670, y: 550, w: 660, h: 420, floor: 'wood', label: 'CAFETERÍA' },
-      { id: 'horno', name: 'Gran Salón de Hornos', x: 670, y: 30, w: 660, h: 440, floor: 'stone', label: 'EL GRAN HORNO' },
-      { id: 'cocina', name: 'Cocina & Amasado', x: 30, y: 30, w: 540, h: 580, floor: 'tile', label: 'COCINA & AMASADO' },
-      { id: 'despensa', name: 'Almacén de Harina', x: 30, y: 780, w: 540, h: 690, floor: 'rustic', label: 'DESPENSA' },
-      { id: 'reposteria', name: 'Repostería', x: 1430, y: 30, w: 540, h: 580, floor: 'tile_pink', label: 'REPOSTERÍA' },
-      { id: 'ventas', name: 'Recepción & Ventas', x: 1430, y: 780, w: 540, h: 690, floor: 'wood_dark', label: 'VENTAS' },
-      { id: 'enfriamiento', name: 'Enfriamiento', x: 670, y: 1050, w: 660, h: 420, floor: 'metal', label: 'ENFRIAMIENTO' }
+      { id: 'cafeteria', name: 'Cafetería & Salón Principal', x: 1250, y: 950, w: 700, h: 500, floor: 'wood', label: 'CAFETERÍA' },
+      { id: 'gran_horno', name: 'El Gran Salón de Hornos', x: 1250, y: 50, w: 700, h: 650, floor: 'stone', label: 'GRAN HORNO' },
+      { id: 'cocina', name: 'Cocina & Amasadero Maestro', x: 50, y: 50, w: 900, h: 650, floor: 'tile', label: 'COCINA & AMASADO' },
+      { id: 'fermentacion', name: 'Cámara de Fermentación Fría', x: 50, y: 950, w: 900, h: 500, floor: 'tile_dark', label: 'FERMENTACIÓN' },
+      { id: 'despensa', name: 'Gran Despensa & Silos de Harina', x: 50, y: 1700, w: 900, h: 650, floor: 'rustic', label: 'DESPENSA & SILOS' },
+      { id: 'enfriamiento', name: 'Cuarto de Enfriamiento & Ventiladores', x: 1250, y: 1700, w: 700, h: 650, floor: 'metal', label: 'ENFRIAMIENTO' },
+      { id: 'reposteria', name: 'Taller de Repostería & Glaseados', x: 2250, y: 50, w: 900, h: 650, floor: 'tile_pink', label: 'REPOSTERÍA' },
+      { id: 'ventas', name: 'Mostrador & Salón de Ventas', x: 2250, y: 950, w: 900, h: 500, floor: 'wood_dark', label: 'VENTAS & MOSTRADOR' },
+      { id: 'empaque', name: 'Despacho & Empaque Artesanal', x: 2250, y: 1700, w: 900, h: 650, floor: 'wood', label: 'DESPACHO' }
     ],
     walls: [
-      { x: 0, y: 0, w: 2000, h: 30 }, { x: 0, y: 1470, w: 2000, h: 30 },
-      { x: 0, y: 0, w: 30, h: 1500 }, { x: 1970, y: 0, w: 30, h: 1500 },
-      { x: 30, y: 610, w: 540, h: 25 }, { x: 570, y: 30, w: 25, h: 250 }, { x: 570, y: 400, w: 25, h: 235 },
-      { x: 30, y: 780, w: 540, h: 25 }, { x: 570, y: 780, w: 25, h: 140 }, { x: 570, y: 1040, w: 25, h: 430 },
-      { x: 1430, y: 610, w: 540, h: 25 }, { x: 1430, y: 30, w: 25, h: 250 }, { x: 1430, y: 400, w: 25, h: 235 },
-      { x: 1430, y: 780, w: 540, h: 25 }, { x: 1430, y: 780, w: 25, h: 140 }, { x: 1430, y: 1040, w: 25, h: 430 },
-      { x: 670, y: 550, w: 25, h: 150 }, { x: 670, y: 820, w: 25, h: 150 },
-      { x: 1330, y: 550, w: 25, h: 150 }, { x: 1330, y: 820, w: 25, h: 150 },
-      { x: 670, y: 550, w: 270, h: 25 }, { x: 1060, y: 550, w: 295, h: 25 },
-      { x: 670, y: 970, w: 270, h: 25 }, { x: 1060, y: 970, w: 295, h: 25 },
-      { x: 670, y: 30, w: 25, h: 440 }, { x: 1330, y: 30, w: 25, h: 440 },
-      { x: 670, y: 470, w: 270, h: 25 }, { x: 1060, y: 470, w: 295, h: 25 },
-      { x: 670, y: 1050, w: 25, h: 420 }, { x: 1330, y: 1050, w: 25, h: 420 },
-      { x: 670, y: 1050, w: 270, h: 25 }, { x: 1060, y: 1050, w: 295, h: 25 }
+      { x: 0, y: 0, w: 3200, h: 30 }, { x: 0, y: 2370, w: 3200, h: 30 },
+      { x: 0, y: 0, w: 30, h: 2400 }, { x: 3170, y: 0, w: 30, h: 2400 },
+      { x: 50, y: 700, w: 900, h: 25 }, { x: 950, y: 50, w: 25, h: 250 }, { x: 950, y: 450, w: 25, h: 250 },
+      { x: 50, y: 950, w: 900, h: 25 }, { x: 50, y: 1450, w: 900, h: 25 },
+      { x: 950, y: 950, w: 25, h: 170 }, { x: 950, y: 1280, w: 25, h: 170 },
+      { x: 50, y: 1700, w: 900, h: 25 }, { x: 950, y: 1700, w: 25, h: 240 }, { x: 950, y: 2100, w: 25, h: 250 },
+      { x: 1250, y: 50, w: 25, h: 650 }, { x: 1950, y: 50, w: 25, h: 650 },
+      { x: 1250, y: 700, w: 260, h: 25 }, { x: 1690, y: 700, w: 260, h: 25 },
+      { x: 1250, y: 950, w: 260, h: 25 }, { x: 1690, y: 950, w: 260, h: 25 },
+      { x: 1250, y: 1450, w: 260, h: 25 }, { x: 1690, y: 1450, w: 260, h: 25 },
+      { x: 1250, y: 950, w: 25, h: 170 }, { x: 1250, y: 1280, w: 25, h: 170 },
+      { x: 1950, y: 950, w: 25, h: 170 }, { x: 1950, y: 1280, w: 25, h: 170 },
+      { x: 1250, y: 1700, w: 25, h: 650 }, { x: 1950, y: 1700, w: 25, h: 650 },
+      { x: 1250, y: 1700, w: 260, h: 25 }, { x: 1690, y: 1700, w: 260, h: 25 },
+      { x: 2250, y: 700, w: 900, h: 25 }, { x: 2250, y: 50, w: 25, h: 250 }, { x: 2250, y: 450, w: 25, h: 250 },
+      { x: 2250, y: 950, w: 900, h: 25 }, { x: 2250, y: 1450, w: 900, h: 25 },
+      { x: 2250, y: 950, w: 25, h: 170 }, { x: 2250, y: 1280, w: 25, h: 170 },
+      { x: 2250, y: 1700, w: 900, h: 25 }, { x: 2250, y: 1700, w: 25, h: 240 }, { x: 2250, y: 2100, w: 25, h: 250 }
     ],
     decorations: [
-      { type: 'oven_block', x: 800, y: 80, w: 400, h: 90 },
-      { type: 'table_prep', x: 180, y: 180, w: 160, h: 90 },
-      { type: 'flour_sacks', x: 80, y: 90, count: 6 },
-      { type: 'shelves', x: 80, y: 830, w: 200, h: 50 },
-      { type: 'glass_showcase', x: 1540, y: 120, w: 260, h: 70 },
-      { type: 'checkout_counter', x: 1540, y: 840, w: 260, h: 60 }
+      { type: 'oven_block', x: 1400, y: 110, w: 400, h: 110 },
+      { type: 'table_prep', x: 350, y: 300, w: 200, h: 90 },
+      { type: 'table_prep', x: 650, y: 450, w: 180, h: 90 },
+      { type: 'flour_sacks', x: 150, y: 1800, count: 10 },
+      { type: 'flour_sacks', x: 450, y: 1800, count: 8 },
+      { type: 'wooden_crates', x: 750, y: 2100, count: 6 },
+      { type: 'glass_showcase', x: 2450, y: 1050, w: 320, h: 80 },
+      { type: 'checkout_counter', x: 2850, y: 1300, w: 240, h: 70 },
+      { type: 'bread_rack', x: 2500, y: 1900, w: 70, h: 200 },
+      { type: 'bread_rack', x: 2800, y: 1900, w: 70, h: 200 },
+      { type: 'cafe_table', x: 1380, y: 1050 }, { type: 'cafe_table', x: 1820, y: 1050 },
+      { type: 'cafe_table', x: 1380, y: 1350 }, { type: 'cafe_table', x: 1820, y: 1350 }
+    ],
+    tasks: []
+  },
+
+  'La Masadería': {
+    width: 3300, height: 2500, emergency: { x: 1650, y: 1250 },
+    rooms: [
+      { id: 'salon', name: 'Gran Salón Rústico de Catas', x: 1300, y: 980, w: 700, h: 540, floor: 'rustic', label: 'LA GRAN MESA' },
+      { id: 'molino', name: 'Sala de Engranajes del Molino', x: 1300, y: 60, w: 700, h: 660, floor: 'stone', label: 'MOLINO DE VIENTO' },
+      { id: 'cava', name: 'Cava Ancestral de Levaduras', x: 60, y: 60, w: 920, h: 660, floor: 'tile_dark', label: 'CAVA DE LEVADURAS' },
+      { id: 'amasado', name: 'Amasadero en Artesas de Roble', x: 60, y: 980, w: 920, h: 540, floor: 'wood', label: 'AMASADO EN ARTESAS' },
+      { id: 'granero', name: 'Granero de Centeno, Cebada & Trigo', x: 60, y: 1780, w: 920, h: 660, floor: 'rustic', label: 'GRANERO DE SEMILLAS' },
+      { id: 'cubas', name: 'Lavado de Barricas & Calderas', x: 1300, y: 1780, w: 700, h: 660, floor: 'metal', label: 'LAVADO DE BARRICAS' },
+      { id: 'horno_piedra', name: 'Hornos de Piedra Volcánica', x: 2320, y: 60, w: 920, h: 660, floor: 'stone', label: 'HORNO VOLCÁNICO' },
+      { id: 'confiteria_miel', name: 'Obrador de Miel & Piloncillo', x: 2320, y: 980, w: 920, h: 540, floor: 'tile_pink', label: 'CONFITERÍA DE MIEL' },
+      { id: 'despacho_carretas', name: 'Despacho de Carretas & Cestas', x: 2320, y: 1780, w: 920, h: 660, floor: 'wood_dark', label: 'DESPACHO RÚSTICO' }
+    ],
+    walls: [
+      { x: 0, y: 0, w: 3300, h: 30 }, { x: 0, y: 2470, w: 3300, h: 30 },
+      { x: 0, y: 0, w: 30, h: 2500 }, { x: 3270, y: 0, w: 30, h: 2500 },
+      { x: 60, y: 720, w: 920, h: 25 }, { x: 980, y: 60, w: 25, h: 250 }, { x: 980, y: 470, w: 25, h: 250 },
+      { x: 60, y: 980, w: 920, h: 25 }, { x: 60, y: 1520, w: 920, h: 25 },
+      { x: 980, y: 980, w: 25, h: 180 }, { x: 980, y: 1340, w: 25, h: 180 },
+      { x: 60, y: 1780, w: 920, h: 25 }, { x: 980, y: 1780, w: 25, h: 250 }, { x: 980, y: 2190, w: 25, h: 250 },
+      { x: 1300, y: 60, w: 25, h: 660 }, { x: 2000, y: 60, w: 25, h: 660 },
+      { x: 1300, y: 720, w: 260, h: 25 }, { x: 1740, y: 720, w: 260, h: 25 },
+      { x: 1300, y: 980, w: 260, h: 25 }, { x: 1740, y: 980, w: 260, h: 25 },
+      { x: 1300, y: 1520, w: 260, h: 25 }, { x: 1740, y: 1520, w: 260, h: 25 },
+      { x: 1300, y: 980, w: 25, h: 180 }, { x: 1300, y: 1340, w: 25, h: 180 },
+      { x: 2000, y: 980, w: 25, h: 180 }, { x: 2000, y: 1340, w: 25, h: 180 },
+      { x: 1300, y: 1780, w: 25, h: 660 }, { x: 2000, y: 1780, w: 25, h: 660 },
+      { x: 1300, y: 1780, w: 260, h: 25 }, { x: 1740, y: 1780, w: 260, h: 25 },
+      { x: 2320, y: 720, w: 920, h: 25 }, { x: 2320, y: 60, w: 25, h: 250 }, { x: 2320, y: 470, w: 25, h: 250 },
+      { x: 2320, y: 980, w: 920, h: 25 }, { x: 2320, y: 1520, w: 920, h: 25 },
+      { x: 2320, y: 980, w: 25, h: 180 }, { x: 2320, y: 1340, w: 25, h: 180 },
+      { x: 2320, y: 1780, w: 920, h: 25 }, { x: 2320, y: 1780, w: 25, h: 250 }, { x: 2320, y: 2190, w: 25, h: 250 }
+    ],
+    decorations: [
+      { type: 'stone_oven', x: 2500, y: 120, w: 400, h: 120 },
+      { type: 'flour_sacks', x: 200, y: 1900, count: 12 },
+      { type: 'wooden_crates', x: 600, y: 2150, count: 8 },
+      { type: 'table_prep', x: 450, y: 1150, w: 220, h: 90 },
+      { type: 'glass_showcase', x: 2500, y: 1080, w: 320, h: 80 }
+    ],
+    tasks: []
+  },
+
+  'Pastelería Francesa': {
+    width: 3400, height: 2500, emergency: { x: 1700, y: 1250 },
+    rooms: [
+      { id: 'salon_real', name: 'Salón de Té & Degustación Real', x: 1350, y: 980, w: 700, h: 540, floor: 'marble', label: 'SALÓN DE TÉ REAL' },
+      { id: 'atelier_macarons', name: 'Atelier de Macarons & Merengues', x: 1350, y: 60, w: 700, h: 660, floor: 'tile_pink', label: 'ATELIER MACARONS' },
+      { id: 'chocolateria', name: 'Laboratorio de Alta Chocolatería', x: 60, y: 60, w: 960, h: 660, floor: 'wood_dark', label: 'CHOCOLATERÍA FINA' },
+      { id: 'mantequilla', name: 'Cámara Fría de Mantequilla de Normandía', x: 60, y: 980, w: 960, h: 540, floor: 'tile', label: 'CÁMARA MANTEQUILLA' },
+      { id: 'invernadero', name: 'Invernadero de Vainilla & Frambuesas', x: 60, y: 1780, w: 960, h: 660, floor: 'stone', label: 'INVERNADERO FRUTAL' },
+      { id: 'horno_croissants', name: 'Hornos de Croissants Hojaldrados', x: 1350, y: 1780, w: 700, h: 660, floor: 'stone', label: 'HORNO CROISSANTS' },
+      { id: 'cava_licores', name: 'Cava de Vinos Dulces & Licores', x: 2380, y: 60, w: 960, h: 660, floor: 'rustic', label: 'CAVA DE LICORES' },
+      { id: 'galeria_cristal', name: 'Galería de Vitrinas & Esculturas de Azúcar', x: 2380, y: 980, w: 960, h: 540, floor: 'marble', label: 'GALERÍA DE CRISTAL' },
+      { id: 'empaque_seda', name: 'Salón de Empaque de Lujo con Seda', x: 2380, y: 1780, w: 960, h: 660, floor: 'wood', label: 'EMPAQUE DE SEDA' }
+    ],
+    walls: [
+      { x: 0, y: 0, w: 3400, h: 30 }, { x: 0, y: 2470, w: 3400, h: 30 },
+      { x: 0, y: 0, w: 30, h: 2500 }, { x: 3370, y: 0, w: 30, h: 2500 },
+      { x: 60, y: 720, w: 960, h: 25 }, { x: 1020, y: 60, w: 25, h: 250 }, { x: 1020, y: 470, w: 25, h: 250 },
+      { x: 60, y: 980, w: 960, h: 25 }, { x: 60, y: 1520, w: 960, h: 25 },
+      { x: 1020, y: 980, w: 25, h: 180 }, { x: 1020, y: 1340, w: 25, h: 180 },
+      { x: 60, y: 1780, w: 960, h: 25 }, { x: 1020, y: 1780, w: 25, h: 250 }, { x: 1020, y: 2190, w: 25, h: 250 },
+      { x: 1350, y: 60, w: 25, h: 660 }, { x: 2050, y: 60, w: 25, h: 660 },
+      { x: 1350, y: 720, w: 260, h: 25 }, { x: 1790, y: 720, w: 260, h: 25 },
+      { x: 1350, y: 980, w: 260, h: 25 }, { x: 1790, y: 980, w: 260, h: 25 },
+      { x: 1350, y: 1520, w: 260, h: 25 }, { x: 1790, y: 1520, w: 260, h: 25 },
+      { x: 1350, y: 980, w: 25, h: 180 }, { x: 1350, y: 1340, w: 25, h: 180 },
+      { x: 2050, y: 980, w: 25, h: 180 }, { x: 2050, y: 1340, w: 25, h: 180 },
+      { x: 1350, y: 1780, w: 25, h: 660 }, { x: 2050, y: 1780, w: 25, h: 660 },
+      { x: 1350, y: 1780, w: 260, h: 25 }, { x: 1790, y: 1780, w: 260, h: 25 },
+      { x: 2380, y: 720, w: 960, h: 25 }, { x: 2380, y: 60, w: 25, h: 250 }, { x: 2380, y: 470, w: 25, h: 250 },
+      { x: 2380, y: 980, w: 960, h: 25 }, { x: 2380, y: 1520, w: 960, h: 25 },
+      { x: 2380, y: 980, w: 25, h: 180 }, { x: 2380, y: 1340, w: 25, h: 180 },
+      { x: 2380, y: 1780, w: 960, h: 25 }, { x: 2380, y: 1780, w: 25, h: 250 }, { x: 2380, y: 2190, w: 25, h: 250 }
+    ],
+    decorations: [
+      { type: 'glass_showcase', x: 2500, y: 1050, w: 380, h: 80 },
+      { type: 'crystal_table', x: 1500, y: 1100, w: 180, h: 80 },
+      { type: 'oven_block', x: 1500, y: 1840, w: 400, h: 110 }
+    ],
+    tasks: []
+  },
+
+  'Fábrica Industrial': {
+    width: 3500, height: 2600, emergency: { x: 1750, y: 1300 },
+    rooms: [
+      { id: 'control_central', name: 'Sala de Comando & Monitores Centrales', x: 1400, y: 1020, w: 700, h: 560, floor: 'caution', label: 'CONTROL CENTRAL' },
+      { id: 'hornos_tunel', name: 'Hornos de Túnel Automatizados', x: 1400, y: 60, w: 700, h: 680, floor: 'stone', label: 'HORNOS DE TÚNEL' },
+      { id: 'silos_acero', name: 'Parque de Silos de Acero Inoxidable', x: 60, y: 60, w: 1000, h: 680, floor: 'metal', label: 'SILOS DE ACERO' },
+      { id: 'mezcladoras', name: 'Mezcladoras Continuas de Gran Volumen', x: 60, y: 1020, w: 1000, h: 560, floor: 'tile_dark', label: 'MEZCLADORAS INDUSTRIALES' },
+      { id: 'laboratorio', name: 'Laboratorio de Biotecnología & Levaduras', x: 60, y: 1860, w: 1000, h: 680, floor: 'tile', label: 'LABORATORIO DE CALIDAD' },
+      { id: 'calderas', name: 'Generadores de Vapor & Calderas', x: 1400, y: 1860, w: 700, h: 680, floor: 'metal', label: 'CALDERAS DE VAPOR' },
+      { id: 'rebanado', name: 'Línea Robótica de Rebanado & Envasado', x: 2440, y: 60, w: 1000, h: 680, floor: 'caution', label: 'LÍNEA DE REBANADO' },
+      { id: 'inspeccion', name: 'Puesto de Inspección & Rayos X', x: 2440, y: 1020, w: 1000, h: 560, floor: 'tile', label: 'INSPECCIÓN DE CALIDAD' },
+      { id: 'muelle', name: 'Muelle de Embarque & Logística de Camiones', x: 2440, y: 1860, w: 1000, h: 680, floor: 'metal', label: 'MUELLE DE CARGA' }
+    ],
+    walls: [
+      { x: 0, y: 0, w: 3500, h: 30 }, { x: 0, y: 2570, w: 3500, h: 30 },
+      { x: 0, y: 0, w: 30, h: 2600 }, { x: 3470, y: 0, w: 30, h: 2600 },
+      { x: 60, y: 740, w: 1000, h: 25 }, { x: 1060, y: 60, w: 25, h: 250 }, { x: 1060, y: 490, w: 25, h: 250 },
+      { x: 60, y: 1020, w: 1000, h: 25 }, { x: 60, y: 1580, w: 1000, h: 25 },
+      { x: 1060, y: 1020, w: 25, h: 180 }, { x: 1060, y: 1400, w: 25, h: 180 },
+      { x: 60, y: 1860, w: 1000, h: 25 }, { x: 1060, y: 1860, w: 25, h: 250 }, { x: 1060, y: 2290, w: 25, h: 250 },
+      { x: 1400, y: 60, w: 25, h: 680 }, { x: 2100, y: 60, w: 25, h: 680 },
+      { x: 1400, y: 740, w: 260, h: 25 }, { x: 1840, y: 740, w: 260, h: 25 },
+      { x: 1400, y: 1020, w: 260, h: 25 }, { x: 1840, y: 1020, w: 260, h: 25 },
+      { x: 1400, y: 1580, w: 260, h: 25 }, { x: 1840, y: 1580, w: 260, h: 25 },
+      { x: 1400, y: 1020, w: 25, h: 180 }, { x: 1400, y: 1400, w: 25, h: 180 },
+      { x: 2100, y: 1020, w: 25, h: 180 }, { x: 2100, y: 1400, w: 25, h: 180 },
+      { x: 1400, y: 1860, w: 25, h: 680 }, { x: 2100, y: 1860, w: 25, h: 680 },
+      { x: 1400, y: 1860, w: 260, h: 25 }, { x: 1840, y: 1860, w: 260, h: 25 },
+      { x: 2440, y: 740, w: 1000, h: 25 }, { x: 2440, y: 60, w: 25, h: 250 }, { x: 2440, y: 490, w: 25, h: 250 },
+      { x: 2440, y: 1020, w: 1000, h: 25 }, { x: 2440, y: 1580, w: 1000, h: 25 },
+      { x: 2440, y: 1020, w: 25, h: 180 }, { x: 2440, y: 1400, w: 25, h: 180 },
+      { x: 2440, y: 1860, w: 1000, h: 25 }, { x: 2440, y: 1860, w: 25, h: 250 }, { x: 2440, y: 2290, w: 25, h: 250 }
+    ],
+    decorations: [
+      { type: 'conveyor_belt', x: 2550, y: 250, w: 500, h: 60 },
+      { type: 'silo', x: 300, y: 250, r: 80 },
+      { type: 'silo', x: 600, y: 250, r: 80 }
     ],
     tasks: []
   }
 };
 
 G.map = DEFAULT_MAPS['El Horno Central'];
-G.emergency = (G.map && G.map.emergency) ? G.map.emergency : { x: 1000, y: 760 };
+G.emergency = (G.map && G.map.emergency) ? G.map.emergency : { x: 1600, y: 1200 };
 
 // ============================================
 // RENDERIZADO DEL MAPA
@@ -1697,6 +1851,29 @@ function drawMap(c) {
       } else if (r.floor === 'metal') {
         c.fillStyle = '#59656f';
         c.fillRect(r.x, r.y, r.w, r.h);
+      } else if (r.floor === 'marble') {
+        c.fillStyle = '#f8f6f0';
+        c.fillRect(r.x, r.y, r.w, r.h);
+        c.strokeStyle = 'rgba(212, 175, 55, 0.22)';
+        c.lineWidth = 2.5;
+        for (let vx = r.x; vx < r.x + r.w; vx += 110) {
+          c.beginPath();
+          c.moveTo(vx, r.y);
+          c.bezierCurveTo(vx + 35, r.y + r.h * 0.35, vx - 25, r.y + r.h * 0.65, vx + 15, r.y + r.h);
+          c.stroke();
+        }
+      } else if (r.floor === 'caution') {
+        c.fillStyle = '#374151';
+        c.fillRect(r.x, r.y, r.w, r.h);
+        c.fillStyle = '#f59e0b';
+        for (let cx = r.x; cx < r.x + r.w; cx += 50) {
+          c.fillRect(cx, r.y, 20, 14);
+          c.fillRect(cx, r.y + r.h - 14, 20, 14);
+        }
+        for (let cy = r.y; cy < r.y + r.h; cy += 50) {
+          c.fillRect(r.x, cy, 14, 20);
+          c.fillRect(r.x + r.w - 14, cy, 14, 20);
+        }
       } else {
         c.fillStyle = '#8b6b47';
         c.fillRect(r.x, r.y, r.w, r.h);
@@ -1722,7 +1899,7 @@ function drawMap(c) {
   if (m.decorations) {
     for (const d of m.decorations) {
       c.save();
-      if (d.type === 'oven_block') {
+      if (d.type === 'oven_block' || d.type === 'stone_oven') {
         c.fillStyle = '#2c2523';
         c.fillRect(d.x, d.y, d.w, d.h);
         c.strokeStyle = '#15100e'; c.lineWidth = 4;
@@ -1766,6 +1943,53 @@ function drawMap(c) {
         c.fillRect(d.x, d.y, d.w, d.h);
         c.strokeStyle = '#422813'; c.lineWidth = 3;
         c.strokeRect(d.x, d.y, d.w, d.h);
+      } else if (d.type === 'conveyor_belt') {
+        c.fillStyle = '#1e293b';
+        c.fillRect(d.x, d.y, d.w, d.h);
+        c.strokeStyle = '#475569'; c.lineWidth = 3;
+        c.strokeRect(d.x, d.y, d.w, d.h);
+        c.fillStyle = '#94a3b8';
+        for (let rx = d.x + 8; rx < d.x + d.w - 8; rx += 28) {
+          c.fillRect(rx, d.y + 4, 8, d.h - 8);
+        }
+      } else if (d.type === 'silo') {
+        const r = d.r || 65;
+        c.fillStyle = 'rgba(0,0,0,0.35)';
+        c.beginPath(); c.arc(d.x + 6, d.y + 6, r, 0, Math.PI * 2); c.fill();
+        const grad = c.createRadialGradient(d.x - r * 0.3, d.y - r * 0.3, 10, d.x, d.y, r);
+        grad.addColorStop(0, '#e2e8f0');
+        grad.addColorStop(0.7, '#64748b');
+        grad.addColorStop(1, '#334155');
+        c.fillStyle = grad;
+        c.beginPath(); c.arc(d.x, d.y, r, 0, Math.PI * 2); c.fill();
+        c.strokeStyle = '#1e293b'; c.lineWidth = 4; c.stroke();
+      } else if (d.type === 'crystal_table') {
+        c.fillStyle = 'rgba(224, 242, 254, 0.75)';
+        c.fillRect(d.x, d.y, d.w, d.h);
+        c.strokeStyle = '#f59e0b'; c.lineWidth = 3;
+        c.strokeRect(d.x, d.y, d.w, d.h);
+      } else if (d.type === 'wooden_crates') {
+        c.fillStyle = '#854d0e';
+        for (let i = 0; i < (d.count || 4); i++) {
+          const cx = d.x + (i % 3) * 36;
+          const cy = d.y + Math.floor(i / 3) * 36;
+          c.fillRect(cx, cy, 32, 32);
+          c.strokeStyle = '#451a03'; c.lineWidth = 2; c.strokeRect(cx, cy, 32, 32);
+        }
+      } else if (d.type === 'bread_rack') {
+        c.fillStyle = '#78350f';
+        c.fillRect(d.x, d.y, d.w, d.h);
+        c.strokeStyle = '#451a03'; c.lineWidth = 3; c.strokeRect(d.x, d.y, d.w, d.h);
+        c.fillStyle = '#fef08a';
+        for (let ry = d.y + 12; ry < d.y + d.h - 10; ry += 26) {
+          c.fillRect(d.x + 6, ry, d.w - 12, 10);
+        }
+      } else if (d.type === 'cafe_table') {
+        c.fillStyle = '#78350f';
+        c.beginPath(); c.arc(d.x, d.y, 30, 0, Math.PI * 2); c.fill();
+        c.strokeStyle = '#451a03'; c.lineWidth = 3; c.stroke();
+        c.fillStyle = '#fef3c7';
+        c.beginPath(); c.arc(d.x, d.y, 20, 0, Math.PI * 2); c.fill();
       }
       c.restore();
     }
@@ -2348,15 +2572,208 @@ function updateChatPlaceholders() {
 }
 
 // ============================================
-// GESTIÓN DE PANTALLAS
+// GESTIÓN DE PANTALLAS Y MINIMAPA
 // ============================================
+let minimapActive = false;
+
 function showScreen(screenId) {
+  if (screenId !== 'screenMinimap') {
+    minimapActive = false;
+  }
   document.querySelectorAll('.screen').forEach(s => {
     s.classList.remove('active');
   });
   if (screenId) {
     const target = document.getElementById(screenId);
     if (target) target.classList.add('active');
+  }
+}
+
+function toggleMinimap() {
+  if (G.gameState !== 'playing') {
+    toast('El mapa se consulta durante la partida');
+    return;
+  }
+  const screen = document.getElementById('screenMinimap');
+  if (screen && screen.classList.contains('active')) {
+    minimapActive = false;
+    showScreen(null);
+  } else {
+    showScreen('screenMinimap');
+    minimapActive = true;
+    requestAnimationFrame(renderMinimapFrame);
+  }
+}
+
+function renderMinimapFrame() {
+  if (!minimapActive) return;
+  drawMinimap();
+  requestAnimationFrame(renderMinimapFrame);
+}
+
+function drawMinimap() {
+  const c = document.getElementById('minimapCanvas');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  const W = c.width;
+  const H = c.height;
+
+  // Fondo oscuro arquitectónico
+  ctx.fillStyle = '#0d1520';
+  ctx.fillRect(0, 0, W, H);
+
+  // Cuadrícula blueprint técnica
+  ctx.strokeStyle = 'rgba(38, 65, 102, 0.4)';
+  ctx.lineWidth = 1;
+  const step = 25;
+  for (let x = 0; x < W; x += step) {
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+  }
+  for (let y = 0; y < H; y += step) {
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+  }
+
+  const map = G.map;
+  if (!map) return;
+  const mapW = map.width || 3200;
+  const mapH = map.height || 2400;
+
+  const titleEl = document.getElementById('minimapTitle');
+  if (titleEl && map.name) {
+    titleEl.textContent = '🗺️ ' + map.name + ' (' + mapW + 'x' + mapH + ' px)';
+  }
+
+  const pad = 24;
+  const scale = Math.min((W - pad * 2) / mapW, (H - pad * 2) / mapH);
+  const ox = (W - mapW * scale) / 2;
+  const oy = (H - mapH * scale) / 2;
+
+  const toX = (wx) => ox + wx * scale;
+  const toY = (wy) => oy + wy * scale;
+
+  // Borde perimetral exterior
+  ctx.strokeStyle = 'rgba(80, 130, 200, 0.75)';
+  ctx.lineWidth = 2.5;
+  ctx.strokeRect(ox, oy, mapW * scale, mapH * scale);
+
+  // Habitaciones
+  if (Array.isArray(map.rooms)) {
+    for (const r of map.rooms) {
+      const rx = toX(r.x);
+      const ry = toY(r.y);
+      const rw = r.w * scale;
+      const rh = r.h * scale;
+
+      ctx.fillStyle = 'rgba(26, 44, 68, 0.7)';
+      ctx.fillRect(rx, ry, rw, rh);
+      ctx.strokeStyle = 'rgba(92, 145, 215, 0.55)';
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(rx, ry, rw, rh);
+
+      // Nombre de la sala
+      ctx.fillStyle = '#bfe0ff';
+      ctx.font = 'bold 9px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(r.name, rx + rw / 2, ry + rh / 2);
+    }
+  }
+
+  // Paredes y obstáculos
+  if (Array.isArray(map.walls)) {
+    ctx.fillStyle = '#64748b';
+    for (const w of map.walls) {
+      const wx = toX(w.x);
+      const wy = toY(w.y);
+      const ww = Math.max(w.w * scale, 2);
+      const wh = Math.max(w.h * scale, 2);
+      ctx.fillRect(wx, wy, ww, wh);
+    }
+  }
+
+  // Mesa de emergencia central
+  const emer = G.emergency || map.emergency;
+  if (emer) {
+    const ex = toX(emer.x);
+    const ey = toY(emer.y);
+    const pulse = 1 + Math.sin(Date.now() / 250) * 0.25;
+
+    ctx.fillStyle = 'rgba(243, 156, 18, 0.35)';
+    ctx.beginPath();
+    ctx.arc(ex, ey, 14 * pulse, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = '#f39c12';
+    ctx.beginPath();
+    ctx.arc(ex, ey, 6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    ctx.font = '12px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'bottom';
+    ctx.fillText('🔔', ex, ey - 6);
+  }
+
+  // Tareas
+  const tasks = (!G.isImpostor && G.visibleTasks && G.visibleTasks.length > 0)
+    ? G.visibleTasks
+    : (map.tasks || []);
+
+  for (const t of tasks) {
+    const tx = toX(t.x);
+    const ty = toY(t.y);
+    const isDone = Array.isArray(G.completedTasks) && G.completedTasks.includes(t.id);
+
+    if (isDone) {
+      ctx.fillStyle = '#2ecc71';
+      ctx.beginPath();
+      ctx.arc(tx, ty, 3.5, 0, Math.PI * 2);
+      ctx.fill();
+    } else {
+      const pulseT = 1 + Math.sin(Date.now() / 200 + t.id.length) * 0.25;
+      ctx.fillStyle = 'rgba(241, 196, 15, 0.4)';
+      ctx.beginPath();
+      ctx.arc(tx, ty, 8 * pulseT, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#f1c40f';
+      ctx.beginPath();
+      ctx.arc(tx, ty, 4.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+  }
+
+  // Jugador local
+  const me = G.players.get(G.myId);
+  if (me) {
+    const px = toX(me.x);
+    const py = toY(me.y);
+    const pulseMe = 1 + Math.sin(Date.now() / 180) * 0.25;
+
+    ctx.fillStyle = me.alive ? 'rgba(46, 204, 113, 0.4)' : 'rgba(147, 197, 253, 0.4)';
+    ctx.beginPath();
+    ctx.arc(px, py, 13 * pulseMe, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = me.alive ? '#2ecc71' : '#60a5fa';
+    ctx.beginPath();
+    ctx.arc(px, py, 5.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 10px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'bottom';
+    ctx.fillText('🥖 Tú', px, py - 7);
   }
 }
 
@@ -2451,10 +2868,22 @@ window.addEventListener('keydown', (e) => {
     case 's': case 'arrowdown': G.input.down = true; break;
     case 'a': case 'arrowleft': G.input.left = true; break;
     case 'd': case 'arrowright': G.input.right = true; break;
-    case 'e': case ' ': if (G.gameState === 'playing') tryInteract(); break;
-    case 'q': if (G.gameState === 'playing') tryKill(); break;
-    case 'r': if (G.gameState === 'playing') tryReport(); break;
-    case 'f': if (G.gameState === 'playing') tryInvisibility(); break;
+    case 'm': case 'tab':
+      if (G.gameState === 'playing') {
+        e.preventDefault();
+        toggleMinimap();
+      }
+      break;
+    case 'escape':
+      if (minimapActive) {
+        e.preventDefault();
+        toggleMinimap();
+      }
+      break;
+    case 'e': case ' ': if (G.gameState === 'playing' && !minimapActive) tryInteract(); break;
+    case 'q': if (G.gameState === 'playing' && !minimapActive) tryKill(); break;
+    case 'r': if (G.gameState === 'playing' && !minimapActive) tryReport(); break;
+    case 'f': if (G.gameState === 'playing' && !minimapActive) tryInvisibility(); break;
     case 'enter':
       e.preventDefault();
       toggleFloatingChat();
@@ -2995,6 +3424,15 @@ function toggleFloatingChat() {
 document.getElementById('btnToggleChat').addEventListener('click', toggleFloatingChat);
 document.getElementById('btnCloseFloatingChat').addEventListener('click', () => {
   document.getElementById('floatingChatDrawer').style.display = 'none';
+});
+
+const btnMinimapEl = document.getElementById('btnMinimap');
+if (btnMinimapEl) btnMinimapEl.addEventListener('click', toggleMinimap);
+
+const btnCloseMinimapEl = document.getElementById('btnCloseMinimap');
+if (btnCloseMinimapEl) btnCloseMinimapEl.addEventListener('click', () => {
+  minimapActive = false;
+  showScreen(null);
 });
 
 function escapeHtml(str) {

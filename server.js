@@ -45,210 +45,433 @@ const FACES = [
 // ============================================
 const MAPS = {
   'El Horno Central': {
-    width: 2000,
-    height: 1500,
-    emergency: { x: 1000, y: 760 },
+    width: 3200,
+    height: 2400,
+    emergency: { x: 1600, y: 1200 },
     spawns: [
-      { x: 1000, y: 670 }, { x: 1080, y: 710 }, { x: 1090, y: 790 },
-      { x: 1000, y: 850 }, { x: 910, y: 790 }, { x: 920, y: 710 },
-      { x: 960, y: 680 }, { x: 1040, y: 680 }, { x: 960, y: 840 },
-      { x: 1040, y: 840 }, { x: 880, y: 760 }, { x: 1120, y: 760 },
-      { x: 860, y: 700 }, { x: 1140, y: 700 }, { x: 1000, y: 760 }
+      { x: 1600, y: 1100 }, { x: 1680, y: 1140 }, { x: 1700, y: 1220 },
+      { x: 1650, y: 1280 }, { x: 1550, y: 1280 }, { x: 1500, y: 1220 },
+      { x: 1520, y: 1140 }, { x: 1600, y: 1260 }, { x: 1720, y: 1180 },
+      { x: 1480, y: 1180 }, { x: 1600, y: 1150 }, { x: 1650, y: 1200 }
     ],
     rooms: [
-      { id: 'cafeteria', name: 'Cafetería & Salón Principal', x: 670, y: 550, w: 660, h: 420, floor: 'wood', label: 'CAFETERÍA' },
-      { id: 'horno', name: 'Gran Salón de Hornos', x: 670, y: 30, w: 660, h: 440, floor: 'stone', label: 'EL GRAN HORNO' },
-      { id: 'cocina', name: 'Cocina & Amasadero', x: 30, y: 30, w: 540, h: 580, floor: 'tile', label: 'COCINA & AMASADO' },
-      { id: 'despensa', name: 'Almacén de Harina & Silos', x: 30, y: 780, w: 540, h: 690, floor: 'rustic', label: 'DESPENSA' },
-      { id: 'reposteria', name: 'Repostería & Glaseados', x: 1430, y: 30, w: 540, h: 580, floor: 'tile_pink', label: 'REPOSTERÍA' },
-      { id: 'ventas', name: 'Mostrador & Vitrinas de Venta', x: 1430, y: 780, w: 540, h: 690, floor: 'wood_dark', label: 'RECEPCIÓN & VENTAS' },
-      { id: 'enfriamiento', name: 'Cuarto de Enfriamiento & Limpieza', x: 670, y: 1050, w: 660, h: 420, floor: 'metal', label: 'ENFRIAMIENTO' }
+      { id: 'cafeteria', name: 'Cafetería & Salón Principal', x: 1250, y: 950, w: 700, h: 500, floor: 'wood', label: 'CAFETERÍA' },
+      { id: 'gran_horno', name: 'El Gran Salón de Hornos', x: 1250, y: 50, w: 700, h: 650, floor: 'stone', label: 'GRAN HORNO' },
+      { id: 'cocina', name: 'Cocina & Amasadero Maestro', x: 50, y: 50, w: 900, h: 650, floor: 'tile', label: 'COCINA & AMASADO' },
+      { id: 'fermentacion', name: 'Cámara de Fermentación Fría', x: 50, y: 950, w: 900, h: 500, floor: 'tile_dark', label: 'FERMENTACIÓN' },
+      { id: 'despensa', name: 'Gran Despensa & Silos de Harina', x: 50, y: 1700, w: 900, h: 650, floor: 'rustic', label: 'DESPENSA & SILOS' },
+      { id: 'enfriamiento', name: 'Cuarto de Enfriamiento & Ventiladores', x: 1250, y: 1700, w: 700, h: 650, floor: 'metal', label: 'ENFRIAMIENTO' },
+      { id: 'reposteria', name: 'Taller de Repostería & Glaseados', x: 2250, y: 50, w: 900, h: 650, floor: 'tile_pink', label: 'REPOSTERÍA' },
+      { id: 'ventas', name: 'Mostrador & Salón de Ventas', x: 2250, y: 950, w: 900, h: 500, floor: 'wood_dark', label: 'VENTAS & MOSTRADOR' },
+      { id: 'empaque', name: 'Despacho & Empaque Artesanal', x: 2250, y: 1700, w: 900, h: 650, floor: 'wood', label: 'DESPACHO' }
     ],
     walls: [
       // Perímetro exterior
-      { x: 0, y: 0, w: 2000, h: 30 },
-      { x: 0, y: 1470, w: 2000, h: 30 },
-      { x: 0, y: 0, w: 30, h: 1500 },
-      { x: 1970, y: 0, w: 30, h: 1500 },
+      { x: 0, y: 0, w: 3200, h: 30 },
+      { x: 0, y: 2370, w: 3200, h: 30 },
+      { x: 0, y: 0, w: 30, h: 2400 },
+      { x: 3170, y: 0, w: 30, h: 2400 },
 
       // Cocina (NW)
-      { x: 30, y: 610, w: 540, h: 25 },
-      { x: 570, y: 30, w: 25, h: 250 },
-      { x: 570, y: 400, w: 25, h: 235 }, // puerta y: 280-400
+      { x: 50, y: 700, w: 900, h: 25 },
+      { x: 950, y: 50, w: 25, h: 250 },
+      { x: 950, y: 450, w: 25, h: 250 }, // puerta y: 300-450
+
+      // Fermentación (W)
+      { x: 50, y: 950, w: 900, h: 25 },
+      { x: 50, y: 1450, w: 900, h: 25 },
+      { x: 950, y: 950, w: 25, h: 170 },
+      { x: 950, y: 1280, w: 25, h: 170 }, // puerta y: 1120-1280
 
       // Despensa (SW)
-      { x: 30, y: 780, w: 540, h: 25 },
-      { x: 570, y: 780, w: 25, h: 140 },
-      { x: 570, y: 1040, w: 25, h: 430 }, // puerta y: 920-1040
+      { x: 50, y: 1700, w: 900, h: 25 },
+      { x: 950, y: 1700, w: 25, h: 240 },
+      { x: 950, y: 2100, w: 25, h: 250 }, // puerta y: 1940-2100
 
-      // Repostería (NE)
-      { x: 1430, y: 610, w: 540, h: 25 },
-      { x: 1430, y: 30, w: 25, h: 250 },
-      { x: 1430, y: 400, w: 25, h: 235 }, // puerta y: 280-400
-
-      // Recepción (SE)
-      { x: 1430, y: 780, w: 540, h: 25 },
-      { x: 1430, y: 780, w: 25, h: 140 },
-      { x: 1430, y: 1040, w: 25, h: 430 }, // puerta y: 920-1040
+      // Gran Horno (N)
+      { x: 1250, y: 50, w: 25, h: 650 },
+      { x: 1950, y: 50, w: 25, h: 650 },
+      { x: 1250, y: 700, w: 260, h: 25 },
+      { x: 1690, y: 700, w: 260, h: 25 }, // puerta x: 1510-1690
 
       // Cafetería Central
-      { x: 670, y: 550, w: 25, h: 150 },
-      { x: 670, y: 820, w: 25, h: 150 }, // puerta Oeste y: 700-820
-      { x: 1330, y: 550, w: 25, h: 150 },
-      { x: 1330, y: 820, w: 25, h: 150 }, // puerta Este y: 700-820
-      { x: 670, y: 550, w: 270, h: 25 },
-      { x: 1060, y: 550, w: 295, h: 25 }, // puerta Norte x: 940-1060
-      { x: 670, y: 970, w: 270, h: 25 },
-      { x: 1060, y: 970, w: 295, h: 25 }, // puerta Sur x: 940-1060
+      { x: 1250, y: 950, w: 260, h: 25 },
+      { x: 1690, y: 950, w: 260, h: 25 }, // puerta Norte x: 1510-1690
+      { x: 1250, y: 1450, w: 260, h: 25 },
+      { x: 1690, y: 1450, w: 260, h: 25 }, // puerta Sur x: 1510-1690
+      { x: 1250, y: 950, w: 25, h: 170 },
+      { x: 1250, y: 1280, w: 25, h: 170 }, // puerta Oeste y: 1120-1280
+      { x: 1950, y: 950, w: 25, h: 170 },
+      { x: 1950, y: 1280, w: 25, h: 170 }, // puerta Este y: 1120-1280
 
-      // Gran Horno (Norte)
-      { x: 670, y: 30, w: 25, h: 440 },
-      { x: 1330, y: 30, w: 25, h: 440 },
-      { x: 670, y: 470, w: 270, h: 25 },
-      { x: 1060, y: 470, w: 295, h: 25 }, // puerta a pasillo
+      // Enfriamiento (S)
+      { x: 1250, y: 1700, w: 25, h: 650 },
+      { x: 1950, y: 1700, w: 25, h: 650 },
+      { x: 1250, y: 1700, w: 260, h: 25 },
+      { x: 1690, y: 1700, w: 260, h: 25 }, // puerta x: 1510-1690
 
-      // Enfriamiento (Sur)
-      { x: 670, y: 1050, w: 25, h: 420 },
-      { x: 1330, y: 1050, w: 25, h: 420 },
-      { x: 670, y: 1050, w: 270, h: 25 },
-      { x: 1060, y: 1050, w: 295, h: 25 }
+      // Repostería (NE)
+      { x: 2250, y: 700, w: 900, h: 25 },
+      { x: 2250, y: 50, w: 25, h: 250 },
+      { x: 2250, y: 450, w: 25, h: 250 }, // puerta y: 300-450
+
+      // Ventas (E)
+      { x: 2250, y: 950, w: 900, h: 25 },
+      { x: 2250, y: 1450, w: 900, h: 25 },
+      { x: 2250, y: 950, w: 25, h: 170 },
+      { x: 2250, y: 1280, w: 25, h: 170 }, // puerta y: 1120-1280
+
+      // Empaque (SE)
+      { x: 2250, y: 1700, w: 900, h: 25 },
+      { x: 2250, y: 1700, w: 25, h: 240 },
+      { x: 2250, y: 2100, w: 25, h: 250 } // puerta y: 1940-2100
     ],
     decorations: [
-      // Hornos
-      { type: 'oven_block', x: 800, y: 80, w: 400, h: 90, label: 'HORNO INDUSTRIAL' },
-      { type: 'fire_logs', x: 720, y: 220, count: 5 },
-      { type: 'fire_logs', x: 1240, y: 220, count: 5 },
-      // Cocina
-      { type: 'table_prep', x: 180, y: 180, w: 160, h: 90 },
-      { type: 'flour_sacks', x: 80, y: 90, count: 6 },
-      { type: 'table_prep', x: 180, y: 380, w: 160, h: 80 },
-      // Despensa
-      { type: 'shelves', x: 80, y: 830, w: 200, h: 50 },
-      { type: 'flour_sacks', x: 100, y: 1100, count: 8 },
-      { type: 'wooden_crates', x: 380, y: 1150, count: 4 },
-      // Repostería
-      { type: 'glass_showcase', x: 1540, y: 120, w: 260, h: 70 },
-      { type: 'donut_stand', x: 1820, y: 340 },
-      // Recepción
-      { type: 'checkout_counter', x: 1540, y: 840, w: 260, h: 60 },
-      { type: 'bread_rack', x: 1820, y: 1100, w: 60, h: 160 },
-      // Cafetería
-      { type: 'cafe_table', x: 820, y: 640 },
-      { type: 'cafe_table', x: 1180, y: 640 },
-      { type: 'cafe_table', x: 820, y: 880 },
-      { type: 'cafe_table', x: 1180, y: 880 },
-      // Enfriamiento
-      { type: 'cooling_racks', x: 800, y: 1200, w: 140, h: 70 },
-      { type: 'fan_vent', x: 1180, y: 1200 }
+      { type: 'oven_block', x: 1400, y: 110, w: 400, h: 110 },
+      { type: 'table_prep', x: 350, y: 300, w: 200, h: 90 },
+      { type: 'table_prep', x: 650, y: 450, w: 180, h: 90 },
+      { type: 'flour_sacks', x: 150, y: 1800, count: 10 },
+      { type: 'flour_sacks', x: 450, y: 1800, count: 8 },
+      { type: 'wooden_crates', x: 750, y: 2100, count: 6 },
+      { type: 'glass_showcase', x: 2450, y: 1050, w: 320, h: 80 },
+      { type: 'checkout_counter', x: 2850, y: 1300, w: 240, h: 70 },
+      { type: 'bread_rack', x: 2500, y: 1900, w: 70, h: 200 },
+      { type: 'bread_rack', x: 2800, y: 1900, w: 70, h: 200 },
+      { type: 'cafe_table', x: 1380, y: 1050 },
+      { type: 'cafe_table', x: 1820, y: 1050 },
+      { type: 'cafe_table', x: 1380, y: 1350 },
+      { type: 'cafe_table', x: 1820, y: 1350 }
     ],
     tasks: [
-      { id: 1, name: 'Amasar la Masa', room: 'Cocina', x: 260, y: 230, type: 'amasar' },
-      { id: 2, name: 'Moler Trigo', room: 'Cocina', x: 180, y: 440, type: 'moler' },
-      { id: 3, name: 'Meter Panes al Horno', room: 'Hornos', x: 1000, y: 190, type: 'horno' },
-      { id: 4, name: 'Ajustar Temperatura', room: 'Hornos', x: 1220, y: 270, type: 'temperatura' },
-      { id: 5, name: 'Decorar Donas', room: 'Repostería', x: 1720, y: 220, type: 'donas' },
-      { id: 6, name: 'Acomodar Panes', room: 'Repostería', x: 1680, y: 460, type: 'acomodar' },
-      { id: 7, name: 'Ordenar Sacos', room: 'Despensa', x: 220, y: 980, type: 'sacos' },
-      { id: 8, name: 'Vaciar Mermelada', room: 'Despensa', x: 450, y: 1280, type: 'mermelada' },
-      { id: 9, name: 'Limpiar Migajas', room: 'Recepción', x: 1620, y: 980, type: 'limpiar' },
-      { id: 10, name: 'Enfriar Baguettes', room: 'Enfriamiento', x: 1000, y: 1280, type: 'abanicar' }
+      { id: 1, name: 'Amasar la Masa', room: 'Cocina & Amasado', x: 420, y: 320, type: 'amasar' },
+      { id: 2, name: 'Moler Trigo', room: 'Cocina & Amasado', x: 700, y: 470, type: 'moler' },
+      { id: 3, name: 'Meter Panes al Horno', room: 'Gran Horno', x: 1550, y: 240, type: 'horno' },
+      { id: 4, name: 'Ajustar Temperatura', room: 'Gran Horno', x: 1750, y: 240, type: 'temperatura' },
+      { id: 5, name: 'Decorar Donas', room: 'Repostería', x: 2550, y: 300, type: 'donas' },
+      { id: 6, name: 'Acomodar Panes', room: 'Repostería', x: 2850, y: 450, type: 'acomodar' },
+      { id: 7, name: 'Ordenar Sacos', room: 'Despensa & Silos', x: 300, y: 1950, type: 'sacos' },
+      { id: 8, name: 'Vaciar Mermelada', room: 'Despensa & Silos', x: 650, y: 2150, type: 'mermelada' },
+      { id: 9, name: 'Limpiar Migajas', room: 'Ventas & Mostrador', x: 2600, y: 1180, type: 'limpiar' },
+      { id: 10, name: 'Enfriar Baguettes', room: 'Enfriamiento', x: 1600, y: 2000, type: 'abanicar' }
     ]
   },
 
   'La Masadería': {
-    width: 2200,
-    height: 1600,
-    emergency: { x: 1100, y: 800 },
+    width: 3300,
+    height: 2500,
+    emergency: { x: 1650, y: 1250 },
     spawns: [
-      { x: 1100, y: 700 }, { x: 1180, y: 750 }, { x: 1190, y: 830 },
-      { x: 1100, y: 890 }, { x: 1010, y: 830 }, { x: 1020, y: 750 },
-      { x: 1060, y: 710 }, { x: 1140, y: 710 }, { x: 1060, y: 880 },
-      { x: 1140, y: 880 }, { x: 970, y: 800 }, { x: 1230, y: 800 },
-      { x: 950, y: 740 }, { x: 1250, y: 740 }, { x: 1100, y: 800 }
+      { x: 1650, y: 1150 }, { x: 1730, y: 1190 }, { x: 1750, y: 1270 },
+      { x: 1700, y: 1330 }, { x: 1600, y: 1330 }, { x: 1550, y: 1270 },
+      { x: 1570, y: 1190 }, { x: 1650, y: 1310 }, { x: 1770, y: 1230 },
+      { x: 1530, y: 1230 }, { x: 1650, y: 1200 }, { x: 1700, y: 1250 }
     ],
     rooms: [
-      { id: 'salon', name: 'Salón Rústico de Catas', x: 770, y: 580, w: 660, h: 440, floor: 'rustic', label: 'LA GRAN MESA' },
-      { id: 'horno_artesanal', name: 'Horno de Piedra Tradicional', x: 770, y: 30, w: 660, h: 450, floor: 'stone', label: 'HORNO DE PIEDRA' },
-      { id: 'fermentacion', name: 'Cámara de Fermentación', x: 30, y: 30, w: 600, h: 620, floor: 'tile_dark', label: 'FERMENTACIÓN' },
-      { id: 'bodega', name: 'Bodega de Semillas y Levadura', x: 30, y: 820, w: 600, h: 750, floor: 'rustic', label: 'BODEGA DE LEVADURA' },
-      { id: 'pasteleria', name: 'Taller de Confitería', x: 1570, y: 30, w: 600, h: 620, floor: 'tile_pink', label: 'CONFITERÍA' },
-      { id: 'envasado', name: 'Despacho & Envasado de Pan', x: 1570, y: 820, w: 600, h: 750, floor: 'wood', label: 'DESPACHO' },
-      { id: 'lavanderia', name: 'Taller de Limpieza & Utensilios', x: 770, y: 1120, w: 660, h: 450, floor: 'metal', label: 'LIMPIEZA' }
+      { id: 'salon', name: 'Gran Salón Rústico de Catas', x: 1300, y: 980, w: 700, h: 540, floor: 'rustic', label: 'LA GRAN MESA' },
+      { id: 'molino', name: 'Sala de Engranajes del Molino', x: 1300, y: 60, w: 700, h: 660, floor: 'stone', label: 'MOLINO DE VIENTO' },
+      { id: 'cava', name: 'Cava Ancestral de Levaduras', x: 60, y: 60, w: 920, h: 660, floor: 'tile_dark', label: 'CAVA DE LEVADURAS' },
+      { id: 'amasado', name: 'Amasadero en Artesas de Roble', x: 60, y: 980, w: 920, h: 540, floor: 'wood', label: 'AMASADO EN ARTESAS' },
+      { id: 'granero', name: 'Granero de Centeno, Cebada & Trigo', x: 60, y: 1780, w: 920, h: 660, floor: 'rustic', label: 'GRANERO DE SEMILLAS' },
+      { id: 'cubas', name: 'Lavado de Barricas & Calderas', x: 1300, y: 1780, w: 700, h: 660, floor: 'metal', label: 'LAVADO DE BARRICAS' },
+      { id: 'horno_piedra', name: 'Hornos de Piedra Volcánica', x: 2320, y: 60, w: 920, h: 660, floor: 'stone', label: 'HORNO VOLCÁNICO' },
+      { id: 'confiteria_miel', name: 'Obrador de Miel & Piloncillo', x: 2320, y: 980, w: 920, h: 540, floor: 'tile_pink', label: 'CONFITERÍA DE MIEL' },
+      { id: 'despacho_carretas', name: 'Despacho de Carretas & Cestas', x: 2320, y: 1780, w: 920, h: 660, floor: 'wood_dark', label: 'DESPACHO RÚSTICO' }
     ],
     walls: [
-      // Perímetro exterior
-      { x: 0, y: 0, w: 2200, h: 30 },
-      { x: 0, y: 1570, w: 2200, h: 30 },
-      { x: 0, y: 0, w: 30, h: 1600 },
-      { x: 2170, y: 0, w: 30, h: 1600 },
+      { x: 0, y: 0, w: 3300, h: 30 },
+      { x: 0, y: 2470, w: 3300, h: 30 },
+      { x: 0, y: 0, w: 30, h: 2500 },
+      { x: 3270, y: 0, w: 30, h: 2500 },
 
-      // Fermentación (NW)
-      { x: 30, y: 650, w: 600, h: 25 },
-      { x: 630, y: 30, w: 25, h: 280 },
-      { x: 630, y: 430, w: 25, h: 245 },
+      // Cava (NW)
+      { x: 60, y: 720, w: 920, h: 25 },
+      { x: 980, y: 60, w: 25, h: 250 },
+      { x: 980, y: 470, w: 25, h: 250 },
 
-      // Bodega (SW)
-      { x: 30, y: 820, w: 600, h: 25 },
-      { x: 630, y: 820, w: 25, h: 160 },
-      { x: 630, y: 1100, w: 25, h: 470 },
+      // Amasado (W)
+      { x: 60, y: 980, w: 920, h: 25 },
+      { x: 60, y: 1520, w: 920, h: 25 },
+      { x: 980, y: 980, w: 25, h: 180 },
+      { x: 980, y: 1340, w: 25, h: 180 },
 
-      // Confitería (NE)
-      { x: 1570, y: 650, w: 600, h: 25 },
-      { x: 1570, y: 30, w: 25, h: 280 },
-      { x: 1570, y: 430, w: 25, h: 245 },
+      // Granero (SW)
+      { x: 60, y: 1780, w: 920, h: 25 },
+      { x: 980, y: 1780, w: 25, h: 250 },
+      { x: 980, y: 2190, w: 25, h: 250 },
 
-      // Envasado (SE)
-      { x: 1570, y: 820, w: 600, h: 25 },
-      { x: 1570, y: 820, w: 25, h: 160 },
-      { x: 1570, y: 1100, w: 25, h: 470 },
+      // Molino (N)
+      { x: 1300, y: 60, w: 25, h: 660 },
+      { x: 2000, y: 60, w: 25, h: 660 },
+      { x: 1300, y: 720, w: 260, h: 25 },
+      { x: 1740, y: 720, w: 260, h: 25 },
 
       // Salón Central
-      { x: 770, y: 580, w: 25, h: 160 },
-      { x: 770, y: 860, w: 25, h: 160 },
-      { x: 1430, y: 580, w: 25, h: 160 },
-      { x: 1430, y: 860, w: 25, h: 160 },
-      { x: 770, y: 580, w: 270, h: 25 },
-      { x: 1160, y: 580, w: 295, h: 25 },
-      { x: 770, y: 1020, w: 270, h: 25 },
-      { x: 1160, y: 1020, w: 295, h: 25 },
+      { x: 1300, y: 980, w: 260, h: 25 },
+      { x: 1740, y: 980, w: 260, h: 25 },
+      { x: 1300, y: 1520, w: 260, h: 25 },
+      { x: 1740, y: 1520, w: 260, h: 25 },
+      { x: 1300, y: 980, w: 25, h: 180 },
+      { x: 1300, y: 1340, w: 25, h: 180 },
+      { x: 2000, y: 980, w: 25, h: 180 },
+      { x: 2000, y: 1340, w: 25, h: 180 },
 
-      // Horno Artesanal (N)
-      { x: 770, y: 30, w: 25, h: 450 },
-      { x: 1430, y: 30, w: 25, h: 450 },
-      { x: 770, y: 480, w: 270, h: 25 },
-      { x: 1160, y: 480, w: 295, h: 25 },
+      // Lavado (S)
+      { x: 1300, y: 1780, w: 25, h: 660 },
+      { x: 2000, y: 1780, w: 25, h: 660 },
+      { x: 1300, y: 1780, w: 260, h: 25 },
+      { x: 1740, y: 1780, w: 260, h: 25 },
 
-      // Limpieza (S)
-      { x: 770, y: 1120, w: 25, h: 450 },
-      { x: 1430, y: 1120, w: 25, h: 450 },
-      { x: 770, y: 1120, w: 270, h: 25 },
-      { x: 1160, y: 1120, w: 295, h: 25 }
+      // Horno Volcánico (NE)
+      { x: 2320, y: 720, w: 920, h: 25 },
+      { x: 2320, y: 60, w: 25, h: 250 },
+      { x: 2320, y: 470, w: 25, h: 250 },
+
+      // Confitería (E)
+      { x: 2320, y: 980, w: 920, h: 25 },
+      { x: 2320, y: 1520, w: 920, h: 25 },
+      { x: 2320, y: 980, w: 25, h: 180 },
+      { x: 2320, y: 1340, w: 25, h: 180 },
+
+      // Despacho (SE)
+      { x: 2320, y: 1780, w: 920, h: 25 },
+      { x: 2320, y: 1780, w: 25, h: 250 },
+      { x: 2320, y: 2190, w: 25, h: 250 }
     ],
     decorations: [
-      { type: 'stone_oven', x: 920, y: 80, w: 360, h: 110 },
-      { type: 'flour_sacks', x: 120, y: 120, count: 8 },
-      { type: 'table_prep', x: 260, y: 260, w: 180, h: 90 },
-      { type: 'wooden_crates', x: 120, y: 920, count: 6 },
-      { type: 'shelves', x: 380, y: 860, w: 200, h: 50 },
-      { type: 'glass_showcase', x: 1680, y: 140, w: 260, h: 80 },
-      { type: 'checkout_counter', x: 1680, y: 900, w: 260, h: 70 },
-      { type: 'bread_rack', x: 1980, y: 1150, w: 70, h: 180 },
-      { type: 'cafe_table', x: 920, y: 680 },
-      { type: 'cafe_table', x: 1280, y: 680 },
-      { type: 'cafe_table', x: 920, y: 920 },
-      { type: 'cafe_table', x: 1280, y: 920 }
+      { type: 'stone_oven', x: 2500, y: 120, w: 400, h: 120 },
+      { type: 'flour_sacks', x: 200, y: 1900, count: 12 },
+      { type: 'wooden_crates', x: 600, y: 2150, count: 8 },
+      { type: 'table_prep', x: 450, y: 1150, w: 220, h: 90 },
+      { type: 'shelves', x: 200, y: 120, w: 300, h: 60 },
+      { type: 'glass_showcase', x: 2500, y: 1080, w: 320, h: 80 },
+      { type: 'bread_rack', x: 2600, y: 1950, w: 80, h: 220 },
+      { type: 'cafe_table', x: 1450, y: 1100 },
+      { type: 'cafe_table', x: 1850, y: 1100 },
+      { type: 'cafe_table', x: 1450, y: 1400 },
+      { type: 'cafe_table', x: 1850, y: 1400 }
     ],
     tasks: [
-      { id: 1, name: 'Amasar la Masa', room: 'Fermentación', x: 300, y: 260, type: 'amasar' },
-      { id: 2, name: 'Moler Trigo', room: 'Fermentación', x: 200, y: 480, type: 'moler' },
-      { id: 3, name: 'Meter Panes al Horno', room: 'Horno de Piedra', x: 1100, y: 200, type: 'horno' },
-      { id: 4, name: 'Ajustar Temperatura', room: 'Horno de Piedra', x: 1320, y: 300, type: 'temperatura' },
-      { id: 5, name: 'Decorar Donas', room: 'Confitería', x: 1860, y: 240, type: 'donas' },
-      { id: 6, name: 'Acomodar Panes', room: 'Confitería', x: 1820, y: 500, type: 'acomodar' },
-      { id: 7, name: 'Ordenar Sacos', room: 'Bodega', x: 240, y: 1040, type: 'sacos' },
-      { id: 8, name: 'Vaciar Mermelada', room: 'Bodega', x: 500, y: 1360, type: 'mermelada' },
-      { id: 9, name: 'Limpiar Migajas', room: 'Limpieza', x: 920, y: 1340, type: 'limpiar' },
-      { id: 10, name: 'Enfriar Baguettes', room: 'Despacho', x: 1860, y: 1060, type: 'abanicar' }
+      { id: 1, name: 'Amasar en Artesa de Roble', room: 'Amasado en Artesas', x: 480, y: 1180, type: 'amasar' },
+      { id: 2, name: 'Moler Centeno con Piedra', room: 'Molino de Viento', x: 1650, y: 350, type: 'moler' },
+      { id: 3, name: 'Meter Panes al Horno Volcánico', room: 'Horno Volcánico', x: 2650, y: 240, type: 'horno' },
+      { id: 4, name: 'Ajustar Tiraje de Humo', room: 'Horno Volcánico', x: 2850, y: 400, type: 'temperatura' },
+      { id: 5, name: 'Bañar en Piloncillo', room: 'Confitería de Miel', x: 2650, y: 1150, type: 'donas' },
+      { id: 6, name: 'Acomodar Hogazas Rústicas', room: 'Confitería de Miel', x: 2900, y: 1300, type: 'acomodar' },
+      { id: 7, name: 'Apilar Sacos de Semillas', room: 'Granero de Semillas', x: 400, y: 2050, type: 'sacos' },
+      { id: 8, name: 'Llenar Cántaro de Miel', room: 'Cava de Levaduras', x: 500, y: 350, type: 'mermelada' },
+      { id: 9, name: 'Barrer Virutas de Madera', room: 'Lavado de Barricas', x: 1650, y: 2100, type: 'limpiar' },
+      { id: 10, name: 'Abanicar Panes de Masa Madre', room: 'Despacho Rústico', x: 2650, y: 2100, type: 'abanicar' }
+    ]
+  },
+
+  'Pastelería Francesa': {
+    width: 3400,
+    height: 2500,
+    emergency: { x: 1700, y: 1250 },
+    spawns: [
+      { x: 1700, y: 1150 }, { x: 1780, y: 1190 }, { x: 1800, y: 1270 },
+      { x: 1750, y: 1330 }, { x: 1650, y: 1330 }, { x: 1600, y: 1270 },
+      { x: 1620, y: 1190 }, { x: 1700, y: 1310 }, { x: 1820, y: 1230 },
+      { x: 1580, y: 1230 }, { x: 1700, y: 1200 }, { x: 1750, y: 1250 }
+    ],
+    rooms: [
+      { id: 'salon_real', name: 'Salón de Té & Degustación Real', x: 1350, y: 980, w: 700, h: 540, floor: 'marble', label: 'SALÓN DE TÉ REAL' },
+      { id: 'atelier_macarons', name: 'Atelier de Macarons & Merengues', x: 1350, y: 60, w: 700, h: 660, floor: 'tile_pink', label: 'ATELIER MACARONS' },
+      { id: 'chocolateria', name: 'Laboratorio de Alta Chocolatería', x: 60, y: 60, w: 960, h: 660, floor: 'wood_dark', label: 'CHOCOLATERÍA FINA' },
+      { id: 'mantequilla', name: 'Cámara Fría de Mantequilla de Normandía', x: 60, y: 980, w: 960, h: 540, floor: 'tile', label: 'CÁMARA MANTEQUILLA' },
+      { id: 'invernadero', name: 'Invernadero de Vainilla & Frambuesas', x: 60, y: 1780, w: 960, h: 660, floor: 'stone', label: 'INVERNADERO FRUTAL' },
+      { id: 'horno_croissants', name: 'Hornos de Croissants Hojaldrados', x: 1350, y: 1780, w: 700, h: 660, floor: 'stone', label: 'HORNO CROISSANTS' },
+      { id: 'cava_licores', name: 'Cava de Vinos Dulces & Licores', x: 2380, y: 60, w: 960, h: 660, floor: 'rustic', label: 'CAVA DE LICORES' },
+      { id: 'galeria_cristal', name: 'Galería de Vitrinas & Esculturas de Azúcar', x: 2380, y: 980, w: 960, h: 540, floor: 'marble', label: 'GALERÍA DE CRISTAL' },
+      { id: 'empaque_seda', name: 'Salón de Empaque de Lujo con Seda', x: 2380, y: 1780, w: 960, h: 660, floor: 'wood', label: 'EMPAQUE DE SEDA' }
+    ],
+    walls: [
+      { x: 0, y: 0, w: 3400, h: 30 },
+      { x: 0, y: 2470, w: 3400, h: 30 },
+      { x: 0, y: 0, w: 30, h: 2500 },
+      { x: 3370, y: 0, w: 30, h: 2500 },
+
+      // Chocolatería (NW)
+      { x: 60, y: 720, w: 960, h: 25 },
+      { x: 1020, y: 60, w: 25, h: 250 },
+      { x: 1020, y: 470, w: 25, h: 250 },
+
+      // Mantequilla (W)
+      { x: 60, y: 980, w: 960, h: 25 },
+      { x: 60, y: 1520, w: 960, h: 25 },
+      { x: 1020, y: 980, w: 25, h: 180 },
+      { x: 1020, y: 1340, w: 25, h: 180 },
+
+      // Invernadero (SW)
+      { x: 60, y: 1780, w: 960, h: 25 },
+      { x: 1020, y: 1780, w: 25, h: 250 },
+      { x: 1020, y: 2190, w: 25, h: 250 },
+
+      // Atelier Macarons (N)
+      { x: 1350, y: 60, w: 25, h: 660 },
+      { x: 2050, y: 60, w: 25, h: 660 },
+      { x: 1350, y: 720, w: 260, h: 25 },
+      { x: 1790, y: 720, w: 260, h: 25 },
+
+      // Salón de Té Central
+      { x: 1350, y: 980, w: 260, h: 25 },
+      { x: 1790, y: 980, w: 260, h: 25 },
+      { x: 1350, y: 1520, w: 260, h: 25 },
+      { x: 1790, y: 1520, w: 260, h: 25 },
+      { x: 1350, y: 980, w: 25, h: 180 },
+      { x: 1350, y: 1340, w: 25, h: 180 },
+      { x: 2050, y: 980, w: 25, h: 180 },
+      { x: 2050, y: 1340, w: 25, h: 180 },
+
+      // Horno Croissants (S)
+      { x: 1350, y: 1780, w: 25, h: 660 },
+      { x: 2050, y: 1780, w: 25, h: 660 },
+      { x: 1350, y: 1780, w: 260, h: 25 },
+      { x: 1790, y: 1780, w: 260, h: 25 },
+
+      // Cava Licores (NE)
+      { x: 2380, y: 720, w: 960, h: 25 },
+      { x: 2380, y: 60, w: 25, h: 250 },
+      { x: 2380, y: 470, w: 25, h: 250 },
+
+      // Galería Cristal (E)
+      { x: 2380, y: 980, w: 960, h: 25 },
+      { x: 2380, y: 1520, w: 960, h: 25 },
+      { x: 2380, y: 980, w: 25, h: 180 },
+      { x: 2380, y: 1340, w: 25, h: 180 },
+
+      // Empaque Seda (SE)
+      { x: 2380, y: 1780, w: 960, h: 25 },
+      { x: 2380, y: 1780, w: 25, h: 250 },
+      { x: 2380, y: 2190, w: 25, h: 250 }
+    ],
+    decorations: [
+      { type: 'glass_showcase', x: 2500, y: 1050, w: 380, h: 80 },
+      { type: 'crystal_table', x: 1500, y: 1100, w: 180, h: 80 },
+      { type: 'crystal_table', x: 1720, y: 1100, w: 180, h: 80 },
+      { type: 'oven_block', x: 1500, y: 1840, w: 400, h: 110 },
+      { type: 'table_prep', x: 300, y: 300, w: 220, h: 90 },
+      { type: 'flour_sacks', x: 200, y: 1850, count: 8 },
+      { type: 'bread_rack', x: 2600, y: 1950, w: 80, h: 220 },
+      { type: 'checkout_counter', x: 2800, y: 1350, w: 260, h: 70 }
+    ],
+    tasks: [
+      { id: 1, name: 'Amasar Hojaldre Francés', room: 'Chocolatería Fina', x: 450, y: 340, type: 'amasar' },
+      { id: 2, name: 'Moler Granos de Cacao', room: 'Chocolatería Fina', x: 750, y: 520, type: 'moler' },
+      { id: 3, name: 'Hornear Croissants de Mantequilla', room: 'Horno Croissants', x: 1650, y: 1980, type: 'horno' },
+      { id: 4, name: 'Atemperar Chocolate Suizo', room: 'Cámara Mantequilla', x: 450, y: 1240, type: 'temperatura' },
+      { id: 5, name: 'Decorar Macarons de Colores', room: 'Atelier Macarons', x: 1650, y: 320, type: 'donas' },
+      { id: 6, name: 'Acomodar Eclairs en Vitrina', room: 'Galería de Cristal', x: 2750, y: 1220, type: 'acomodar' },
+      { id: 7, name: 'Organizar Cajas de Seda', room: 'Empaque de Seda', x: 2750, y: 2020, type: 'sacos' },
+      { id: 8, name: 'Verter Jalea de Frambuesa', room: 'Invernadero Frutal', x: 450, y: 2020, type: 'mermelada' },
+      { id: 9, name: 'Lustrar Vitrinas de Cristal', room: 'Cava de Licores', x: 2750, y: 420, type: 'limpiar' },
+      { id: 10, name: 'Enfriar Merengues Suaves', room: 'Atelier Macarons', x: 1700, y: 480, type: 'abanicar' }
+    ]
+  },
+
+  'Fábrica Industrial': {
+    width: 3500,
+    height: 2600,
+    emergency: { x: 1750, y: 1300 },
+    spawns: [
+      { x: 1750, y: 1200 }, { x: 1830, y: 1240 }, { x: 1850, y: 1320 },
+      { x: 1800, y: 1380 }, { x: 1700, y: 1380 }, { x: 1650, y: 1320 },
+      { x: 1670, y: 1240 }, { x: 1750, y: 1360 }, { x: 1870, y: 1280 },
+      { x: 1630, y: 1280 }, { x: 1750, y: 1250 }, { x: 1800, y: 1300 }
+    ],
+    rooms: [
+      { id: 'control_central', name: 'Sala de Comando & Monitores Centrales', x: 1400, y: 1020, w: 700, h: 560, floor: 'caution', label: 'CONTROL CENTRAL' },
+      { id: 'hornos_tunel', name: 'Hornos de Túnel Automatizados', x: 1400, y: 60, w: 700, h: 680, floor: 'stone', label: 'HORNOS DE TÚNEL' },
+      { id: 'silos_acero', name: 'Parque de Silos de Acero Inoxidable', x: 60, y: 60, w: 1000, h: 680, floor: 'metal', label: 'SILOS DE ACERO' },
+      { id: 'mezcladoras', name: 'Mezcladoras Continuas de Gran Volumen', x: 60, y: 1020, w: 1000, h: 560, floor: 'tile_dark', label: 'MEZCLADORAS INDUSTRIALES' },
+      { id: 'laboratorio', name: 'Laboratorio de Biotecnología & Levaduras', x: 60, y: 1860, w: 1000, h: 680, floor: 'tile', label: 'LABORATORIO DE CALIDAD' },
+      { id: 'calderas', name: 'Generadores de Vapor & Calderas', x: 1400, y: 1860, w: 700, h: 680, floor: 'metal', label: 'CALDERAS DE VAPOR' },
+      { id: 'rebanado', name: 'Línea Robótica de Rebanado & Envasado', x: 2440, y: 60, w: 1000, h: 680, floor: 'caution', label: 'LÍNEA DE REBANADO' },
+      { id: 'inspeccion', name: 'Puesto de Inspección & Rayos X', x: 2440, y: 1020, w: 1000, h: 560, floor: 'tile', label: 'INSPECCIÓN DE CALIDAD' },
+      { id: 'muelle', name: 'Muelle de Embarque & Logística de Camiones', x: 2440, y: 1860, w: 1000, h: 680, floor: 'metal', label: 'MUELLE DE CARGA' }
+    ],
+    walls: [
+      { x: 0, y: 0, w: 3500, h: 30 },
+      { x: 0, y: 2570, w: 3500, h: 30 },
+      { x: 0, y: 0, w: 30, h: 2600 },
+      { x: 3470, y: 0, w: 30, h: 2600 },
+
+      // Silos (NW)
+      { x: 60, y: 740, w: 1000, h: 25 },
+      { x: 1060, y: 60, w: 25, h: 250 },
+      { x: 1060, y: 490, w: 25, h: 250 },
+
+      // Mezcladoras (W)
+      { x: 60, y: 1020, w: 1000, h: 25 },
+      { x: 60, y: 1580, w: 1000, h: 25 },
+      { x: 1060, y: 1020, w: 25, h: 180 },
+      { x: 1060, y: 1400, w: 25, h: 180 },
+
+      // Laboratorio (SW)
+      { x: 60, y: 1860, w: 1000, h: 25 },
+      { x: 1060, y: 1860, w: 25, h: 250 },
+      { x: 1060, y: 2290, w: 25, h: 250 },
+
+      // Hornos Túnel (N)
+      { x: 1400, y: 60, w: 25, h: 680 },
+      { x: 2100, y: 60, w: 25, h: 680 },
+      { x: 1400, y: 740, w: 260, h: 25 },
+      { x: 1840, y: 740, w: 260, h: 25 },
+
+      // Control Central
+      { x: 1400, y: 1020, w: 260, h: 25 },
+      { x: 1840, y: 1020, w: 260, h: 25 },
+      { x: 1400, y: 1580, w: 260, h: 25 },
+      { x: 1840, y: 1580, w: 260, h: 25 },
+      { x: 1400, y: 1020, w: 25, h: 180 },
+      { x: 1400, y: 1400, w: 25, h: 180 },
+      { x: 2100, y: 1020, w: 25, h: 180 },
+      { x: 2100, y: 1400, w: 25, h: 180 },
+
+      // Calderas (S)
+      { x: 1400, y: 1860, w: 25, h: 680 },
+      { x: 2100, y: 1860, w: 25, h: 680 },
+      { x: 1400, y: 1860, w: 260, h: 25 },
+      { x: 1840, y: 1860, w: 260, h: 25 },
+
+      // Rebanado (NE)
+      { x: 2440, y: 740, w: 1000, h: 25 },
+      { x: 2440, y: 60, w: 25, h: 250 },
+      { x: 2440, y: 490, w: 25, h: 250 },
+
+      // Inspección (E)
+      { x: 2440, y: 1020, w: 1000, h: 25 },
+      { x: 2440, y: 1580, w: 1000, h: 25 },
+      { x: 2440, y: 1020, w: 25, h: 180 },
+      { x: 2440, y: 1400, w: 25, h: 180 },
+
+      // Muelle (SE)
+      { x: 2440, y: 1860, w: 1000, h: 25 },
+      { x: 2440, y: 1860, w: 25, h: 250 },
+      { x: 2440, y: 2290, w: 25, h: 250 }
+    ],
+    decorations: [
+      { type: 'conveyor_belt', x: 2550, y: 250, w: 500, h: 60 },
+      { type: 'conveyor_belt', x: 2550, y: 450, w: 500, h: 60 },
+      { type: 'silo', x: 300, y: 250, r: 80 },
+      { type: 'silo', x: 600, y: 250, r: 80 },
+      { type: 'silo', x: 900, y: 250, r: 80 },
+      { type: 'oven_block', x: 1500, y: 150, w: 500, h: 140 },
+      { type: 'wooden_crates', x: 2600, y: 2000, count: 12 },
+      { type: 'flour_sacks', x: 300, y: 1200, count: 10 },
+      { type: 'table_prep', x: 600, y: 1200, w: 240, h: 90 }
+    ],
+    tasks: [
+      { id: 1, name: 'Amasar Masa en Tina Industrial', room: 'Mezcladoras Industriales', x: 480, y: 1280, type: 'amasar' },
+      { id: 2, name: 'Moler Trigo en Molino Eléctrico', room: 'Silos de Acero', x: 480, y: 380, type: 'moler' },
+      { id: 3, name: 'Supervisar Horno de Túnel', room: 'Hornos de Túnel', x: 1750, y: 360, type: 'horno' },
+      { id: 4, name: 'Calibrar Sensores Térmicos', room: 'Calderas de Vapor', x: 1750, y: 2180, type: 'temperatura' },
+      { id: 5, name: 'Inyectar Relleno Automático', room: 'Línea de Rebanado', x: 2850, y: 360, type: 'donas' },
+      { id: 6, name: 'Estibar Rebanadas de Molde', room: 'Inspección de Calidad', x: 2850, y: 1280, type: 'acomodar' },
+      { id: 7, name: 'Descargar Sacos de Levadura', room: 'Laboratorio de Calidad', x: 480, y: 2180, type: 'sacos' },
+      { id: 8, name: 'Presurizar Tanque de Mermelada', room: 'Laboratorio de Calidad', x: 780, y: 2180, type: 'mermelada' },
+      { id: 9, name: 'Desinfectar Banda Transportadora', room: 'Muelle de Carga', x: 2850, y: 2180, type: 'limpiar' },
+      { id: 10, name: 'Activar Turbinas de Enfriamiento', room: 'Hornos de Túnel', x: 1750, y: 550, type: 'abanicar' }
     ]
   }
 };
