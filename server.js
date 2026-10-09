@@ -29,9 +29,16 @@ const io = new Server(server, {
 const rooms = new Map(); // code -> Room
 const socketToRoom = new Map(); // socketId -> code
 
-const BREAD_SKINS = ['baguette', 'bolillo', 'donut', 'concha', 'mohoso', 'quemado'];
-const HATS = ['none', 'chef', 'butter', 'candle'];
-const FACES = ['none', 'sunglasses', 'mustache', 'monocle'];
+const BREAD_SKINS = [
+  'bolillo', 'baguette', 'donut', 'concha', 'mohoso', 'quemado',
+  'croissant', 'pandemuerto', 'concha_rosa', 'tostada', 'bagel', 'muffin', 'donut_chocolate'
+];
+const HATS = [
+  'none', 'chef', 'butter', 'candle', 'beret', 'crown', 'mini_bread', 'rolling_pin', 'flower', 'party'
+];
+const FACES = [
+  'none', 'sunglasses', 'mustache', 'monocle', 'blush', 'pirate', 'glasses', 'mask', 'bubblegum'
+];
 
 // ============================================
 // MAPAS ARQUITECTÓNICOS DIVERSOS (HABITACIONES, PASILLOS Y PAREDES)
@@ -541,29 +548,43 @@ io.on('connection', (socket) => {
     }
   });
 
-  // -------- CHAT --------
+  // -------- CHAT (FILTRADO FANTASMAS VS VIVOS) --------
   socket.on('chat', ({ msg }) => {
     const code = socketToRoom.get(socket.id);
     const room = rooms.get(code);
     if (!room) return;
-    const p = room.players.get(socket.id);
-    if (!p) return;
+    const sender = room.players.get(socket.id);
+    if (!sender) return;
     const cleanMsg = String(msg || '').trim().slice(0, 200);
     if (!cleanMsg) return;
 
+    // Un emisor es fantasma si está en partida/votación y no está vivo
+    const isSenderGhost = (room.state !== 'lobby') && (!sender.alive || sender.isGhost);
+
     const message = {
       senderId: socket.id,
-      name: p.name,
+      name: sender.name,
       msg: cleanMsg,
       ts: Date.now(),
-      color: p.color,
-      skin: p.skin,
-      alive: p.alive,
-      isGhost: p.isGhost
+      color: sender.color,
+      skin: sender.skin,
+      alive: sender.alive,
+      isGhost: isSenderGhost
     };
     room.chat.push(message);
     if (room.chat.length > 100) room.chat.shift();
-    io.to(code).emit('chat', message);
+
+    if (isSenderGhost) {
+      // 👻 Chat de fantasmas: SÓLO se envía a los sockets de jugadores que estén muertos/fantasmas
+      for (const [targetSocketId, targetPlayer] of room.players) {
+        if (!targetPlayer.alive || targetPlayer.isGhost) {
+          io.to(targetSocketId).emit('chat', message);
+        }
+      }
+    } else {
+      // 🍞 Chat de vivos: Lo reciben TODOS (tanto vivos como fantasmas)
+      io.to(code).emit('chat', message);
+    }
   });
 
   // -------- COMPLETAR MISIÓN --------
@@ -957,5 +978,6 @@ function endGame(room, winner) {
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
   console.log(`🍞 Among Breads Server corriendo en puerto ${PORT}`);
-  console.log(`🌐 http://localhost:${PORT}`);
+  console.log(`🌐 Local:   http://localhost:${PORT}`);
+  console.log(`📱 Celular: http://192.168.155.101:${PORT} (en la misma red Wi-Fi)`);
 });

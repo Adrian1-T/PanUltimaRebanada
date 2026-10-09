@@ -12,7 +12,7 @@
 html, body {
   width: 100%; height: 100%; overflow: hidden;
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-  background: #2a1e14;
+  background: #23180f;
   color: #4a3a2a;
   user-select: none;
   -webkit-user-select: none;
@@ -30,7 +30,7 @@ html, body {
 .neu {
   background: linear-gradient(145deg, #f5e6d3, #d9c4a8);
   border-radius: 20px;
-  box-shadow: 6px 6px 14px rgba(120, 90, 60, 0.45),
+  box-shadow: 6px 6px 14px rgba(100, 75, 50, 0.5),
               -6px -6px 14px rgba(255, 245, 230, 0.65);
   border: 1px solid rgba(255, 255, 255, 0.5);
 }
@@ -43,13 +43,13 @@ html, body {
 .neu-btn {
   background: linear-gradient(145deg, #e8c9a0, #c9a878);
   border: none; border-radius: 16px;
-  padding: 12px 20px;
-  font-size: 15px; font-weight: 700;
+  padding: 12px 18px;
+  font-size: 14px; font-weight: 700;
   color: #4a3a2a;
   cursor: pointer;
-  box-shadow: 5px 5px 10px rgba(120, 90, 60, 0.4),
-              -5px -5px 10px rgba(255, 245, 230, 0.6);
-  transition: transform 0.1s, box-shadow 0.1s, opacity 0.1s;
+  box-shadow: 4px 4px 9px rgba(110, 80, 50, 0.4),
+              -4px -4px 9px rgba(255, 245, 230, 0.6);
+  transition: transform 0.08s, box-shadow 0.08s;
   font-family: inherit;
   touch-action: manipulation;
   display: inline-flex; align-items: center; justify-content: center; gap: 6px;
@@ -67,13 +67,17 @@ html, body {
   background: linear-gradient(145deg, #e07a5f, #c0503a);
   color: #fff;
 }
+.neu-btn.accent {
+  background: linear-gradient(145deg, #7ac74f, #4caf50);
+  color: #fff;
+}
 .neu-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
 .neu-input {
   background: linear-gradient(145deg, #d9c4a8, #f5e6d3);
   border: none; border-radius: 12px;
-  padding: 12px 14px;
-  font-size: 15px; font-family: inherit;
+  padding: 11px 14px;
+  font-size: 14px; font-family: inherit;
   color: #4a3a2a;
   width: 100%;
   box-shadow: inset 4px 4px 8px rgba(120, 90, 60, 0.35),
@@ -91,7 +95,7 @@ html, body {
   align-items: center; justify-content: center;
   z-index: 100;
   padding: 12px;
-  background: rgba(35, 24, 15, 0.88);
+  background: rgba(30, 20, 12, 0.88);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   overflow-y: auto;
@@ -111,7 +115,7 @@ html, body {
 .panel h2 { font-size: 20px; margin-bottom: 8px; color: #5a3a1a; }
 .panel .subtitle {
   text-align: center; font-size: 13px;
-  color: #7a6a5a; margin-bottom: 16px;
+  color: #7a6a5a; margin-bottom: 14px;
 }
 
 .field { margin-bottom: 12px; }
@@ -126,23 +130,35 @@ html, body {
   font-size: 13px; color: #8b5a2b;
 }
 
-.btn-row { display: flex; gap: 8px; margin-top: 14px; }
+.btn-row { display: flex; gap: 8px; margin-top: 12px; }
 .btn-row .neu-btn { flex: 1; }
 
 /* ============================================
-   SELECTOR DE PERSONAJE
+   PERSONALIZACIÓN DE PAN
    ============================================ */
 .preview-canvas {
-  width: 100%; height: 150px;
-  border-radius: 16px; margin-bottom: 14px;
+  width: 100%; height: 160px;
+  border-radius: 16px; margin-bottom: 12px;
   background: linear-gradient(145deg, #d9c4a8, #f5e6d3);
   box-shadow: inset 4px 4px 8px rgba(120, 90, 60, 0.35),
               inset -4px -4px 8px rgba(255, 245, 230, 0.5);
 }
 .option-grid {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
-  gap: 8px;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(68px, 1fr));
+  gap: 6px; max-height: 140px; overflow-y: auto; padding: 4px 2px;
 }
+.color-grid {
+  display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 6px;
+}
+.color-circle {
+  width: 32px; height: 32px; border-radius: 50%;
+  cursor: pointer; border: 3px solid transparent;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+  transition: transform 0.1s, border-color 0.1s;
+}
+.color-circle:active { transform: scale(0.9); }
+.color-circle.selected { border-color: #fff; transform: scale(1.15); box-shadow: 0 0 10px #f4c542; }
+
 .option-btn {
   padding: 8px 4px; border-radius: 12px;
   background: linear-gradient(145deg, #e8c9a0, #c9a878);
@@ -151,7 +167,7 @@ html, body {
   color: #4a3a2a; text-align: center;
   box-shadow: 3px 3px 6px rgba(120, 90, 60, 0.35),
               -3px -3px 6px rgba(255, 245, 230, 0.5);
-  transition: all 0.15s;
+  transition: all 0.1s;
 }
 .option-btn.selected {
   border-color: #d4a017;
@@ -168,16 +184,16 @@ html, body {
   font-family: 'Courier New', monospace;
   font-size: 38px; font-weight: 900;
   letter-spacing: 6px;
-  padding: 12px;
+  padding: 10px;
   border-radius: 16px;
-  margin: 10px 0 16px;
+  margin: 8px 0 14px;
   border: 3px solid #8b5a2b;
   box-shadow: inset 0 0 16px rgba(0,0,0,0.5);
   text-shadow: 0 0 10px rgba(244, 197, 66, 0.6);
 }
 .lobby-players {
   display: flex; flex-wrap: wrap; gap: 8px;
-  justify-content: center; margin: 12px 0;
+  justify-content: center; margin: 10px 0;
   min-height: 70px;
 }
 .lobby-player {
@@ -187,7 +203,7 @@ html, body {
   box-shadow: 3px 3px 6px rgba(120, 90, 60, 0.35);
   min-width: 65px;
 }
-.lobby-player canvas { width: 40px; height: 40px; }
+.lobby-player canvas { width: 44px; height: 44px; }
 .lobby-player .pname {
   font-size: 11px; font-weight: 700; margin-top: 3px;
   color: #4a3a2a; max-width: 65px;
@@ -199,7 +215,7 @@ html, body {
   margin-top: 2px; font-weight: 700;
 }
 
-/* LOBBY FLOTANTE RESPONSIVE */
+/* LOBBY FLOTANTE */
 #screenLobby {
   background: transparent !important;
   backdrop-filter: none !important;
@@ -211,17 +227,16 @@ html, body {
 #screenLobby .panel {
   pointer-events: auto !important;
   max-width: 440px !important;
-  background: rgba(245, 230, 211, 0.94) !important;
+  background: rgba(245, 230, 211, 0.95) !important;
   backdrop-filter: blur(14px) !important;
   border: 2px solid rgba(139, 90, 43, 0.5) !important;
   box-shadow: 0 10px 30px rgba(42, 30, 20, 0.55), inset 0 1px 0 rgba(255,255,255,0.8) !important;
   border-radius: 18px !important;
   padding: 14px 18px !important;
   margin-top: 4px !important;
-  transition: max-height 0.3s ease, padding 0.3s ease;
 }
 #screenLobby .panel.minimized {
-  max-height: 54px !important;
+  max-height: 52px !important;
   overflow: hidden !important;
   padding: 8px 14px !important;
 }
@@ -274,6 +289,11 @@ html, body {
   background: rgba(139, 30, 30, 0.9);
   border-color: #e07a5f;
 }
+.hud-badge.ghost {
+  background: rgba(40, 80, 110, 0.85);
+  border-color: #70d6ff;
+  color: #cffafe;
+}
 
 /* Botón flotante de Chat en HUD */
 .hud-chat-btn {
@@ -299,7 +319,7 @@ html, body {
   border: 2px solid #fff;
 }
 
-/* JOYSTICK TÁCTIL (VISIBLE EN MÓVIL Y LOBBY) */
+/* JOYSTICK TÁCTIL */
 .joystick-zone {
   position: absolute; bottom: 20px; left: 20px;
   width: 140px; height: 140px;
@@ -326,7 +346,7 @@ html, body {
   pointer-events: none;
 }
 
-/* BOTONES DE ACCIÓN (TÁCTILES ERGONÓMICOS) */
+/* BOTONES DE ACCIÓN */
 .action-buttons {
   position: absolute; bottom: 20px; right: 20px;
   display: none; flex-direction: column; gap: 10px;
@@ -386,8 +406,8 @@ html, body {
    ============================================ */
 .floating-chat-drawer {
   position: absolute; top: 58px; right: 12px;
-  width: 290px; max-height: 380px;
-  background: rgba(36, 24, 16, 0.94);
+  width: 300px; max-height: 400px;
+  background: rgba(30, 20, 14, 0.95);
   border: 2px solid rgba(244, 197, 66, 0.6);
   border-radius: 16px;
   box-shadow: 0 10px 25px rgba(0,0,0,0.6);
@@ -404,19 +424,32 @@ html, body {
   font-weight: 700; font-size: 12px; color: #f5e6d3;
 }
 .floating-chat-messages {
-  flex: 1; min-height: 140px; max-height: 200px;
+  flex: 1; min-height: 140px; max-height: 220px;
   overflow-y: auto; padding: 10px;
   display: flex; flex-direction: column; gap: 6px;
 }
 .chat-msg {
   font-size: 12px; line-height: 1.3;
   color: #f5e6d3; word-break: break-word;
+  padding: 3px 6px; border-radius: 6px;
 }
 .chat-msg .cname { font-weight: 700; color: #f4c542; margin-right: 4px; }
 .chat-msg .ctime { font-size: 10px; opacity: 0.6; margin-left: 4px; }
+
+/* MENSAJES DE FANTASMAS (SÓLO VISIBLES PARA FANTASMAS) */
+.chat-msg.ghost-msg {
+  background: rgba(80, 160, 220, 0.15);
+  border: 1px dashed rgba(112, 214, 255, 0.4);
+}
+.chat-msg.ghost-msg .cbadge {
+  font-size: 9px; font-weight: 900; background: #3b82f6; color: #fff;
+  padding: 1px 4px; border-radius: 4px; margin-right: 4px;
+}
+.chat-msg.ghost-msg .cname { color: #93c5fd !important; }
+
 .quick-chat-row {
   display: flex; gap: 4px; padding: 6px 8px;
-  overflow-x: auto; background: rgba(0,0,0,0.2);
+  overflow-x: auto; background: rgba(0,0,0,0.25);
   scrollbar-width: none;
 }
 .quick-chat-row::-webkit-scrollbar { display: none; }
@@ -430,7 +463,7 @@ html, body {
 .quick-chip:active { background: #f4c542; color: #2a1e14; }
 .floating-chat-input-bar {
   padding: 8px; display: flex; gap: 6px;
-  background: rgba(20, 12, 8, 0.5);
+  background: rgba(20, 12, 8, 0.6);
   border-top: 1px solid rgba(244, 197, 66, 0.2);
 }
 .chat-input {
@@ -460,7 +493,6 @@ html, body {
   border: 2px solid #d4a017;
 }
 
-/* Tabs para móvil */
 .voting-tabs {
   display: none;
   gap: 8px; margin-bottom: 10px;
@@ -517,7 +549,7 @@ html, body {
 }
 .vote-card .vname { font-weight: 700; font-size: 12px; margin-top: 4px; color: #3a2a1a; }
 .vote-card .vcount { font-size: 11px; font-weight: 800; color: #b03a2e; margin-top: 2px; }
-.vote-card canvas { width: 48px; height: 48px; }
+.vote-card canvas { width: 50px; height: 50px; }
 
 .voting-actions-row {
   margin-top: 10px; display: flex; justify-content: space-between; align-items: center;
@@ -529,7 +561,7 @@ html, body {
 .skip-btn.voted { border: 2px solid #fff; }
 
 .voting-right-col {
-  background: rgba(36, 24, 16, 0.92);
+  background: rgba(30, 20, 14, 0.94);
   border-radius: 16px;
   border: 2px solid rgba(139, 90, 43, 0.5);
   display: flex; flex-direction: column;
@@ -577,18 +609,19 @@ html, body {
   width: 100%; height: 280px;
   border-radius: 16px;
   touch-action: none;
-  background: #8b6f47;
+  background: #6d5438;
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
 }
 .mission-title { text-align: center; font-size: 18px; font-weight: 700; margin-bottom: 10px; color: #5a3a1a; }
 .mission-hint { text-align: center; font-size: 12px; color: #8b5a2b; margin: 6px 0; }
 
 /* ============================================
-   TOAST
+   TOAST Y MODALES
    ============================================ */
 #toast {
   position: fixed; top: 18px; left: 50%;
   transform: translateX(-50%) translateY(-100px);
-  background: rgba(42, 30, 20, 0.96);
+  background: rgba(35, 22, 14, 0.96);
   color: #f5e6d3; padding: 10px 20px;
   border-radius: 12px; font-weight: 700; font-size: 13px;
   z-index: 300; transition: transform 0.3s;
@@ -598,8 +631,23 @@ html, body {
 }
 #toast.show { transform: translateX(-50%) translateY(0); }
 
+/* MODAL DE AYUDA CELULAR */
+.mobile-guide-box {
+  background: rgba(244, 197, 66, 0.15);
+  border: 2px dashed #d4a017;
+  border-radius: 14px; padding: 12px;
+  margin: 12px 0; font-size: 13px; line-height: 1.4;
+  color: #4a3a2a;
+}
+.mobile-ip-badge {
+  background: #202b20; color: #7ac74f;
+  font-family: monospace; font-size: 15px; font-weight: 900;
+  padding: 6px 10px; border-radius: 8px;
+  margin: 6px 0; display: inline-block;
+}
+
 /* ============================================
-   RESPONSIVE DESIGN (CELULAR VERTICAL/HORIZONTAL)
+   RESPONSIVE DESIGN (CELULAR)
    ============================================ */
 @media (max-width: 768px) {
   .panel { padding: 14px; }
@@ -638,7 +686,7 @@ html, body {
     </button>
   </div>
 
-  <!-- Joystick táctil en pantalla -->
+  <!-- Joystick táctil -->
   <div class="joystick-zone" id="joystickZone">
     <div class="joystick-base">
       <div class="joystick-knob" id="joystickKnob"></div>
@@ -666,7 +714,7 @@ html, body {
   <!-- Chat flotante para juego y lobby -->
   <div class="floating-chat-drawer" id="floatingChatDrawer" style="display:none;">
     <div class="floating-chat-header">
-      <span>💬 Chat de la Panadería</span>
+      <span id="floatingChatTitle">💬 Chat de la Panadería</span>
       <button class="neu-btn" id="btnCloseFloatingChat" style="padding:2px 8px;font-size:11px;">✕</button>
     </div>
     <div class="floating-chat-messages" id="floatingChatMessages"></div>
@@ -687,13 +735,13 @@ html, body {
 <div class="screen active" id="screenMain">
   <div class="panel neu">
     <h1>🍞 Among Breads</h1>
-    <p class="subtitle">Panes, impostores y hornos calientes</p>
+    <p class="subtitle">El impostor está entre las rebanadas...</p>
 
     <div class="field">
       <label>🌐 Servidor de Juego</label>
-      <input type="text" class="neu-input" id="serverUrl" placeholder="https://mi-servidor.onrender.com">
+      <input type="text" class="neu-input" id="serverUrl" placeholder="http://192.168.155.101:3000">
       <div style="font-size:11px;color:#8b5a2b;margin-top:4px;" id="serverUrlHint">
-        Deja vacío para usar el mismo servidor, o coloca tu URL de Render/Railway si juegas en celular
+        En PC: deja vacío o usa localhost. En Celular: usa la IP de tu PC o tu link de Render.
       </div>
     </div>
 
@@ -702,13 +750,36 @@ html, body {
       <button class="neu-btn" id="btnJoin">🔗 Unirse</button>
     </div>
     <div class="btn-row">
-      <button class="neu-btn" id="btnCustomize">🎨 Modificar Pan</button>
+      <button class="neu-btn" id="btnCustomize">🎨 Personalizar Pan</button>
+      <button class="neu-btn" id="btnMobileHelp">📱 Jugar en Celular</button>
     </div>
     <div class="btn-row">
-      <button class="neu-btn" id="btnConnect" style="font-size:13px;">🔄 Conectar al Servidor</button>
+      <button class="neu-btn accent" id="btnConnect" style="font-size:13px;">🔄 Conectar al Servidor</button>
     </div>
     <div style="text-align:center;margin-top:10px;font-size:11px;color:#8b5a2b;" id="connStatus">
       Estado: Desconectado
+    </div>
+  </div>
+</div>
+
+<!-- ============ PANTALLA: GUÍA CELULAR ============ -->
+<div class="screen" id="screenMobileHelp">
+  <div class="panel neu" style="max-width:440px;">
+    <h2>📱 Cómo Jugar desde el Celular</h2>
+    <div class="mobile-guide-box">
+      <b>Opción 1: En tu casa (misma red Wi-Fi de tu PC)</b><br>
+      Abre el navegador en tu celular (Chrome o Safari) e ingresa esta dirección exacta:<br>
+      <div class="mobile-ip-badge" id="localIpBadge">http://192.168.155.101:3000</div><br>
+      <button class="neu-btn" id="btnCopyIp" style="font-size:12px;padding:6px 12px;margin-top:4px;">📋 Copiar Dirección</button>
+    </div>
+
+    <div class="mobile-guide-box">
+      <b>Opción 2: Con servidor en la nube (Render / Railway)</b><br>
+      Si subiste tu servidor a Render o Glitch, escribe esa URL completa en la casilla de <i>Servidor de Juego</i> (ej. <code>https://tu-juego.onrender.com</code>).
+    </div>
+
+    <div class="btn-row">
+      <button class="neu-btn primary" id="btnMobileHelpBack">✓ Entendido</button>
     </div>
   </div>
 </div>
@@ -746,7 +817,7 @@ html, body {
     </div>
     <div class="btn-row">
       <button class="neu-btn" id="btnCreateBack">← Volver</button>
-      <button class="neu-btn primary" id="btnCreateConfirm">Crear →</button>
+      <button class="neu-btn primary" id="btnCreateConfirm">Crear Sala →</button>
     </div>
   </div>
 </div>
@@ -769,26 +840,36 @@ html, body {
 <!-- ============ PANTALLA: PERSONALIZAR PERSONAJE ============ -->
 <div class="screen" id="screenCustomize">
   <div class="panel neu">
-    <h2>🎨 Personalizar Pan</h2>
-    <canvas class="preview-canvas" id="previewCanvas" width="300" height="150"></canvas>
+    <h2>🎨 Taller del Panadero</h2>
+    <canvas class="preview-canvas" id="previewCanvas" width="300" height="160"></canvas>
+    
     <div class="field">
       <label>Nombre del Pan</label>
       <input type="text" class="neu-input" id="custName" maxlength="12" placeholder="Mi Pan">
     </div>
+
+    <div class="field">
+      <label>Tono de Horneado (Color de Masa)</label>
+      <div class="color-grid" id="colorGrid"></div>
+    </div>
+
     <div class="field">
       <label>Tipo de Pan (Skin)</label>
       <div class="option-grid" id="skinGrid"></div>
     </div>
+
     <div class="field">
-      <label>Sombrero</label>
+      <label>Gorro / Sombrero</label>
       <div class="option-grid" id="hatGrid"></div>
     </div>
+
     <div class="field">
       <label>Accesorio Facial</label>
       <div class="option-grid" id="faceGrid"></div>
     </div>
+
     <div class="btn-row">
-      <button class="neu-btn primary" id="btnCustDone">✓ Guardar y Volver</button>
+      <button class="neu-btn primary" id="btnCustDone">✓ Guardar Pan</button>
     </div>
   </div>
 </div>
@@ -810,7 +891,7 @@ html, body {
       </div>
       <div class="lobby-players" id="lobbyPlayers"></div>
       <div style="font-size:11px;color:#8b5a2b;text-align:center;margin:6px 0;">
-        🚶 ¡Puedes moverte libremente por el mapa con el <b>Joystick / WASD</b> mientras esperan!
+        🚶 ¡Puedes moverte libremente con el <b>Joystick / WASD</b> mientras esperan!
       </div>
       <div class="btn-row">
         <button class="neu-btn danger" id="btnLobbyLeave">Salir</button>
@@ -835,12 +916,12 @@ html, body {
     <div class="voting-header">
       <div class="voting-title-wrap">
         <h2 id="votingTitle">🔔 ¡Emergencia!</h2>
-        <p id="votingSubtitle">Discutan en el chat y voten por el impostor</p>
+        <p id="votingSubtitle">Discutan en el chat y voten por el sospechoso</p>
       </div>
       <div class="vote-timer-badge">⏱️ <span id="voteTimer">30</span>s</div>
     </div>
 
-    <!-- Pestañas para móvil -->
+    <!-- Pestañas para celular -->
     <div class="voting-tabs" id="votingTabs">
       <button class="voting-tab active" id="tabVotingCards">🗳️ Votar</button>
       <button class="voting-tab" id="tabVotingChat">
@@ -849,7 +930,7 @@ html, body {
     </div>
 
     <div class="voting-content-grid">
-      <!-- Columna Izquierda: Tarjetas de Jugadores -->
+      <!-- Tarjetas de Jugadores -->
       <div class="voting-left-col" id="colVotingCards">
         <div class="voting-grid" id="votingGrid"></div>
         <div class="voting-actions-row">
@@ -862,9 +943,9 @@ html, body {
         </div>
       </div>
 
-      <!-- Columna Derecha: Chat en Vivo de Votación -->
+      <!-- Chat en Vivo de Votación -->
       <div class="voting-right-col" id="colVotingChat">
-        <div class="chat-header-bar">💬 Discusión en Vivo</div>
+        <div class="chat-header-bar" id="votingChatHeader">💬 Discusión en Vivo</div>
         <div class="voting-chat-messages" id="votingChatMessages"></div>
         <div class="quick-chat-row">
           <button class="quick-chip" data-msg="¿Quién fue?">¿Quién fue?</button>
@@ -906,14 +987,22 @@ html, body {
 
 <div id="toast"></div>
 
-<!-- SOCKET.IO CLIENT -->
-<script src="/socket.io/socket.io.js"></script>
+<!-- LIBRERÍA SOCKET.IO CON CDN Y FALLBACK LOCAL -->
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script>
+  if (typeof io === 'undefined') {
+    document.write('<script src="/socket.io/socket.io.js"><\/script>');
+  }
+</script>
+
 <script>
 /* ============================================================
-   AMONG BREADS - Cliente Completo con Soporte Celular y Mapas
+   AMONG BREADS - Cliente Completo Optimizado
    ============================================================ */
 (() => {
 'use strict';
+
+const LOCAL_PC_IP = '192.168.155.101:3000';
 
 // ------------------------------------------------------------
 // ESTADO GLOBAL
@@ -929,7 +1018,8 @@ const G = {
     name: 'Panadero',
     skin: 'bolillo',
     hat: 'none',
-    face: 'none'
+    face: 'none',
+    color: '#d4a373'
   },
   config: null,
   map: null,
@@ -956,14 +1046,13 @@ const G = {
   input: { up: false, down: false, left: false, right: false }
 };
 
-// Cargar perfil y servidor guardado de LocalStorage
+// Cargar almacenamiento local
 try {
   const savedServer = localStorage.getItem('among_breads_server_url');
   if (savedServer) G.serverUrl = savedServer;
   const savedProfile = localStorage.getItem('among_breads_profile');
   if (savedProfile) {
-    const parsed = JSON.parse(savedProfile);
-    Object.assign(G.profile, parsed);
+    Object.assign(G.profile, JSON.parse(savedProfile));
   }
 } catch (e) {}
 
@@ -982,7 +1071,7 @@ window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 
 // ============================================
-// DIBUJO DE PERSONAJES (PANES, SOMBREROS, CARAS)
+// DIBUJO DETALLADO Y HERMOSO DE LOS PANES
 // ============================================
 function drawBread(c, opts) {
   const {
@@ -995,150 +1084,383 @@ function drawBread(c, opts) {
   c.globalAlpha = alpha;
   c.translate(x, y);
 
-  const walkCycle = moving ? Math.sin(animTime * 0.3) : 0;
-  const breath = moving ? 0 : Math.sin(animTime * 0.05) * 0.03;
+  // Animación suave de squash & stretch al caminar o respirar
+  const walkCycle = moving ? Math.sin(animTime * 0.35) : 0;
+  const breath = moving ? 0 : Math.sin(animTime * 0.06) * 0.035;
   const sx = scale * (1 + walkCycle * 0.08 + breath);
   const sy = scale * (1 - walkCycle * 0.08 - breath);
   c.scale(sx, sy);
   if (dir < 0) c.scale(-1, 1);
 
+  // Sombra suave en el suelo
   if (!isGhost && !isDead) {
-    c.fillStyle = 'rgba(0,0,0,0.25)';
+    c.fillStyle = 'rgba(0,0,0,0.28)';
     c.beginPath();
-    c.ellipse(0, 30, 26, 8, 0, 0, Math.PI * 2);
+    c.ellipse(0, 32, 26, 8, 0, 0, Math.PI * 2);
     c.fill();
   }
 
-  const bodyColor = isGhost ? '#f5e6d3' : (isDead ? '#8a8a8a' : color);
+  // Aura y cola translúcida de fantasma
+  if (isGhost) {
+    drawGhostAura(c, animTime);
+  }
+
+  // Cuerpo según skin
+  const bodyColor = isGhost ? 'rgba(230, 245, 255, 0.6)' : color;
   drawBreadBody(c, skin, bodyColor, isGhost, animTime);
 
+  // Mejillas tiernas con rubor (si no es fantasma/muerto)
+  if (!isDead && !isGhost) {
+    c.fillStyle = 'rgba(255, 120, 130, 0.45)';
+    c.beginPath();
+    c.arc(-15, 3, 5, 0, Math.PI * 2);
+    c.arc(15, 3, 5, 0, Math.PI * 2);
+    c.fill();
+  }
+
+  // Ojos expresivos
   if (!isDead && !isGhost) {
     drawEyes(c, moving, animTime);
   } else if (isDead) {
-    c.strokeStyle = '#3a2a1a';
-    c.lineWidth = 3;
-    c.lineCap = 'round';
-    c.beginPath();
-    c.moveTo(-10, -8); c.lineTo(-2, 0);
-    c.moveTo(-2, -8); c.lineTo(-10, 0);
-    c.moveTo(2, -8); c.lineTo(10, 0);
-    c.moveTo(10, -8); c.lineTo(2, 0);
-    c.stroke();
+    drawDeadEyes(c);
   }
 
-  if (hat !== 'none' && !isDead) drawHat(c, hat);
+  // Sombrero y accesorio
+  if (hat !== 'none' && !isDead) drawHat(c, hat, animTime);
   if (face !== 'none' && !isDead) drawFace(c, face);
 
   c.restore();
 }
 
+function drawGhostAura(c, animTime) {
+  const glow = 14 + Math.sin(animTime * 0.1) * 4;
+  c.shadowColor = '#70d6ff';
+  c.shadowBlur = glow;
+
+  // Cola ondeante de fantasma
+  const wave = Math.sin(animTime * 0.15) * 8;
+  c.fillStyle = 'rgba(180, 230, 255, 0.45)';
+  c.beginPath();
+  c.moveTo(-20, 20);
+  c.quadraticCurveTo(0 + wave, 48, 20, 20);
+  c.closePath();
+  c.fill();
+}
+
 function drawBreadBody(c, skin, color, isGhost, animTime = 0) {
-  const fill = isGhost ? 'rgba(245, 230, 211, 0.45)' : color;
-  c.fillStyle = fill;
-  c.strokeStyle = isGhost ? 'rgba(245,230,211,0.8)' : darken(color, 35);
+  c.save();
   c.lineWidth = 2.5;
 
   if (skin === 'baguette') {
+    // Baguette crujiente estilizada
+    const grad = c.createLinearGradient(-18, 0, 18, 0);
+    grad.addColorStop(0, darken(color, 25));
+    grad.addColorStop(0.4, color);
+    grad.addColorStop(1, darken(color, 35));
+    c.fillStyle = isGhost ? color : grad;
+    c.strokeStyle = darken(color, 45);
+
     c.beginPath();
-    c.moveTo(-18, 20);
-    c.bezierCurveTo(-22, -10, -18, -35, 0, -42);
-    c.bezierCurveTo(18, -35, 22, -10, 18, 20);
-    c.bezierCurveTo(12, 32, -12, 32, -18, 20);
+    c.moveTo(-16, 22);
+    c.bezierCurveTo(-22, -15, -16, -38, 0, -44);
+    c.bezierCurveTo(16, -38, 22, -15, 16, 22);
+    c.bezierCurveTo(10, 32, -10, 32, -16, 22);
     c.closePath();
     c.fill(); c.stroke();
+
+    // Cortes diagonales clásicos con harina
     if (!isGhost) {
-      c.strokeStyle = darken(color, 45);
-      c.lineWidth = 2;
-      for (let i = -20; i <= 10; i += 12) {
+      c.strokeStyle = '#fff5ea';
+      c.lineWidth = 3;
+      for (let i = -22; i <= 10; i += 12) {
         c.beginPath();
         c.moveTo(-10, i); c.lineTo(10, i + 6);
         c.stroke();
       }
     }
-  } else if (skin === 'donut') {
+  } else if (skin === 'croissant') {
+    // Cuernito / Croissant hojaldrado
+    const grad = c.createRadialGradient(0, 0, 8, 0, 0, 32);
+    grad.addColorStop(0, '#ffe8b3');
+    grad.addColorStop(0.7, color);
+    grad.addColorStop(1, darken(color, 35));
+    c.fillStyle = isGhost ? color : grad;
+    c.strokeStyle = darken(color, 40);
+
     c.beginPath();
-    c.arc(0, 0, 28, 0, Math.PI * 2);
-    c.fill(); c.stroke();
-    c.fillStyle = isGhost ? 'rgba(200,180,160,0.5)' : '#e07a5f';
-    c.beginPath();
-    c.arc(0, 0, 25, 0, Math.PI * 2);
-    c.fill();
-    c.fillStyle = isGhost ? 'rgba(42,30,20,0.4)' : '#2a1e14';
-    c.beginPath();
-    c.arc(0, 0, 10, 0, Math.PI * 2);
-    c.fill();
-  } else if (skin === 'concha') {
-    c.beginPath();
-    c.arc(0, 4, 30, Math.PI, 0, false);
-    c.lineTo(30, 20);
-    c.bezierCurveTo(20, 28, -20, 28, -30, 20);
+    c.arc(0, 6, 28, Math.PI * 0.85, Math.PI * 2.15);
+    c.quadraticCurveTo(0, -32, -24, 18);
     c.closePath();
     c.fill(); c.stroke();
+
+    // Capas hojaldradas
     if (!isGhost) {
-      c.strokeStyle = '#fff';
+      c.strokeStyle = 'rgba(255,255,255,0.4)';
       c.lineWidth = 2;
       c.beginPath();
-      c.arc(0, 4, 25, Math.PI * 1.1, Math.PI * 1.9);
+      c.arc(0, 2, 22, Math.PI * 1.1, Math.PI * 1.9);
+      c.stroke();
+      c.strokeStyle = darken(color, 45);
+      c.beginPath();
+      c.arc(0, 8, 16, Math.PI * 1.15, Math.PI * 1.85);
       c.stroke();
     }
-  } else if (skin === 'mohoso') {
+  } else if (skin === 'donut' || skin === 'donut_chocolate') {
+    // Dona glaseada esponjosa
+    c.fillStyle = isGhost ? color : '#f0c78a';
+    c.strokeStyle = '#a66e38';
     c.beginPath();
-    c.ellipse(0, 0, 28, 24, 0, 0, Math.PI * 2);
+    c.arc(0, 0, 30, 0, Math.PI * 2);
     c.fill(); c.stroke();
-    c.fillStyle = isGhost ? 'rgba(100,180,100,0.4)' : '#4d7c0f';
+
+    // Glaseado brillante (rosa o chocolate)
+    const isChoco = skin === 'donut_chocolate';
+    c.fillStyle = isGhost ? 'rgba(200,200,200,0.5)' : (isChoco ? '#5c3317' : '#ff6b8b');
     c.beginPath();
-    c.arc(-10, -10, 7, 0, Math.PI * 2);
-    c.arc(8, -8, 5, 0, Math.PI * 2);
-    c.arc(-4, 8, 6, 0, Math.PI * 2);
+    c.arc(0, 0, 26, 0, Math.PI * 2);
     c.fill();
+
+    // Agujero central
+    c.fillStyle = isGhost ? 'rgba(20,20,20,0.4)' : '#23180f';
+    c.beginPath();
+    c.arc(0, 0, 11, 0, Math.PI * 2);
+    c.fill();
+
+    // Chispitas de colores
+    if (!isGhost) {
+      const sprinkles = [
+        { x: -16, y: -12, col: '#ffeb3b', a: 0.3 },
+        { x: 14, y: -14, col: '#4caf50', a: -0.4 },
+        { x: -14, y: 14, col: '#00e5ff', a: 0.8 },
+        { x: 16, y: 12, col: '#ff5252', a: -0.6 },
+        { x: 0, y: -20, col: '#ffffff', a: 0.2 },
+        { x: -20, y: 0, col: '#ff4081', a: 1.1 }
+      ];
+      for (const sp of sprinkles) {
+        c.save();
+        c.translate(sp.x, sp.y); c.rotate(sp.a);
+        c.fillStyle = sp.col;
+        c.fillRect(-4, -1.5, 8, 3);
+        c.restore();
+      }
+    }
+  } else if (skin === 'concha' || skin === 'concha_rosa') {
+    // Concha dulce con corteza de concha marina
+    const isPink = skin === 'concha_rosa';
+    c.fillStyle = isGhost ? color : '#e8c9a0';
+    c.beginPath();
+    c.arc(0, 4, 30, 0, Math.PI * 2);
+    c.fill();
+
+    // Pasta dulce superior
+    c.fillStyle = isGhost ? 'rgba(255,255,255,0.4)' : (isPink ? '#f472b6' : '#5c3821');
+    c.beginPath();
+    c.arc(0, 2, 28, Math.PI, 0, false);
+    c.fill();
+
+    // Líneas curvas de concha
+    if (!isGhost) {
+      c.strokeStyle = '#fff8f0';
+      c.lineWidth = 2.5;
+      for (let i = -2; i <= 2; i++) {
+        c.beginPath();
+        c.arc(i * 9, -2, 20, Math.PI * 1.1, Math.PI * 1.9);
+        c.stroke();
+      }
+    }
+  } else if (skin === 'pandemuerto') {
+    // Pan de muerto tradicional mexicano
+    c.fillStyle = isGhost ? color : '#d49b5b';
+    c.strokeStyle = '#8b5a2b';
+    c.beginPath();
+    c.arc(0, 4, 30, 0, Math.PI * 2);
+    c.fill(); c.stroke();
+
+    // Canillas (huesitos)
+    if (!isGhost) {
+      c.fillStyle = '#edd2a4';
+      c.strokeStyle = '#a66e38';
+      c.lineWidth = 2;
+      // Huesito horizontal
+      c.beginPath();
+      c.ellipse(-14, 0, 7, 5, 0, 0, Math.PI * 2);
+      c.ellipse(14, 0, 7, 5, 0, 0, Math.PI * 2);
+      c.fill(); c.stroke();
+      // Bolita central (cráneo)
+      c.beginPath();
+      c.arc(0, -6, 8, 0, Math.PI * 2);
+      c.fill(); c.stroke();
+    }
+  } else if (skin === 'tostada') {
+    // Pan tostado cuadrado con mantequilla
+    c.fillStyle = isGhost ? color : '#bf7b3f';
+    c.strokeStyle = '#5a3418';
+    c.lineWidth = 3;
+    c.beginPath();
+    c.roundRect(-24, -24, 48, 50, 10);
+    c.fill(); c.stroke();
+
+    if (!isGhost) {
+      // Miga tostada central
+      c.fillStyle = '#fce5b8';
+      c.beginPath();
+      c.roundRect(-18, -18, 36, 38, 6);
+      c.fill();
+
+      // Cuadrito de mantequilla derretida
+      c.fillStyle = '#ffeb3b';
+      c.strokeStyle = '#fbc02d';
+      c.lineWidth = 1.5;
+      c.fillRect(-8, -8, 16, 16);
+      c.strokeRect(-8, -8, 16, 16);
+    }
+  } else if (skin === 'bagel') {
+    // Bagel tostado con ajonjolí
+    c.fillStyle = isGhost ? color : '#c98a4b';
+    c.strokeStyle = '#7c4c1e';
+    c.beginPath();
+    c.arc(0, 0, 29, 0, Math.PI * 2);
+    c.fill(); c.stroke();
+
+    // Hueco
+    c.fillStyle = isGhost ? 'rgba(20,20,20,0.4)' : '#23180f';
+    c.beginPath();
+    c.arc(0, 0, 9, 0, Math.PI * 2);
+    c.fill();
+
+    // Semillitas
+    if (!isGhost) {
+      c.fillStyle = '#fff9e6';
+      for (let a = 0; a < Math.PI * 2; a += 0.7) {
+        const sx = Math.cos(a) * 19;
+        const sy = Math.sin(a) * 19;
+        c.fillRect(sx, sy, 3, 2);
+      }
+    }
+  } else if (skin === 'muffin') {
+    // Muffin / Cupcake esponjoso
+    c.fillStyle = '#ff6b8b'; // Capacillo de papel
+    c.beginPath();
+    c.moveTo(-20, 26); c.lineTo(-14, 6);
+    c.lineTo(14, 6); c.lineTo(20, 26);
+    c.closePath();
+    c.fill();
+
+    // Cúpula esponjosa
+    c.fillStyle = isGhost ? color : '#d49b5b';
+    c.strokeStyle = '#8b5a2b';
+    c.beginPath();
+    c.arc(0, 4, 25, Math.PI, 0);
+    c.closePath();
+    c.fill(); c.stroke();
+  } else if (skin === 'mohoso') {
+    // Pan Mohoso con esporas
+    c.fillStyle = isGhost ? color : '#849363';
+    c.strokeStyle = '#3e4e26';
+    c.beginPath();
+    c.ellipse(0, 2, 28, 24, 0, 0, Math.PI * 2);
+    c.fill(); c.stroke();
+
+    if (!isGhost) {
+      c.fillStyle = '#3f6212';
+      c.beginPath();
+      c.arc(-10, -10, 8, 0, Math.PI * 2);
+      c.arc(10, -8, 6, 0, Math.PI * 2);
+      c.arc(-4, 10, 7, 0, Math.PI * 2);
+      c.fill();
+    }
   } else if (skin === 'quemado') {
-    c.fillStyle = isGhost ? 'rgba(60,40,30,0.4)' : '#2b1d14';
+    // Pan quemado crujiente
+    c.fillStyle = isGhost ? color : '#261b14';
     c.strokeStyle = '#000';
     c.beginPath();
-    c.ellipse(0, 0, 26, 24, 0, 0, Math.PI * 2);
+    c.ellipse(0, 2, 27, 23, 0, 0, Math.PI * 2);
     c.fill(); c.stroke();
   } else {
-    // Bolillo estándar
+    // Bolillo tradicional mexicano
+    const grad = c.createRadialGradient(-4, -6, 4, 0, 0, 32);
+    grad.addColorStop(0, '#fde6b6');
+    grad.addColorStop(0.65, color);
+    grad.addColorStop(1, darken(color, 35));
+    c.fillStyle = isGhost ? color : grad;
+    c.strokeStyle = darken(color, 45);
+
     c.beginPath();
-    c.ellipse(0, 0, 28, 22, 0, 0, Math.PI * 2);
+    c.ellipse(0, 2, 29, 23, 0, 0, Math.PI * 2);
     c.fill(); c.stroke();
+
+    // Corteza abierta del bolillo
     if (!isGhost) {
       c.strokeStyle = darken(color, 45);
-      c.lineWidth = 2.5;
+      c.lineWidth = 3;
       c.beginPath();
-      c.arc(0, -2, 18, 0.2, Math.PI - 0.2);
+      c.arc(0, -1, 18, 0.25, Math.PI - 0.25);
       c.stroke();
+      // Polvo de harina
+      c.fillStyle = 'rgba(255,255,255,0.4)';
+      c.beginPath();
+      c.ellipse(0, -6, 12, 4, 0, 0, Math.PI * 2);
+      c.fill();
     }
   }
+
+  c.restore();
 }
 
 function drawEyes(c, moving, animTime) {
   const blink = (!moving && (Math.sin(animTime * 0.05) > 0.96));
   if (blink) {
-    c.strokeStyle = '#2a1e14';
-    c.lineWidth = 2.5;
+    c.strokeStyle = '#23180f';
+    c.lineWidth = 3; c.lineCap = 'round';
     c.beginPath();
-    c.moveTo(-10, -4); c.lineTo(-2, -4);
-    c.moveTo(2, -4); c.lineTo(10, -4);
+    c.moveTo(-11, -3); c.lineTo(-3, -3);
+    c.moveTo(3, -3); c.lineTo(11, -3);
     c.stroke();
     return;
   }
-  c.fillStyle = '#fff';
-  c.beginPath();
-  c.ellipse(-7, -4, 5, 7, 0, 0, Math.PI * 2);
-  c.ellipse(7, -4, 5, 7, 0, 0, Math.PI * 2);
-  c.fill();
-  c.fillStyle = '#2a1e14';
-  c.beginPath();
-  c.arc(-5, -4, 3, 0, Math.PI * 2);
-  c.arc(9, -4, 3, 0, Math.PI * 2);
-  c.fill();
+
+  // Ojos estilo anime grandes y tiernos
+  for (const ex of [-8, 8]) {
+    // Blanco
+    c.fillStyle = '#ffffff';
+    c.beginPath();
+    c.ellipse(ex, -3, 6, 8, 0, 0, Math.PI * 2);
+    c.fill();
+
+    // Pupila
+    c.fillStyle = '#23180f';
+    c.beginPath();
+    c.arc(ex + 1, -3, 4, 0, Math.PI * 2);
+    c.fill();
+
+    // Brillo grande
+    c.fillStyle = '#ffffff';
+    c.beginPath();
+    c.arc(ex, -5, 2.2, 0, Math.PI * 2);
+    c.fill();
+
+    // Brillo mini
+    c.beginPath();
+    c.arc(ex + 2, -1, 1.2, 0, Math.PI * 2);
+    c.fill();
+  }
 }
 
-function drawHat(c, hat) {
+function drawDeadEyes(c) {
+  c.strokeStyle = '#23180f';
+  c.lineWidth = 3; c.lineCap = 'round';
+  c.beginPath();
+  c.moveTo(-12, -7); c.lineTo(-4, 1);
+  c.moveTo(-4, -7); c.lineTo(-12, 1);
+  c.moveTo(4, -7); c.lineTo(12, 1);
+  c.moveTo(12, -7); c.lineTo(4, 1);
+  c.stroke();
+}
+
+function drawHat(c, hat, animTime = 0) {
   if (hat === 'chef') {
-    c.fillStyle = '#fff';
-    c.strokeStyle = '#ddd';
+    c.fillStyle = '#ffffff';
+    c.strokeStyle = '#d6d3d1';
     c.lineWidth = 1.5;
     c.beginPath();
     c.rect(-16, -34, 32, 10);
@@ -1146,45 +1468,119 @@ function drawHat(c, hat) {
     c.arc(0, -42, 11, 0, Math.PI * 2);
     c.arc(8, -38, 9, 0, Math.PI * 2);
     c.fill(); c.stroke();
+    // Banda roja
+    c.fillStyle = '#e11d48';
+    c.fillRect(-16, -26, 32, 3);
   } else if (hat === 'butter') {
-    c.fillStyle = '#f4c542';
-    c.strokeStyle = '#d4a017';
-    c.lineWidth = 1.5;
+    c.fillStyle = '#fde047';
+    c.strokeStyle = '#ca8a04';
+    c.lineWidth = 2;
     c.fillRect(-14, -32, 28, 12);
     c.strokeRect(-14, -32, 28, 12);
   } else if (hat === 'candle') {
-    c.fillStyle = '#fff';
-    c.fillRect(-4, -40, 8, 16);
-    c.fillStyle = '#f4c542';
+    c.fillStyle = '#f8fafc';
+    c.fillRect(-4, -38, 8, 16);
+    // Llama animada
+    const flameY = -42 + Math.sin(animTime * 0.15) * 2;
+    c.fillStyle = '#fb923c';
     c.beginPath();
-    c.ellipse(0, -44, 4, 7 + Math.sin(Date.now() * 0.01) * 1.5, 0, 0, Math.PI * 2);
+    c.ellipse(0, flameY, 5, 8, 0, 0, Math.PI * 2);
     c.fill();
+    c.fillStyle = '#fef08a';
+    c.beginPath();
+    c.ellipse(0, flameY + 2, 2.5, 4, 0, 0, Math.PI * 2);
+    c.fill();
+  } else if (hat === 'beret') {
+    c.fillStyle = '#1e1b4b';
+    c.beginPath();
+    c.ellipse(3, -26, 22, 9, 0.2, 0, Math.PI * 2);
+    c.fill();
+    c.fillRect(6, -34, 3, 6);
+  } else if (hat === 'crown') {
+    c.fillStyle = '#facc15';
+    c.strokeStyle = '#b45309';
+    c.lineWidth = 1.5;
+    c.beginPath();
+    c.moveTo(-18, -24);
+    c.lineTo(-18, -36); c.lineTo(-9, -28);
+    c.lineTo(0, -40); c.lineTo(9, -28);
+    c.lineTo(18, -36); c.lineTo(18, -24);
+    c.closePath();
+    c.fill(); c.stroke();
+  } else if (hat === 'mini_bread') {
+    drawBread(c, { x: 0, y: -26, skin: 'bolillo', scale: 0.35 });
+  } else if (hat === 'rolling_pin') {
+    c.save();
+    c.translate(0, -28); c.rotate(-0.3);
+    c.fillStyle = '#8b5a2b';
+    c.fillRect(-22, -4, 44, 8);
+    c.restore();
+  } else if (hat === 'flower') {
+    c.fillStyle = '#fef08a';
+    c.beginPath(); c.arc(10, -26, 6, 0, Math.PI * 2); c.fill();
+    c.fillStyle = '#ffffff';
+    for (let i = 0; i < 5; i++) {
+      const a = (i * Math.PI * 2) / 5;
+      c.beginPath();
+      c.arc(10 + Math.cos(a) * 8, -26 + Math.sin(a) * 8, 4, 0, Math.PI * 2);
+      c.fill();
+    }
+  } else if (hat === 'party') {
+    c.fillStyle = '#f43f5e';
+    c.beginPath();
+    c.moveTo(-12, -24); c.lineTo(0, -46); c.lineTo(12, -24);
+    c.closePath();
+    c.fill();
+    c.fillStyle = '#fbbf24';
+    c.beginPath(); c.arc(0, -48, 4, 0, Math.PI * 2); c.fill();
   }
 }
 
 function drawFace(c, face) {
   if (face === 'sunglasses') {
-    c.fillStyle = '#111';
-    c.fillRect(-16, -10, 32, 8);
-    c.fillStyle = '#444';
-    c.fillRect(-14, -9, 10, 6);
-    c.fillRect(4, -9, 10, 6);
+    c.fillStyle = '#09090b';
+    c.fillRect(-17, -9, 34, 9);
+    c.fillStyle = 'rgba(255,255,255,0.45)';
+    c.fillRect(-14, -8, 10, 4);
+    c.fillRect(4, -8, 10, 4);
   } else if (face === 'mustache') {
-    c.fillStyle = '#2a1e14';
+    c.fillStyle = '#261b14';
     c.beginPath();
-    c.ellipse(-7, 6, 8, 3, 0.2, 0, Math.PI * 2);
-    c.ellipse(7, 6, 8, 3, -0.2, 0, Math.PI * 2);
+    c.ellipse(-7, 6, 9, 4, 0.2, 0, Math.PI * 2);
+    c.ellipse(7, 6, 9, 4, -0.2, 0, Math.PI * 2);
     c.fill();
   } else if (face === 'monocle') {
     c.strokeStyle = '#d4a017';
-    c.lineWidth = 2;
+    c.lineWidth = 2.5;
+    c.beginPath(); c.arc(9, -3, 8, 0, Math.PI * 2); c.stroke();
+    c.beginPath(); c.moveTo(17, -1); c.lineTo(24, 8); c.stroke();
+  } else if (face === 'blush') {
+    c.fillStyle = 'rgba(244, 63, 94, 0.6)';
     c.beginPath();
-    c.arc(8, -4, 8, 0, Math.PI * 2);
-    c.stroke();
+    c.ellipse(-14, 4, 6, 4, 0, 0, Math.PI * 2);
+    c.ellipse(14, 4, 6, 4, 0, 0, Math.PI * 2);
+    c.fill();
+  } else if (face === 'pirate') {
+    c.fillStyle = '#09090b';
+    c.beginPath(); c.arc(8, -3, 8, 0, Math.PI * 2); c.fill();
+    c.strokeStyle = '#09090b'; c.lineWidth = 2;
+    c.beginPath(); c.moveTo(-16, -14); c.lineTo(22, 6); c.stroke();
+  } else if (face === 'glasses') {
+    c.strokeStyle = '#854d0e'; c.lineWidth = 2;
+    c.beginPath(); c.arc(-8, -3, 7, 0, Math.PI * 2); c.stroke();
+    c.beginPath(); c.arc(8, -3, 7, 0, Math.PI * 2); c.stroke();
+    c.beginPath(); c.moveTo(-1, -3); c.lineTo(1, -3); c.stroke();
+  } else if (face === 'mask') {
+    c.fillStyle = '#f8fafc'; c.strokeStyle = '#cbd5e1'; c.lineWidth = 1.5;
+    c.beginPath(); c.roundRect(-14, 2, 28, 14, 4); c.fill(); c.stroke();
+  } else if (face === 'bubblegum') {
+    c.fillStyle = 'rgba(244, 114, 182, 0.85)';
+    c.beginPath(); c.arc(0, 6, 11, 0, Math.PI * 2); c.fill();
   }
 }
 
 function darken(hex, amount) {
+  if (!hex || !hex.startsWith('#')) return '#8b5a2b';
   const c = hex.replace('#', '');
   const r = Math.max(0, parseInt(c.substr(0,2),16) - amount);
   const g = Math.max(0, parseInt(c.substr(2,2),16) - amount);
@@ -1238,31 +1634,29 @@ const DEFAULT_MAPS = {
 G.map = DEFAULT_MAPS['El Horno Central'];
 
 // ============================================
-// RENDERIZADO DEL MAPA ARQUITECTÓNICO DIVERSO
+// RENDERIZADO DEL MAPA
 // ============================================
 function drawMap(c) {
   if (!G.map) return;
   const m = G.map;
 
-  // 1. Suelo base de los pasillos
+  // 1. Suelo base de pasillos
   c.fillStyle = '#6d5438';
   c.fillRect(0, 0, m.width, m.height);
 
-  // Tablones sutiles en pasillos
   c.strokeStyle = 'rgba(0,0,0,0.1)';
   c.lineWidth = 1;
   for (let y = 0; y < m.height; y += 60) {
     c.beginPath(); c.moveTo(0, y); c.lineTo(m.width, y); c.stroke();
   }
 
-  // 2. Habitaciones temáticas (suelos personalizados)
+  // 2. Habitaciones temáticas
   if (m.rooms) {
     for (const r of m.rooms) {
       c.save();
       if (r.floor === 'stone') {
         c.fillStyle = '#3f3a36';
         c.fillRect(r.x, r.y, r.w, r.h);
-        // Baldosas de piedra
         c.strokeStyle = 'rgba(255,255,255,0.06)';
         c.lineWidth = 2;
         for (let bx = r.x; bx < r.x + r.w; bx += 70) {
@@ -1274,7 +1668,6 @@ function drawMap(c) {
       } else if (r.floor === 'tile' || r.floor === 'tile_dark') {
         c.fillStyle = '#dcd2c4';
         c.fillRect(r.x, r.y, r.w, r.h);
-        // Patrón ajedrezado sutil
         c.fillStyle = 'rgba(180, 165, 150, 0.35)';
         const sz = 40;
         for (let x = r.x; x < r.x + r.w; x += sz * 2) {
@@ -1290,7 +1683,6 @@ function drawMap(c) {
         c.fillStyle = '#59656f';
         c.fillRect(r.x, r.y, r.w, r.h);
       } else {
-        // Madera cálida
         c.fillStyle = '#8b6b47';
         c.fillRect(r.x, r.y, r.w, r.h);
         c.strokeStyle = 'rgba(0,0,0,0.12)';
@@ -1300,7 +1692,7 @@ function drawMap(c) {
         }
       }
 
-      // Nombre de la habitación en el suelo
+      // Nombre de la sala
       if (r.label) {
         c.fillStyle = 'rgba(255, 245, 230, 0.22)';
         c.font = '900 28px sans-serif';
@@ -1311,18 +1703,16 @@ function drawMap(c) {
     }
   }
 
-  // 3. Decoraciones temáticas
+  // 3. Decoraciones
   if (m.decorations) {
     for (const d of m.decorations) {
       c.save();
       if (d.type === 'oven_block') {
         c.fillStyle = '#2c2523';
         c.fillRect(d.x, d.y, d.w, d.h);
-        c.strokeStyle = '#15100e';
-        c.lineWidth = 4;
+        c.strokeStyle = '#15100e'; c.lineWidth = 4;
         c.strokeRect(d.x, d.y, d.w, d.h);
 
-        // Fuego animado en 3 hornillas
         const firePulse = 0.6 + Math.sin(Date.now() * 0.006) * 0.3;
         for (let ox = d.x + 40; ox < d.x + d.w; ox += 110) {
           const grad = c.createRadialGradient(ox, d.y + 45, 8, ox, d.y + 45, 45);
@@ -1335,13 +1725,11 @@ function drawMap(c) {
       } else if (d.type === 'table_prep') {
         c.fillStyle = '#b0a89d';
         c.fillRect(d.x, d.y, d.w, d.h);
-        c.strokeStyle = '#6e655b';
-        c.lineWidth = 3;
+        c.strokeStyle = '#6e655b'; c.lineWidth = 3;
         c.strokeRect(d.x, d.y, d.w, d.h);
-        // Rodillo de madera sobre la mesa
         c.fillStyle = '#8b5a2b';
         c.fillRect(d.x + 30, d.y + 20, 60, 14);
-        c.fillStyle = '#f5e6d3'; // Masa
+        c.fillStyle = '#f5e6d3';
         c.beginPath();
         c.ellipse(d.x + d.w - 50, d.y + 40, 26, 18, 0, 0, Math.PI * 2);
         c.fill();
@@ -1351,43 +1739,33 @@ function drawMap(c) {
           c.beginPath();
           c.ellipse(d.x + i * 22, d.y + (i % 2) * 12, 14, 18, 0.2, 0, Math.PI * 2);
           c.fill();
-          c.strokeStyle = '#c9b49b';
-          c.lineWidth = 2; c.stroke();
+          c.strokeStyle = '#c9b49b'; c.lineWidth = 2; c.stroke();
         }
       } else if (d.type === 'glass_showcase') {
         c.fillStyle = 'rgba(210, 235, 245, 0.6)';
         c.fillRect(d.x, d.y, d.w, d.h);
-        c.strokeStyle = '#5a788a';
-        c.lineWidth = 3;
+        c.strokeStyle = '#5a788a'; c.lineWidth = 3;
         c.strokeRect(d.x, d.y, d.w, d.h);
       } else if (d.type === 'checkout_counter') {
         c.fillStyle = '#6b4728';
         c.fillRect(d.x, d.y, d.w, d.h);
-        c.strokeStyle = '#422813';
-        c.lineWidth = 3;
+        c.strokeStyle = '#422813'; c.lineWidth = 3;
         c.strokeRect(d.x, d.y, d.w, d.h);
       }
       c.restore();
     }
   }
 
-  // 4. Paredes con sombras y relieve 3D
+  // 4. Paredes con sombras y relieve
   if (m.walls) {
     for (const w of m.walls) {
-      // Sombra
       c.fillStyle = 'rgba(0,0,0,0.4)';
       c.fillRect(w.x + 4, w.y + 4, w.w, w.h);
-
-      // Cuerpo del muro
       c.fillStyle = '#422e1f';
       c.fillRect(w.x, w.y, w.w, w.h);
-
-      // Borde superior 3D iluminado
       c.fillStyle = '#6b4c33';
       c.fillRect(w.x, w.y, w.w, Math.min(8, w.h));
-
-      c.strokeStyle = '#281a10';
-      c.lineWidth = 2;
+      c.strokeStyle = '#281a10'; c.lineWidth = 2;
       c.strokeRect(w.x, w.y, w.w, w.h);
     }
   }
@@ -1395,47 +1773,27 @@ function drawMap(c) {
   // 5. Mesa Central y Campana de Emergencia
   if (m.emergency) {
     const e = m.emergency;
-    // Gran mesa redonda de madera
     c.fillStyle = '#5c3a21';
-    c.beginPath();
-    c.arc(e.x, e.y, 65, 0, Math.PI * 2);
-    c.fill();
-    c.strokeStyle = '#382212';
-    c.lineWidth = 6;
-    c.stroke();
+    c.beginPath(); c.arc(e.x, e.y, 65, 0, Math.PI * 2); c.fill();
+    c.strokeStyle = '#382212'; c.lineWidth = 6; c.stroke();
 
-    // Mantel o centro de mesa
     c.fillStyle = '#e8d4b8';
-    c.beginPath();
-    c.arc(e.x, e.y, 45, 0, Math.PI * 2);
-    c.fill();
+    c.beginPath(); c.arc(e.x, e.y, 45, 0, Math.PI * 2); c.fill();
 
-    // Campana Dorada Central
     c.fillStyle = '#d4a017';
-    c.beginPath();
-    c.arc(e.x, e.y, 22, 0, Math.PI * 2);
-    c.fill();
-    c.strokeStyle = '#8b5a2b';
-    c.lineWidth = 4;
-    c.stroke();
+    c.beginPath(); c.arc(e.x, e.y, 22, 0, Math.PI * 2); c.fill();
+    c.strokeStyle = '#8b5a2b'; c.lineWidth = 4; c.stroke();
 
-    // Brillo pulsante
     const pulse = 0.5 + Math.sin(Date.now() * 0.005) * 0.5;
     c.strokeStyle = `rgba(244, 197, 66, ${pulse})`;
     c.lineWidth = 3;
-    c.beginPath();
-    c.arc(e.x, e.y, 30 + pulse * 6, 0, Math.PI * 2);
-    c.stroke();
+    c.beginPath(); c.arc(e.x, e.y, 30 + pulse * 6, 0, Math.PI * 2); c.stroke();
   }
 }
 
-// ============================================
-// SISTEMA DE COLISIONES SUAVES CON PAREDES
-// ============================================
 function checkWallCollision(x, y, radius = 20) {
   if (!G.map || !G.map.walls) return { x, y };
   const me = G.players.get(G.myId);
-  // Los fantasmas atraviesan libremente las paredes
   if (me && (!me.alive || me.isGhost)) return { x, y };
 
   let px = x;
@@ -1473,17 +1831,13 @@ function drawTasks(c) {
     c.translate(t.x, t.y);
 
     c.fillStyle = completed ? 'rgba(122,199,79,0.35)' : 'rgba(244,197,66,0.35)';
-    c.beginPath();
-    c.arc(0, 0, 24, 0, Math.PI * 2);
-    c.fill();
+    c.beginPath(); c.arc(0, 0, 24, 0, Math.PI * 2); c.fill();
     c.strokeStyle = completed ? '#7ac74f' : '#d4a017';
-    c.lineWidth = 3;
-    c.stroke();
+    c.lineWidth = 3; c.stroke();
 
     c.fillStyle = completed ? '#7ac74f' : '#d4a017';
     c.font = 'bold 20px sans-serif';
-    c.textAlign = 'center';
-    c.textBaseline = 'middle';
+    c.textAlign = 'center'; c.textBaseline = 'middle';
     const icons = {
       amasar: '🥖', acomodar: '📦', limpiar: '🧹', horno: '🔥',
       donas: '🍩', temperatura: '🌡️', moler: '⚙️', sacos: '🎒',
@@ -1498,27 +1852,18 @@ function drawBodies(c) {
   for (const [id, body] of G.bodyParts) {
     c.save();
     c.translate(body.x, body.y);
-
-    // Pan partido por la mitad
     c.fillStyle = 'rgba(139, 90, 43, 0.85)';
     c.beginPath();
     c.ellipse(-8, 0, 13, 8, 0.3, 0, Math.PI * 2);
     c.ellipse(8, 0, 13, 8, -0.3, 0, Math.PI * 2);
     c.fill();
-
-    // Miga expuesta
     c.fillStyle = '#f5e6d3';
     c.beginPath();
     c.ellipse(-7, -2, 8, 4, 0.3, 0, Math.PI * 2);
     c.ellipse(7, -2, 8, 4, -0.3, 0, Math.PI * 2);
     c.fill();
-
-    // Mermelada derramada
     c.fillStyle = '#c0392b';
-    c.beginPath();
-    c.ellipse(0, 12, 18, 6, 0, 0, Math.PI * 2);
-    c.fill();
-
+    c.beginPath(); c.ellipse(0, 12, 18, 6, 0, 0, Math.PI * 2); c.fill();
     c.restore();
   }
 }
@@ -1548,7 +1893,6 @@ function render() {
       drawBodies(ctx);
     }
 
-    // Dibujar Jugadores
     for (const p of G.players.values()) {
       if (p.invisible && p.id !== G.myId && !G.isImpostor) continue;
 
@@ -1562,14 +1906,13 @@ function render() {
         isDead: !p.alive && G.gameState !== 'lobby'
       });
 
-      // Etiqueta de nombre
       ctx.fillStyle = '#f5e6d3';
       ctx.font = 'bold 12px sans-serif';
       ctx.textAlign = 'center';
       ctx.strokeStyle = 'rgba(0,0,0,0.7)';
       ctx.lineWidth = 3;
-      ctx.strokeText(p.name || 'Pan', p.x, p.y - 42);
-      ctx.fillText(p.name || 'Pan', p.x, p.y - 42);
+      ctx.strokeText(p.name || 'Pan', p.x, p.y - 44);
+      ctx.fillText(p.name || 'Pan', p.x, p.y - 44);
     }
 
     ctx.restore();
@@ -1583,7 +1926,7 @@ function render() {
 function drawFog() {
   if (!G.map || G.gameState !== 'playing') return;
   const me = G.players.get(G.myId);
-  if (!me || !me.alive || me.isGhost) return; // Fantasmas ven todo
+  if (!me || !me.alive || me.isGhost) return;
 
   const vision = (G.config && G.config.vision) ? G.config.vision : 300;
   const screenX = me.x - G.camera.x;
@@ -1597,9 +1940,7 @@ function drawFog() {
   grad.addColorStop(1, 'rgba(12, 8, 5, 0.94)');
 
   ctx.fillStyle = grad;
-  ctx.beginPath();
-  ctx.arc(screenX, screenY, vision, 0, Math.PI * 2);
-  ctx.fill();
+  ctx.beginPath(); c.arc(screenX, screenY, vision, 0, Math.PI * 2); c.fill();
 
   ctx.fillStyle = 'rgba(12, 8, 5, 0.94)';
   ctx.beginPath();
@@ -1611,19 +1952,31 @@ function drawFog() {
 }
 
 // ============================================
-// CONEXIÓN SOCKET.IO
+// CONEXIÓN SOCKET.IO (OPTIMIZADA PARA MÓVIL)
 // ============================================
 function getServerUrl() {
   const input = document.getElementById('serverUrl').value.trim();
   if (input) {
-    const clean = input.replace(/\/$/, '');
+    let clean = input.replace(/\/$/, '');
+    if (!clean.startsWith('http://') && !clean.startsWith('https://')) {
+      clean = 'http://' + clean;
+    }
     localStorage.setItem('among_breads_server_url', clean);
     return clean;
+  }
+  // Si se abre desde GitHub Pages y está vacío, advertir
+  if (window.location.hostname.includes('github.io')) {
+    return 'http://' + LOCAL_PC_IP;
   }
   return window.location.origin;
 }
 
 function connectToServer() {
+  if (typeof io === 'undefined') {
+    setConnStatus('❌ Librería de conexión no disponible. Revisa tu internet.');
+    return;
+  }
+
   if (G.socket) {
     G.socket.disconnect();
     G.socket = null;
@@ -1657,7 +2010,7 @@ function connectToServer() {
   });
 
   G.socket.on('connect_error', (err) => {
-    setConnStatus('❌ Error: ' + err.message);
+    setConnStatus('❌ Error al conectar a ' + G.serverUrl);
   });
 
   G.socket.on('error_msg', (msg) => toast(msg));
@@ -1708,7 +2061,6 @@ function connectToServer() {
     G.completedTasks = [];
     updateActionButtonsVisibility();
 
-    // Pantalla de revelación de rol
     const reveal = document.getElementById('roleReveal');
     const card = document.getElementById('roleCard');
     const title = document.getElementById('roleTitle');
@@ -1755,10 +2107,8 @@ function connectToServer() {
   G.socket.on('player_moved', (data) => {
     const p = G.players.get(data.id);
     if (!p) return;
-    p.x = data.x;
-    p.y = data.y;
-    p.dir = data.dir;
-    p.moving = data.moving;
+    p.x = data.x; p.y = data.y;
+    p.dir = data.dir; p.moving = data.moving;
     p.animTime = data.animTime;
   });
 
@@ -1799,17 +2149,15 @@ function connectToServer() {
       for (const p of data.players) {
         const localP = G.players.get(p.id);
         if (localP) {
-          localP.x = p.x;
-          localP.y = p.y;
-          localP.alive = p.alive;
-          localP.isGhost = p.isGhost;
+          localP.x = p.x; localP.y = p.y;
+          localP.alive = p.alive; localP.isGhost = p.isGhost;
         }
       }
     }
     updateActionButtonsVisibility();
   });
 
-  // ---- CHAT ----
+  // ---- CHAT (CON FILTRADO FANTASMAS VS VIVOS) ----
   G.socket.on('chat', (msg) => {
     addChatMessage(msg);
   });
@@ -1868,7 +2216,7 @@ function updateActionButtonsVisibility() {
   if (roleBadge) {
     if (!me || !me.alive || me.isGhost) {
       roleBadge.textContent = '👻 Fantasma';
-      roleBadge.className = 'hud-badge';
+      roleBadge.className = 'hud-badge ghost';
     } else if (G.isImpostor) {
       roleBadge.textContent = '🔪 Impostor';
       roleBadge.className = 'hud-badge impostor';
@@ -1877,6 +2225,9 @@ function updateActionButtonsVisibility() {
       roleBadge.className = 'hud-badge';
     }
   }
+
+  // Actualizar placeholder del chat según si eres fantasma o no
+  updateChatPlaceholders();
 
   if (me && me.alive && !me.isGhost) {
     if (btnUse) btnUse.style.display = 'flex';
@@ -1894,7 +2245,28 @@ function updateActionButtonsVisibility() {
     if (btnKill) btnKill.style.display = 'none';
     if (btnInvis) btnInvis.style.display = 'none';
     if (btnReport) btnReport.style.display = 'none';
-    if (btnUse) btnUse.style.display = 'flex'; // Fantasmas pueden hacer tareas
+    if (btnUse) btnUse.style.display = 'flex';
+  }
+}
+
+function updateChatPlaceholders() {
+  const me = G.players.get(G.myId);
+  const isGhost = (G.gameState !== 'lobby') && (!me || !me.alive || me.isGhost);
+  const inputVoting = document.getElementById('votingChatInput');
+  const inputFloating = document.getElementById('floatingChatInput');
+  const headerVoting = document.getElementById('votingChatHeader');
+  const headerFloating = document.getElementById('floatingChatTitle');
+
+  if (isGhost) {
+    if (inputVoting) inputVoting.placeholder = '👻 Escribe (Solo los fantasmas te leen)...';
+    if (inputFloating) inputFloating.placeholder = '👻 Solo los fantasmas te leen...';
+    if (headerVoting) headerVoting.textContent = '👻 Canal de Fantasmas (Vivos no lo ven)';
+    if (headerFloating) headerFloating.textContent = '👻 Chat Espectral (Privado de Fantasmas)';
+  } else {
+    if (inputVoting) inputVoting.placeholder = 'Escribe para convencer...';
+    if (inputFloating) inputFloating.placeholder = 'Escribe aquí...';
+    if (headerVoting) headerVoting.textContent = '💬 Discusión en Vivo';
+    if (headerFloating) headerFloating.textContent = '💬 Chat de la Panadería';
   }
 }
 
@@ -1991,7 +2363,6 @@ window.addEventListener('touchcancel', onJoyEnd);
 
 // Teclado
 window.addEventListener('keydown', (e) => {
-  // Si está escribiendo en el chat, no mover el personaje
   if (document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA')) {
     if (e.key === 'Escape') document.activeElement.blur();
     return;
@@ -2024,7 +2395,6 @@ window.addEventListener('keyup', (e) => {
   }
 });
 
-// Botones de acción táctiles y clic
 function bindTouchButton(id, handler) {
   const btn = document.getElementById(id);
   if (!btn) return;
@@ -2064,7 +2434,6 @@ function updateLocalPlayer() {
     const nextX = me.x + dx * speed;
     const nextY = me.y + dy * speed;
 
-    // Colisión con paredes (fantasmas pueden atravesar)
     const resolved = checkWallCollision(nextX, nextY, 20);
     me.x = resolved.x;
     me.y = resolved.y;
@@ -2072,13 +2441,11 @@ function updateLocalPlayer() {
     if (Math.abs(dx) > 0.05) me.dir = dx > 0 ? 1 : -1;
     me.animTime = (me.animTime || 0) + 1;
 
-    // Límites exteriores del mapa
     if (G.map) {
       me.x = Math.max(35, Math.min(G.map.width - 35, me.x));
       me.y = Math.max(35, Math.min(G.map.height - 35, me.y));
     }
 
-    // Enviar movimiento al servidor
     const now = Date.now();
     if (now - G.lastMoveSent > 33) {
       G.lastMoveSent = now;
@@ -2151,7 +2518,7 @@ function tryInteract() {
     }
   }
 
-  // Tareas (tripulantes vivos o fantasmas)
+  // Tareas
   if (!G.isImpostor && G.visibleTasks) {
     for (const t of G.visibleTasks) {
       if (G.completedTasks.includes(t.id)) continue;
@@ -2163,7 +2530,6 @@ function tryInteract() {
     }
   }
 
-  // Si hay un cuerpo cerca, reportarlo
   tryReport();
 }
 
@@ -2177,7 +2543,6 @@ function tryInvisibility() {
   G.invisCooldown = 25000;
 }
 
-// Proximidad y actualización dinámica de botones del HUD
 function updateProximityButtons() {
   if (G.gameState !== 'playing') return;
   const me = G.players.get(G.myId);
@@ -2186,7 +2551,6 @@ function updateProximityButtons() {
   const btnReport = document.getElementById('btnReport');
   const btnUse = document.getElementById('btnUse');
 
-  // Detectar cuerpos cercanos
   let bodyNearby = false;
   for (const [id, body] of G.bodyParts) {
     if (Math.hypot(body.x - me.x, body.y - me.y) < 130) {
@@ -2204,7 +2568,6 @@ function updateProximityButtons() {
     }
   }
 
-  // Detectar tareas o emergencia
   let taskNearby = false;
   if (G.emergency && me.alive && !me.isGhost && Math.hypot(G.emergency.x - me.x, G.emergency.y - me.y) < 95) {
     taskNearby = true;
@@ -2231,7 +2594,7 @@ function updateProximityButtons() {
 // VOTACIÓN CON CHAT INTEGRADO
 // ============================================
 function showVoting(data) {
-  G.voteTarget = null; // ¡RESETEAR OBJETIVO DE VOTO CADA RONDA!
+  G.voteTarget = null;
   showScreen('screenVoting');
 
   const title = document.getElementById('votingTitle');
@@ -2251,7 +2614,7 @@ function showVoting(data) {
 
   const statusNote = document.getElementById('votingStatusNote');
   if (!amAlive) {
-    statusNote.textContent = '👻 Eres un fantasma: observa la votación y el chat.';
+    statusNote.textContent = '👻 Eres un fantasma: observa la votación y habla en tu canal de chat.';
   } else {
     statusNote.textContent = 'Toca la tarjeta de un sospechoso para votar por él';
   }
@@ -2265,12 +2628,10 @@ function showVoting(data) {
     card.className = 'vote-card' + (p.alive ? '' : ' dead');
     card.dataset.id = p.id;
 
-    // Mini preview de pan
     const cv = document.createElement('canvas');
     cv.width = 96; cv.height = 96;
     const cx = cv.getContext('2d');
-    cx.save();
-    cx.translate(48, 52);
+    cx.save(); cx.translate(48, 52);
     drawBread(cx, {
       x: 0, y: 0, skin: p.skin, hat: 'none', face: 'none',
       dir: 1, moving: false, animTime: 0,
@@ -2290,7 +2651,6 @@ function showVoting(data) {
     countEl.textContent = '';
     card.appendChild(countEl);
 
-    // Indicador de que ya votó
     const votedMark = document.createElement('div');
     votedMark.className = 'has-voted-mark';
     votedMark.dataset.voted = p.id;
@@ -2301,7 +2661,7 @@ function showVoting(data) {
     card.addEventListener('click', () => {
       if (!amAlive) return;
       if (!p.alive) return;
-      if (G.voteTarget) return; // Ya votó en esta ronda
+      if (G.voteTarget) return;
 
       G.voteTarget = p.id;
       G.socket.emit('vote', { targetId: p.id });
@@ -2313,7 +2673,6 @@ function showVoting(data) {
     grid.appendChild(card);
   }
 
-  // Timer de votación
   if (G.voteTimerInterval) clearInterval(G.voteTimerInterval);
   let timeLeft = 30;
   const timerEl = document.getElementById('voteTimer');
@@ -2326,11 +2685,10 @@ function showVoting(data) {
     }
   }, 1000);
 
-  // Asegurar pestañas en móvil
+  updateChatPlaceholders();
   setVotingTab('cards');
 }
 
-// Saltar voto
 document.getElementById('btnSkipVote').addEventListener('click', () => {
   const me = G.players.get(G.myId);
   if (!me || !me.alive || me.isGhost) return;
@@ -2344,7 +2702,6 @@ document.getElementById('btnSkipVote').addEventListener('click', () => {
 });
 
 function updateVotesDisplay(data) {
-  // Marca de quién ya votó
   if (data.voters) {
     document.querySelectorAll('[data-voted]').forEach(el => {
       const pid = el.dataset.voted;
@@ -2352,7 +2709,6 @@ function updateVotesDisplay(data) {
     });
   }
 
-  // Recuento de votos en vivo
   const counts = {};
   for (const t of Object.values(data.votes)) {
     counts[t] = (counts[t] || 0) + 1;
@@ -2369,18 +2725,14 @@ function updateVotesDisplay(data) {
 
 function handleVotingResult(data) {
   if (G.voteTimerInterval) clearInterval(G.voteTimerInterval);
-
-  // Revelar votos en tarjetas
   updateVotesDisplay(data);
 
-  // Expulsión
   const note = document.getElementById('votingStatusNote');
   if (data.ejectedId) {
     const wasImp = data.wasImpostor;
     note.textContent = `🥖 ${data.ejectedName} fue expulsado. Era ${wasImp ? 'UN IMPOSTOR 🔪' : 'INOCENTE 🍞'}.`;
     toast(note.textContent);
 
-    // Actualizar estado del jugador inmediatamente en cliente
     const ejected = G.players.get(data.ejectedId);
     if (ejected) {
       ejected.alive = false;
@@ -2396,9 +2748,6 @@ function handleVotingResult(data) {
   }
 }
 
-// ============================================
-// PESTAÑAS Y CHAT DE VOTACIÓN
-// ============================================
 function setVotingTab(tab) {
   const colCards = document.getElementById('colVotingCards');
   const colChat = document.getElementById('colVotingChat');
@@ -2428,38 +2777,43 @@ document.getElementById('tabVotingCards').addEventListener('click', () => setVot
 document.getElementById('tabVotingChat').addEventListener('click', () => setVotingTab('chat'));
 
 // ============================================
-// CHAT EN VIVO (GLOBAL Y VOTACIÓN)
+// CHAT EN VIVO CON FILTRADO DE FANTASMAS
 // ============================================
 function addChatMessage(msg) {
+  const me = G.players.get(G.myId);
+  const amAlive = me && me.alive && !me.isGhost;
+
+  // REGLA CLAVE: Si el mensaje es de fantasma y yo estoy vivo en partida/votación, NO lo veo
+  if (msg.isGhost && amAlive && G.gameState !== 'lobby') {
+    return;
+  }
+
   G.chatMessages.push(msg);
 
-  // 1. Mensaje en Chat de Votación
-  const vBox = document.getElementById('votingChatMessages');
-  if (vBox) {
+  // Crear elemento de mensaje
+  function createMsgElement() {
     const el = document.createElement('div');
-    el.className = 'chat-msg';
+    el.className = 'chat-msg' + (msg.isGhost ? ' ghost-msg' : '');
     const time = new Date(msg.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    el.innerHTML = `<span class="cname" style="color:${msg.color || '#f4c542'}">${msg.name}:</span>` +
+    const ghostBadge = msg.isGhost ? '<span class="cbadge">👻 FANTASMA</span>' : '';
+    el.innerHTML = `${ghostBadge}<span class="cname" style="color:${msg.color || '#f4c542'}">${msg.name}:</span>` +
                    `<span>${escapeHtml(msg.msg)}</span>` +
                    `<span class="ctime">${time}</span>`;
-    vBox.appendChild(el);
+    return el;
+  }
+
+  const vBox = document.getElementById('votingChatMessages');
+  if (vBox) {
+    vBox.appendChild(createMsgElement());
     vBox.scrollTop = vBox.scrollHeight;
   }
 
-  // 2. Mensaje en Chat Flotante
   const fBox = document.getElementById('floatingChatMessages');
   if (fBox) {
-    const el = document.createElement('div');
-    el.className = 'chat-msg';
-    const time = new Date(msg.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    el.innerHTML = `<span class="cname" style="color:${msg.color || '#f4c542'}">${msg.name}:</span>` +
-                   `<span>${escapeHtml(msg.msg)}</span>` +
-                   `<span class="ctime">${time}</span>`;
-    fBox.appendChild(el);
+    fBox.appendChild(createMsgElement());
     fBox.scrollTop = fBox.scrollHeight;
   }
 
-  // Badge de no leídos
   const drawer = document.getElementById('floatingChatDrawer');
   if (drawer.style.display === 'none') {
     G.unreadChatCount++;
@@ -2470,7 +2824,6 @@ function addChatMessage(msg) {
     }
   }
 
-  // Indicador en pestaña de votación móvil
   const vBadge = document.getElementById('votingChatBadge');
   if (vBadge && !document.getElementById('tabVotingChat').classList.contains('active')) {
     vBadge.style.display = 'inline';
@@ -2482,7 +2835,6 @@ function sendChatMessage(text) {
   G.socket.emit('chat', { msg: text.trim() });
 }
 
-// Formulario de chat en votación
 document.getElementById('votingChatForm').addEventListener('submit', (e) => {
   e.preventDefault();
   const input = document.getElementById('votingChatInput');
@@ -2490,7 +2842,6 @@ document.getElementById('votingChatForm').addEventListener('submit', (e) => {
   input.value = '';
 });
 
-// Formulario de chat flotante
 document.getElementById('floatingChatForm').addEventListener('submit', (e) => {
   e.preventDefault();
   const input = document.getElementById('floatingChatInput');
@@ -2498,14 +2849,12 @@ document.getElementById('floatingChatForm').addEventListener('submit', (e) => {
   input.value = '';
 });
 
-// Chips rápidos
 document.querySelectorAll('.quick-chip').forEach(chip => {
   chip.addEventListener('click', () => {
     sendChatMessage(chip.dataset.msg);
   });
 });
 
-// Toggle Chat Flotante
 function toggleFloatingChat() {
   const drawer = document.getElementById('floatingChatDrawer');
   const isOpen = drawer.style.display === 'flex';
@@ -2530,7 +2879,7 @@ function escapeHtml(str) {
 }
 
 // ============================================
-// MINIJUEGOS / MISIONES (TOUCH OPTIMIZADO)
+// MINIJUEGOS / MISIONES (TOUCH Y VISUALES HERMOSOS)
 // ============================================
 const missionCanvas = document.getElementById('missionCanvas');
 const mctx = missionCanvas.getContext('2d');
@@ -2570,28 +2919,57 @@ function clearMissionListeners() {
 
 const MISSION_HANDLERS = {
   amasar: {
-    title: '🥖 Amasar la Masa',
-    hint: 'Desliza el rodillo de izquierda a derecha',
+    title: '🥖 Amasar la Masa Madre',
+    hint: 'Desliza el rodillo de izquierda a derecha para aplanar la masa',
     init: (m) => {
-      m.state = { rollX: 100, target: 0, done: false };
+      m.state = { rollX: 100, target: 0, done: false, particles: [] };
       const draw = () => {
         mctx.clearRect(0, 0, 440, 280);
-        mctx.fillStyle = '#8b6f47'; mctx.fillRect(0, 0, 440, 280);
-        mctx.fillStyle = '#f5e6d3';
+        // Mesa de mármol
+        mctx.fillStyle = '#654f38'; mctx.fillRect(0, 0, 440, 280);
+        mctx.fillStyle = 'rgba(255,255,255,0.06)';
+        for (let x = 0; x < 440; x += 40) mctx.fillRect(x, 0, 2, 280);
+
+        // Masa con degradado esponjoso
+        const doughGrad = mctx.createRadialGradient(220, 160, 20, 220, 160, 140);
+        doughGrad.addColorStop(0, '#fffbf5');
+        doughGrad.addColorStop(0.8, '#f5e4c8');
+        doughGrad.addColorStop(1, '#d9b685');
+        mctx.fillStyle = doughGrad;
         mctx.beginPath();
-        mctx.ellipse(220, 160, 140, 60, 0, 0, Math.PI * 2);
+        mctx.ellipse(220, 160, 140 + (m.state.target * 0.1), 58 + (m.state.target * 0.05), 0, 0, Math.PI * 2);
         mctx.fill();
-        // Rodillo
+        mctx.strokeStyle = '#c49a63'; mctx.lineWidth = 3; mctx.stroke();
+
+        // Partículas de harina flotando
+        for (const p of m.state.particles) {
+          mctx.fillStyle = 'rgba(255,255,255,' + p.alpha + ')';
+          mctx.beginPath(); mctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); mctx.fill();
+          p.y -= 0.5; p.alpha -= 0.02;
+        }
+        m.state.particles = m.state.particles.filter(p => p.alpha > 0);
+
+        // Rodillo de madera pulida
         mctx.save();
         mctx.translate(m.state.rollX, 110);
-        mctx.fillStyle = '#8b5a2b';
-        mctx.fillRect(-60, -15, 120, 30);
+        const rollGrad = mctx.createLinearGradient(0, -18, 0, 18);
+        rollGrad.addColorStop(0, '#5a3a1c');
+        rollGrad.addColorStop(0.5, '#9a6b3d');
+        rollGrad.addColorStop(1, '#5a3a1c');
+        mctx.fillStyle = rollGrad;
+        mctx.fillRect(-65, -16, 130, 32);
+        // Mangos de rodillo
+        mctx.fillStyle = '#422812';
+        mctx.fillRect(-85, -8, 20, 16);
+        mctx.fillRect(65, -8, 20, 16);
         mctx.restore();
-        // Progreso
-        mctx.fillStyle = '#3a2a1a';
-        mctx.fillRect(20, 250, 400, 14);
+
+        // Barra de progreso elegante
+        mctx.fillStyle = '#2a1a0e';
+        mctx.beginPath(); mctx.roundRect(20, 250, 400, 16, 8); mctx.fill();
         mctx.fillStyle = '#7ac74f';
-        mctx.fillRect(20, 250, 400 * (m.state.target / 300), 14);
+        mctx.beginPath(); mctx.roundRect(22, 252, 396 * (m.state.target / 300), 12, 6); mctx.fill();
+
         if (G.mission === m) requestAnimationFrame(draw);
       };
       draw();
@@ -2600,38 +2978,45 @@ const MISSION_HANDLERS = {
         const p = getMissionPos(e);
         m.state.rollX = Math.max(70, Math.min(370, p.x));
         m.state.target = Math.min(300, m.state.target + 3);
+        if (Math.random() < 0.4) {
+          m.state.particles.push({ x: p.x + (Math.random()*40-20), y: 150, r: Math.random()*3+1, alpha: 0.8 });
+        }
         if (m.state.target >= 300) { m.state.done = true; completeMission(); }
       });
     }
   },
   acomodar: {
-    title: '📦 Acomodar Panes',
-    hint: 'Arrastra el pan a la canasta',
+    title: '📦 Acomodar Panes en la Canasta',
+    hint: 'Arrastra el pan a la canasta tejida',
     init: (m) => {
-      m.state = { px: 100, py: 140, dragging: false, done: false };
+      m.state = { px: 110, py: 140, dragging: false, done: false };
       const draw = () => {
         mctx.clearRect(0, 0, 440, 280);
-        mctx.fillStyle = '#8b6f47'; mctx.fillRect(0, 0, 440, 280);
-        // Canasta
-        mctx.fillStyle = '#6b4728';
-        mctx.fillRect(290, 80, 110, 120);
-        mctx.fillStyle = '#f5e6d3';
-        mctx.font = 'bold 14px sans-serif';
-        mctx.fillText('CANASTA', 315, 150);
-        // Pan
-        drawBread(mctx, { x: m.state.px, y: m.state.py, skin: 'bolillo', scale: 0.8 });
+        mctx.fillStyle = '#5c4530'; mctx.fillRect(0, 0, 440, 280);
+
+        // Canasta de mimbre tejida con forro a cuadros
+        mctx.fillStyle = '#784d28';
+        mctx.beginPath(); mctx.roundRect(270, 70, 140, 140, 16); mctx.fill();
+        mctx.fillStyle = '#f87171'; // Tela roja a cuadros
+        mctx.beginPath(); mctx.roundRect(280, 80, 120, 120, 10); mctx.fill();
+        mctx.fillStyle = '#ffffff';
+        mctx.font = 'bold 15px sans-serif';
+        mctx.fillText('🧺 CANASTA', 295, 145);
+
+        // Pan a colocar
+        drawBread(mctx, { x: m.state.px, y: m.state.py, skin: 'croissant', scale: 1 });
         if (G.mission === m) requestAnimationFrame(draw);
       };
       draw();
       onMission(['mousedown', 'touchstart'], (e) => {
         const p = getMissionPos(e);
-        if (Math.hypot(p.x - m.state.px, p.y - m.state.py) < 50) m.state.dragging = true;
+        if (Math.hypot(p.x - m.state.px, p.y - m.state.py) < 55) m.state.dragging = true;
       });
       onMission(['mousemove', 'touchmove'], (e) => {
         if (!m.state.dragging || m.state.done) return;
         const p = getMissionPos(e);
         m.state.px = p.x; m.state.py = p.y;
-        if (p.x > 290 && p.y > 80 && p.y < 200) {
+        if (p.x > 270 && p.y > 70 && p.y < 210) {
           m.state.done = true; m.state.dragging = false; completeMission();
         }
       });
@@ -2639,23 +3024,26 @@ const MISSION_HANDLERS = {
     }
   },
   limpiar: {
-    title: '🧹 Limpiar Migajas',
-    hint: 'Toca todas las migajas para limpiarlas',
+    title: '🧹 Limpiar Migajas Crujientes',
+    hint: 'Toca todas las migajas para dejar la mesa impecable',
     init: (m) => {
       const crumbs = [
-        { x: 80, y: 70, ok: false }, { x: 220, y: 150, ok: false },
-        { x: 360, y: 90, ok: false }, { x: 140, y: 220, ok: false },
-        { x: 310, y: 210, ok: false }
+        { x: 70, y: 70, ok: false }, { x: 220, y: 130, ok: false },
+        { x: 370, y: 80, ok: false }, { x: 130, y: 210, ok: false },
+        { x: 320, y: 200, ok: false }, { x: 230, y: 60, ok: false }
       ];
       m.state = { crumbs };
       const draw = () => {
         mctx.clearRect(0, 0, 440, 280);
-        mctx.fillStyle = '#7a5f3d'; mctx.fillRect(0, 0, 440, 280);
+        mctx.fillStyle = '#6b543c'; mctx.fillRect(0, 0, 440, 280);
+
         for (const c of crumbs) {
           if (!c.ok) {
-            mctx.fillStyle = '#f5e6d3';
+            mctx.fillStyle = '#fde68a';
             mctx.beginPath(); mctx.arc(c.x, c.y, 14, 0, Math.PI * 2); mctx.fill();
-            mctx.strokeStyle = '#c9a878'; mctx.stroke();
+            mctx.strokeStyle = '#b45309'; mctx.lineWidth = 2.5; mctx.stroke();
+            mctx.fillStyle = '#b45309';
+            mctx.fillRect(c.x - 3, c.y - 3, 6, 6);
           }
         }
         if (G.mission === m) requestAnimationFrame(draw);
@@ -2664,57 +3052,73 @@ const MISSION_HANDLERS = {
       onMission(['mousedown', 'touchstart'], (e) => {
         const p = getMissionPos(e);
         for (const c of crumbs) {
-          if (!c.ok && Math.hypot(p.x - c.x, p.y - c.y) < 28) c.ok = true;
+          if (!c.ok && Math.hypot(p.x - c.x, p.y - c.y) < 30) c.ok = true;
         }
         if (crumbs.every(c => c.ok)) completeMission();
       });
     }
   },
   horno: {
-    title: '🔥 Meter Panes al Horno',
-    hint: 'Empuja la pala hacia el horno',
+    title: '🔥 Meter Pan al Horno Caliente',
+    hint: 'Empuja la pala de madera hacia las brasas',
     init: (m) => {
       m.state = { palaX: 80, done: false };
       const draw = () => {
         mctx.clearRect(0, 0, 440, 280);
-        mctx.fillStyle = '#3a2a1a'; mctx.fillRect(0, 0, 440, 280);
-        // Boca del horno
-        mctx.fillStyle = '#ff7b25';
-        mctx.fillRect(320, 60, 100, 160);
-        // Pala con pan
-        mctx.fillStyle = '#8b5a2b';
-        mctx.fillRect(m.state.palaX - 40, 130, 80, 20);
-        drawBread(mctx, { x: m.state.palaX + 20, y: 140, skin: 'baguette', scale: 0.6 });
+        mctx.fillStyle = '#2c221b'; mctx.fillRect(0, 0, 440, 280);
+
+        // Horno de piedra con fuego
+        const grad = mctx.createRadialGradient(380, 140, 20, 380, 140, 120);
+        grad.addColorStop(0, '#ff9800');
+        grad.addColorStop(0.7, '#e65100');
+        grad.addColorStop(1, '#3e2723');
+        mctx.fillStyle = grad;
+        mctx.beginPath(); mctx.roundRect(300, 40, 130, 200, 20); mctx.fill();
+
+        // Pala con baguette
+        mctx.fillStyle = '#8d6e63';
+        mctx.fillRect(m.state.palaX - 60, 130, 110, 20);
+        drawBread(mctx, { x: m.state.palaX + 30, y: 140, skin: 'baguette', scale: 0.75 });
+
         if (G.mission === m) requestAnimationFrame(draw);
       };
       draw();
       onMission(['mousemove', 'touchmove'], (e) => {
         if (m.state.done) return;
         const p = getMissionPos(e);
-        m.state.palaX = Math.max(50, p.x);
-        if (m.state.palaX > 300) { m.state.done = true; completeMission(); }
+        m.state.palaX = Math.max(60, p.x);
+        if (m.state.palaX > 280) { m.state.done = true; completeMission(); }
       });
     }
   },
   donas: {
-    title: '🍩 Decorar Donas',
-    hint: 'Desliza el dedo sobre la dona para aplicar glaseado',
+    title: '🍩 Decorar Dona con Glaseado',
+    hint: 'Pasa el dedo sobre la dona para aplicar glaseado y chispas',
     init: (m) => {
       let progress = 0;
       const draw = () => {
         mctx.clearRect(0, 0, 440, 280);
-        mctx.fillStyle = '#f5e6d3'; mctx.fillRect(0, 0, 440, 280);
-        // Masa dona
-        mctx.fillStyle = '#d4a373';
-        mctx.beginPath(); mctx.arc(220, 140, 90, 0, Math.PI * 2); mctx.fill();
-        // Glaseado rosa
-        mctx.fillStyle = '#e07a5f';
+        mctx.fillStyle = '#f8fafc'; mctx.fillRect(0, 0, 440, 280);
+
+        // Plato
+        mctx.fillStyle = '#f1f5f9';
+        mctx.beginPath(); mctx.arc(220, 140, 115, 0, Math.PI * 2); mctx.fill();
+        mctx.strokeStyle = '#cbd5e1'; mctx.lineWidth = 4; mctx.stroke();
+
+        // Masa de dona
+        mctx.fillStyle = '#f59e0b';
+        mctx.beginPath(); mctx.arc(220, 140, 85, 0, Math.PI * 2); mctx.fill();
+
+        // Glaseado rosa brillante
+        mctx.fillStyle = '#ec4899';
         mctx.beginPath();
-        mctx.arc(220, 140, 80 * Math.min(1, progress / 100), 0, Math.PI * 2);
+        mctx.arc(220, 140, 75 * Math.min(1, progress / 100), 0, Math.PI * 2);
         mctx.fill();
+
         // Hueco
-        mctx.fillStyle = '#f5e6d3';
-        mctx.beginPath(); mctx.arc(220, 140, 30, 0, Math.PI * 2); mctx.fill();
+        mctx.fillStyle = '#f1f5f9';
+        mctx.beginPath(); mctx.arc(220, 140, 28, 0, Math.PI * 2); mctx.fill();
+
         if (G.mission === m) requestAnimationFrame(draw);
       };
       draw();
@@ -2725,49 +3129,58 @@ const MISSION_HANDLERS = {
     }
   },
   temperatura: {
-    title: '🌡️ Ajustar Temperatura',
-    hint: 'Gira la perilla hasta la zona verde',
+    title: '🌡️ Ajustar Temperatura de Horneado',
+    hint: 'Gira el dial hasta la zona verde óptima',
     init: (m) => {
       let angle = 0;
       const draw = () => {
         mctx.clearRect(0, 0, 440, 280);
-        mctx.fillStyle = '#4a3a2a'; mctx.fillRect(0, 0, 440, 280);
-        // Zona correcta
-        mctx.strokeStyle = '#7ac74f'; mctx.lineWidth = 14;
-        mctx.beginPath(); mctx.arc(220, 140, 80, 1.2, 2.0); mctx.stroke();
-        // Perilla
-        mctx.fillStyle = '#d4a017';
+        mctx.fillStyle = '#3e2723'; mctx.fillRect(0, 0, 440, 280);
+
+        // Termómetro
+        mctx.strokeStyle = '#ef4444'; mctx.lineWidth = 14;
+        mctx.beginPath(); mctx.arc(220, 140, 80, 0.4, 1.2); mctx.stroke();
+        mctx.strokeStyle = '#22c55e'; // Zona verde
+        mctx.beginPath(); mctx.arc(220, 140, 80, 1.3, 2.1); mctx.stroke();
+
+        // Dial de latón
+        mctx.fillStyle = '#eab308';
         mctx.beginPath(); mctx.arc(220, 140, 60, 0, Math.PI * 2); mctx.fill();
         mctx.strokeStyle = '#fff'; mctx.lineWidth = 4;
         mctx.beginPath();
         mctx.moveTo(220, 140);
         mctx.lineTo(220 + Math.cos(angle) * 55, 140 + Math.sin(angle) * 55);
         mctx.stroke();
+
         if (G.mission === m) requestAnimationFrame(draw);
       };
       draw();
       onMission(['mousemove', 'touchmove'], (e) => {
         const p = getMissionPos(e);
         angle = Math.atan2(p.y - 140, p.x - 220);
-        if (angle > 1.3 && angle < 1.9) completeMission();
+        if (angle > 1.4 && angle < 2.0) completeMission();
       });
     }
   },
   moler: {
-    title: '⚙️ Moler Trigo',
-    hint: 'Gira la manivela en círculos',
+    title: '⚙️ Moler Grano de Trigo',
+    hint: 'Gira la manivela del molino en círculos',
     init: (m) => {
       let rotations = 0, lastAngle = 0;
       const draw = () => {
         mctx.clearRect(0, 0, 440, 280);
-        mctx.fillStyle = '#5a3a1a'; mctx.fillRect(0, 0, 440, 280);
-        mctx.fillStyle = '#d4a017';
-        mctx.beginPath(); mctx.arc(220, 140, 70, 0, Math.PI * 2); mctx.fill();
-        mctx.fillStyle = '#3a2a1a';
-        mctx.beginPath(); mctx.arc(220, 140, 20, 0, Math.PI * 2); mctx.fill();
+        mctx.fillStyle = '#4b382a'; mctx.fillRect(0, 0, 440, 280);
+
+        // Piedra de molino
+        mctx.fillStyle = '#a8a29e';
+        mctx.beginPath(); mctx.arc(220, 140, 75, 0, Math.PI * 2); mctx.fill();
+        mctx.fillStyle = '#78716c';
+        mctx.beginPath(); mctx.arc(220, 140, 24, 0, Math.PI * 2); mctx.fill();
+
         // Barra de progreso
-        mctx.fillStyle = '#7ac74f';
-        mctx.fillRect(20, 250, 400 * Math.min(1, rotations / 15), 14);
+        mctx.fillStyle = '#22c55e';
+        mctx.fillRect(20, 250, 400 * Math.min(1, rotations / 14), 14);
+
         if (G.mission === m) requestAnimationFrame(draw);
       };
       draw();
@@ -2777,25 +3190,27 @@ const MISSION_HANDLERS = {
         if (Math.abs(ang - lastAngle) > 0.4) {
           rotations++;
           lastAngle = ang;
-          if (rotations >= 15) completeMission();
+          if (rotations >= 14) completeMission();
         }
       });
     }
   },
   sacos: {
-    title: '🎒 Ordenar Sacos',
-    hint: 'Toca los 3 sacos en orden (1, 2, 3)',
+    title: '🎒 Ordenar Sacos de Harina',
+    hint: 'Toca los 3 sacos de harina en orden (1, 2, 3)',
     init: (m) => {
       let step = 1;
-      const sacks = [{ id: 1, x: 100 }, { id: 2, x: 220 }, { id: 3, x: 340 }];
+      const sacks = [{ id: 1, x: 90 }, { id: 2, x: 220 }, { id: 3, x: 350 }];
       const draw = () => {
         mctx.clearRect(0, 0, 440, 280);
-        mctx.fillStyle = '#6b4f2f'; mctx.fillRect(0, 0, 440, 280);
+        mctx.fillStyle = '#5c4530'; mctx.fillRect(0, 0, 440, 280);
+
         for (const s of sacks) {
-          mctx.fillStyle = s.id < step ? '#7ac74f' : '#f5e6d3';
-          mctx.beginPath(); mctx.ellipse(s.x, 140, 35, 55, 0, 0, Math.PI * 2); mctx.fill();
-          mctx.fillStyle = '#3a2a1a'; mctx.font = 'bold 24px sans-serif';
-          mctx.fillText(s.id, s.x - 6, 148);
+          mctx.fillStyle = s.id < step ? '#86efac' : '#fef08a';
+          mctx.beginPath(); mctx.ellipse(s.x, 140, 36, 56, 0, 0, Math.PI * 2); mctx.fill();
+          mctx.strokeStyle = '#854d0e'; mctx.lineWidth = 3; mctx.stroke();
+          mctx.fillStyle = '#451a03'; mctx.font = 'bold 26px sans-serif';
+          mctx.fillText(s.id, s.x - 7, 148);
         }
         if (G.mission === m) requestAnimationFrame(draw);
       };
@@ -2814,41 +3229,43 @@ const MISSION_HANDLERS = {
     }
   },
   abanicar: {
-    title: '🌬️ Enfriar Baguettes',
-    hint: 'Toca repetidamente para ventilar el pan',
+    title: '🌬️ Enfriar Baguettes Horneadas',
+    hint: 'Toca repetidamente para ventilar y enfriar',
     init: (m) => {
       let taps = 0;
       const draw = () => {
         mctx.clearRect(0, 0, 440, 280);
-        mctx.fillStyle = '#8b6f47'; mctx.fillRect(0, 0, 440, 280);
-        drawBread(mctx, { x: 220, y: 140, skin: 'baguette', scale: 1 });
-        mctx.fillStyle = '#7ac74f';
-        mctx.fillRect(20, 250, 400 * Math.min(1, taps / 12), 14);
+        mctx.fillStyle = '#654f38'; mctx.fillRect(0, 0, 440, 280);
+        drawBread(mctx, { x: 220, y: 140, skin: 'baguette', scale: 1.1 });
+        mctx.fillStyle = '#22c55e';
+        mctx.fillRect(20, 250, 400 * Math.min(1, taps / 11), 14);
         if (G.mission === m) requestAnimationFrame(draw);
       };
       draw();
       onMission(['mousedown', 'touchstart'], () => {
         taps++;
-        if (taps >= 12) completeMission();
+        if (taps >= 11) completeMission();
       });
     }
   },
   mermelada: {
-    title: '🍓 Vaciar Mermelada',
-    hint: 'Mantén presionado para llenar el tarro',
+    title: '🍓 Llenar Tarro de Mermelada',
+    hint: 'Mantén presionado para verter la mermelada de fresa',
     init: (m) => {
       let filling = false, fillAmount = 0;
       const draw = () => {
         mctx.clearRect(0, 0, 440, 280);
-        mctx.fillStyle = '#5a3a2a'; mctx.fillRect(0, 0, 440, 280);
-        // Frasco
-        mctx.strokeStyle = '#fff'; mctx.lineWidth = 4;
-        mctx.strokeRect(170, 70, 100, 140);
+        mctx.fillStyle = '#4a3525'; mctx.fillRect(0, 0, 440, 280);
+
+        // Frasco de cristal
+        mctx.strokeStyle = '#ffffff'; mctx.lineWidth = 4;
+        mctx.strokeRect(170, 60, 100, 150);
         // Mermelada
-        mctx.fillStyle = '#c0392b';
-        mctx.fillRect(172, 210 - fillAmount * 1.3, 96, fillAmount * 1.3);
+        mctx.fillStyle = '#dc2626';
+        mctx.fillRect(172, 210 - fillAmount * 1.4, 96, fillAmount * 1.4);
+
         if (filling) {
-          fillAmount += 1.5;
+          fillAmount += 1.6;
           if (fillAmount >= 100) completeMission();
         }
         if (G.mission === m) requestAnimationFrame(draw);
@@ -2945,7 +3362,6 @@ function renderLobbyScreen(data) {
   if (btnStart) btnStart.style.display = G.isHost ? 'inline-flex' : 'none';
 }
 
-// Minimizar / Expandir panel del lobby en móvil
 let lobbyMinimized = false;
 document.getElementById('btnToggleLobbyMinimize').addEventListener('click', () => {
   lobbyMinimized = !lobbyMinimized;
@@ -2967,7 +3383,7 @@ function showEndScreen(data) {
   if (data.winner === 'crewmates') {
     title.textContent = '🍞 ¡Ganaron los Panes!';
     title.style.color = '#7ac74f';
-    desc.textContent = 'Los impostores fueron descubiertos y expulsados del horno.';
+    desc.textContent = 'Los impostores fueron descubiertos y expulsados.';
   } else {
     title.textContent = '🔪 ¡Ganaron los Impostores!';
     title.style.color = '#e07a5f';
@@ -2985,11 +3401,22 @@ function showEndScreen(data) {
 }
 
 // ============================================
-// PERSONALIZADOR DE PERSONAJE
+// PERSONALIZADOR DE PERSONAJE AMPLIADO
 // ============================================
-const BREAD_SKINS = ['bolillo', 'baguette', 'donut', 'concha', 'mohoso', 'quemado'];
-const HATS = ['none', 'chef', 'butter', 'candle'];
-const FACES = ['none', 'sunglasses', 'mustache', 'monocle'];
+const BREAD_SKINS = [
+  'bolillo', 'croissant', 'concha', 'concha_rosa', 'baguette',
+  'donut', 'donut_chocolate', 'pandemuerto', 'tostada', 'bagel', 'muffin', 'mohoso', 'quemado'
+];
+const BREAD_COLORS = [
+  '#d4a373', '#f4c542', '#c48b52', '#8b5a2b',
+  '#f5e6d3', '#e8a8a8', '#a2c595', '#bfa5d9'
+];
+const HATS = [
+  'none', 'chef', 'butter', 'candle', 'beret', 'crown', 'mini_bread', 'rolling_pin', 'flower', 'party'
+];
+const FACES = [
+  'none', 'sunglasses', 'mustache', 'monocle', 'blush', 'pirate', 'glasses', 'mask', 'bubblegum'
+];
 
 function renderCustomize() {
   const pCv = document.getElementById('previewCanvas');
@@ -2998,12 +3425,12 @@ function renderCustomize() {
   function drawPreview() {
     pcx.clearRect(0, 0, pCv.width, pCv.height);
     pcx.save();
-    pcx.translate(pCv.width / 2, pCv.height / 2 + 10);
+    pcx.translate(pCv.width / 2, pCv.height / 2 + 12);
     drawBread(pcx, {
       x: 0, y: 0,
       skin: G.profile.skin, hat: G.profile.hat, face: G.profile.face,
       dir: 1, moving: false, animTime: Date.now() * 0.05,
-      scale: 1.5, color: '#d4a373'
+      scale: 1.6, color: G.profile.color || '#d4a373'
     });
     pcx.restore();
     requestAnimationFrame(drawPreview);
@@ -3011,6 +3438,22 @@ function renderCustomize() {
   drawPreview();
 
   document.getElementById('custName').value = G.profile.name;
+
+  // Selector de colores
+  const cGrid = document.getElementById('colorGrid');
+  cGrid.innerHTML = '';
+  for (const col of BREAD_COLORS) {
+    const cir = document.createElement('div');
+    cir.className = 'color-circle' + ((G.profile.color === col) ? ' selected' : '');
+    cir.style.backgroundColor = col;
+    cir.addEventListener('click', () => {
+      cGrid.querySelectorAll('.color-circle').forEach(c => c.classList.remove('selected'));
+      cir.classList.add('selected');
+      G.profile.color = col;
+    });
+    cGrid.appendChild(cir);
+  }
+
   buildOptionGrid('skinGrid', BREAD_SKINS, G.profile.skin, (v) => { G.profile.skin = v; });
   buildOptionGrid('hatGrid', HATS, G.profile.hat, (v) => { G.profile.hat = v; });
   buildOptionGrid('faceGrid', FACES, G.profile.face, (v) => { G.profile.face = v; });
@@ -3042,10 +3485,10 @@ document.getElementById('btnCustDone').addEventListener('click', () => {
     G.socket.emit('update_profile', G.profile);
   }
   showScreen('screenMain');
-  toast('Personaje guardado');
+  toast('Pan guardado');
 });
 
-// Botones de Navegación del Menú
+// Navegación
 document.getElementById('btnCreate').addEventListener('click', () => showScreen('screenCreate'));
 document.getElementById('btnJoin').addEventListener('click', () => showScreen('screenJoin'));
 document.getElementById('btnCustomize').addEventListener('click', () => showScreen('screenCustomize'));
@@ -3053,7 +3496,15 @@ document.getElementById('btnCreateBack').addEventListener('click', () => showScr
 document.getElementById('btnJoinBack').addEventListener('click', () => showScreen('screenMain'));
 document.getElementById('btnConnect').addEventListener('click', connectToServer);
 
-// Sliders de Configuración
+// Ayuda Celular
+document.getElementById('btnMobileHelp').addEventListener('click', () => showScreen('screenMobileHelp'));
+document.getElementById('btnMobileHelpBack').addEventListener('click', () => showScreen('screenMain'));
+document.getElementById('btnCopyIp').addEventListener('click', () => {
+  navigator.clipboard.writeText('http://' + LOCAL_PC_IP);
+  toast('¡Dirección copiada!');
+});
+
+// Sliders
 ['Players', 'Speed', 'Vision', 'Tasks', 'Impostors'].forEach(k => {
   const s = document.getElementById('cfg' + k);
   const v = document.getElementById('v' + k);
@@ -3063,7 +3514,8 @@ document.getElementById('btnConnect').addEventListener('click', connectToServer)
 // Crear Sala
 document.getElementById('btnCreateConfirm').addEventListener('click', () => {
   if (!G.socket || !G.socket.connected) {
-    toast('No hay conexión con el servidor');
+    toast('Conectando al servidor...');
+    connectToServer();
     return;
   }
   const config = {
@@ -3101,7 +3553,8 @@ document.getElementById('btnJoinConfirm').addEventListener('click', () => {
     return;
   }
   if (!G.socket || !G.socket.connected) {
-    toast('No hay conexión con el servidor');
+    toast('Conectando al servidor...');
+    connectToServer();
     return;
   }
   G.socket.emit('join_room', { code, profile: G.profile }, (res) => {
@@ -3121,14 +3574,12 @@ document.getElementById('btnJoinConfirm').addEventListener('click', () => {
   });
 });
 
-// Iniciar Partida desde Lobby
 document.getElementById('btnLobbyStart').addEventListener('click', () => {
   if (G.isHost && G.socket) {
     G.socket.emit('start_game');
   }
 });
 
-// Salir del Lobby
 document.getElementById('btnLobbyLeave').addEventListener('click', () => {
   if (G.socket) G.socket.disconnect();
   G.gameState = 'menu';
@@ -3148,10 +3599,8 @@ function gameLoop(now) {
   const dt = now - lastLoopTime;
   lastLoopTime = now;
 
-  // 1. Movimiento local
   updateLocalPlayer();
 
-  // 2. Cooldowns
   if (G.killCooldown > 0) {
     G.killCooldown = Math.max(0, G.killCooldown - dt);
     const btn = document.getElementById('btnKill');
@@ -3180,19 +3629,15 @@ function gameLoop(now) {
     }
   }
 
-  // 3. Proximidad de tareas y reporte
   updateProximityButtons();
-
-  // 4. Renderizar escena
   render();
 
   requestAnimationFrame(gameLoop);
 }
 
-// Iniciar bucle de juego
 requestAnimationFrame(gameLoop);
 
-// Inicializar interfaz y conexión
+// Inicializar
 if (G.serverUrl) {
   document.getElementById('serverUrl').value = G.serverUrl;
 }
